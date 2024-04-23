@@ -5,16 +5,13 @@ import { runServer } from './run/run.server'
 
 export default async function bootstrap() {
     const builder = await ServerBuilder.create(AppModule)
-    const app = builder
-        .setCors()
-        .setGlobalProfix('api')
-        .setValidationPipe()
-        .setDocumentation({
+    const app = builder.setCors().setGlobalProfix('api').setValidationPipe()
+    if (process.env.NODE_ENV === 'development')
+        app.setDocumentation({
             title: 'Gymnastic center API Docs',
             description: 'API Documentation for Gymnastic center',
             version: '1.0',
             path: 'api/docs',
         })
-        .build()
-    await runServer(app, PORT)
+    await runServer(app.build(), PORT)
 }
