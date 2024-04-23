@@ -1,0 +1,13 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "module": "CommonJs",
+        "lib": ["dom", "es2017"],
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "./commonjs",
+        "baseUrl": "./lib"
+    },
+    "include": ["lib"],
+    "exclude": ["./commonjs/**"]
+}

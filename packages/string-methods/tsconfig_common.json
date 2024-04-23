@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "module": "CommonJs",
+        "moduleResolution": "node",
+        "target": "ESNext",
+        "sourceMap": true,
+        "outDir": "./commonjs",
+        "downlevelIteration": true,
+        "baseUrl": "./lib"
+    },
+    "include": ["lib"],
+    "exclude": ["./commonjs/**/*"]
+}

@@ -1,0 +1,33 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "extends": "../../tsconfig.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "module": "ESNext",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "target": "ESNext",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "src/*": [
+        "./src/*"
+      ],
+      "tests/*": [
+        "./tests/*"
+      ]
+    }
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
+  "tscc": {
+      "excludesWatch": ["public", "tests", "dist_test"],
+      "postWatch": "node dist/main",
+      "transformsMethodsToArrow": true,
+    "deleteOutDir": true
+  }
+}

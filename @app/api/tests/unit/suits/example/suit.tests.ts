@@ -1,0 +1,3 @@
+suiteDeclare('example')
+
+export {}

@@ -1,0 +1,25 @@
+{
+  "name": "@mono/compiler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "postinstall": "tsc"
+  },
+  "bin": {
+    "tscc": "./dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.8.7",
+    "ttypescript": "^1.5.15"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "rimraf": "^5.0.5"
+  }
+}

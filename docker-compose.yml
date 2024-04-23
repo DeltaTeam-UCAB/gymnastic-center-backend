@@ -1,0 +1,14 @@
+# Set the version of docker compose to use
+version: '3.9'
+
+# The containers that compose the project
+services:
+  db:
+    image: postgres:16
+    container_name: gymnastic-center-DB
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: gymdb

@@ -1,0 +1,22 @@
+{
+  "name": "@mono/promise-methods",
+  "private": true,
+  "types": "./commonjs/index.d.ts",
+    "type": "module",
+  "exports": {
+      ".": {
+          "import": "./esm/index.js",
+          "default": "./esm/index.js"
+      }
+  },
+  "module": "./esm/index.js",
+  "main": "./commonjs/index.js",
+  "scripts": {
+      "build": "tsc --project tsconfig_common.json && tscc",
+      "postinstall": "tsc --project tsconfig_common.json && tscc"
+  },
+    "devDependencies": {
+        "@mono/compiler": "*"
+    },
+  "version": "0.0.1"
+}
