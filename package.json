@@ -1,7 +1,7 @@
 {
-  "name": "monorepo",
+  "name": "gymnastic-center",
   "version": "1.0.0",
-  "description": "Monorepo template with pnpm, typescript, nest and react",
+  "description": "Gymnastic center API build with pnpm, typescript and nest",
   "type": "module",
   "scripts": {
     "start:dev": "pnpm --recursive --parallel --stream run start:dev",

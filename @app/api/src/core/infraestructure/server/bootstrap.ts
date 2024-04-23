@@ -10,8 +10,8 @@ export default async function bootstrap() {
         .setGlobalProfix('api')
         .setValidationPipe()
         .setDocumentation({
-            title: 'API Docs',
-            description: 'API Documentation',
+            title: 'Gymnastic center API Docs',
+            description: 'API Documentation for Gymnastic center',
             version: '1.0',
             path: 'api/docs',
         })
