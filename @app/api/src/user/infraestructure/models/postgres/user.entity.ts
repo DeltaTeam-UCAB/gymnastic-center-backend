@@ -1,5 +1,7 @@
 import { Check, Column, Entity, PrimaryColumn } from 'typeorm'
 
+export type UserRoles = 'CLIENT' | 'ADMIN'
+
 @Entity()
 @Check('"email" ~* \'^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$\'')
 export class User {
