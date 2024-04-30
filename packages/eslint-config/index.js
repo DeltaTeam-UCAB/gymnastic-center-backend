@@ -20,7 +20,8 @@ module.exports = {
         camelcase: [
             'error',
             {
-                properties: 'always',
+                properties: 'never',
+                ignoreImports: true,
             },
         ],
         'no-return-await': ['error'],
@@ -36,7 +37,7 @@ module.exports = {
         'no-else-return': 1,
         '@typescript-eslint/no-non-null-assertion': 'off',
         'prettier/prettier': [
-            'error',
+            'warn',
             {
                 endOfLine: 'auto',
             },
