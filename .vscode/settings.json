@@ -1,6 +1,7 @@
 {
     "conventionalCommits.scopes": [
         "api",
-        "root"
+        "root",
+        "a"
     ]
 }
