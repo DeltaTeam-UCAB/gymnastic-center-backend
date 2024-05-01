@@ -6,12 +6,16 @@ export type ClientGenders = 'F' | 'M' | 'X'
 export class Client {
     
     @PrimaryColumn({
-        type:'uuid'
+        type: 'uuid'
     })
-    userId:string
+    id:string
+    @Column({
+        type: 'uuid',
+    })
+    userId: string
     @OneToOne(() => User)
     @JoinColumn()
-    user:User;
+    user: User
     @Column({
         type: 'int',
         nullable: true,
@@ -36,5 +40,5 @@ export class Client {
         type: 'date',
         nullable: true,
     })
-    birthdate: Date;
+    birthdate: Date
 }
