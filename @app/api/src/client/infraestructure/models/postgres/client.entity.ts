@@ -10,6 +10,7 @@ export class Client {
     id: string
     @Column({
         type: 'uuid',
+        unique: true
     })
     userId: string
     @OneToOne(() => User)
@@ -19,25 +20,25 @@ export class Client {
         type: 'int',
         nullable: true,
     })
-    weight: number
+    weight?: number
     @Column({
         type: 'int',
         nullable: true,
     })
-    height: number
+    height?: number
     @Column({
         type: 'varchar',
         nullable: true,
     })
-    location: string
+    location?: string
     @Column({
         type: 'varchar',
         nullable: true,
     })
-    gender: 'F' | 'M' | 'X'
+    gender?: 'F' | 'M' | 'X'
     @Column({
         type: 'date',
         nullable: true,
     })
-    birthdate: Date
+    birthdate?: Date
 }

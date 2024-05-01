@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import {
-    IsDateString,
-    IsInt,
-    IsOptional,
-    IsString,
-    Min,
-} from 'class-validator'
+import { IsDateString, IsInt, IsOptional, IsString, Min } from 'class-validator'
 
 export class SetClientInfoDTO {
     @ApiProperty()
@@ -21,13 +15,13 @@ export class SetClientInfoDTO {
     @ApiProperty()
     @IsString()
     @IsOptional()
-    location: string
+    location?: string
     @ApiProperty()
     @IsString()
     @IsOptional()
-    gender: 'F' | 'M' | 'X'
+    gender?: 'F' | 'M' | 'X'
     @ApiProperty()
     @IsDateString()
     @IsOptional()
-    birthdate: Date
+    birthdate?: Date
 }

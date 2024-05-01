@@ -1,40 +1,27 @@
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { Get, HttpException, SetMetadata, UseGuards } from '@nestjs/common'
-import { User as UserDecorator } from '../../decorators/user.decorator'
-import { UserGuard } from '../../guards/user.guard'
+import { Get, UseGuards } from '@nestjs/common'
 import { ApiHeader } from '@nestjs/swagger'
-import { User } from 'src/user/infraestructure/models/postgres/user.entity'
 import { Client } from '../../models/postgres/client.entity'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
-import { RolesGuard } from '../../guards/roles.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
+import { Client as ClientDecorator} from '../../decorators/client.decorator'
+import { ClientGuard } from '../../guards/client.guard'
+import { UserGuard } from '../../guards/user.guard'
 
 @Controller({
     path: 'client',
     docTitle: 'Client',
 })
 export class CurrentClientController
-    implements ControllerContract<[user: User], Client>
+    implements ControllerContract<[client: Client], Client>
 {
-    constructor(
-        @InjectRepository(Client) private clientRepo: Repository<Client>,
-    ) {}
     @Get('current')
-    @SetMetadata('roles', ['CLIENT'])
-    @UseGuards(UserGuard, RolesGuard)
+    @Roles('CLIENT')
+    @UseGuards(ClientGuard, UserGuard ,RolesGuard)
     @ApiHeader({
         name: 'auth',
     })
-    async execute(@UserDecorator() user: User): Promise<Client> {
-        const possibleClient = await this.clientRepo.findOneBy({
-            user,
-        })
-        if (!possibleClient)
-            throw new HttpException(
-                'Client additional information not registered',
-                400,
-            )
-        return possibleClient
+    async execute(@ClientDecorator() client: Client): Promise<Client> {
+        return client
     }
 }
