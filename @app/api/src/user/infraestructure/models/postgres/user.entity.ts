@@ -19,10 +19,11 @@ export class User {
     })
     password: string
     @Column({
-        type: 'varchar',
+        type: 'enum',
         enum: ['CLIENT', 'ADMIN'],
+        default: 'CLIENT',
     })
-    type: 'CLIENT' | 'ADMIN'
+    type: UserRoles
     @Column({
         type: 'varchar',
     })
