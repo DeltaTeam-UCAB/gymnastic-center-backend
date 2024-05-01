@@ -31,7 +31,7 @@ import { rmSync } from 'fs'
     docTitle: VIDEO_DOC_PREFIX,
 })
 export class UploadVideoController
-implements
+    implements
         ControllerContract<
             [file: Express.Multer.File, body: UploadVideoDTO],
             {
