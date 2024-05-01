@@ -1,5 +1,8 @@
 import { SetMetadata } from '@nestjs/common'
-import { User, UserRoles } from '../../../user/infraestructure/models/postgres/user.entity'
+import {
+    User,
+    UserRoles,
+} from '../../../user/infraestructure/models/postgres/user.entity'
 import {
     CanActivate,
     ExecutionContext,

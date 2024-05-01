@@ -20,7 +20,7 @@ import { UserGuard } from '../../guards/user.guard'
 export class SetClientInfoController
     implements
         ControllerContract<
-            [user: User,body: SetClientInfoDTO],
+            [user: User, body: SetClientInfoDTO],
             {
                 message: string
             }
@@ -31,8 +31,8 @@ export class SetClientInfoController
         @InjectRepository(Client) private clientRepo: Repository<Client>,
     ) {}
     @Post('set-info')
-    @SetMetadata('roles',['CLIENT'])
-    @UseGuards(UserGuard,RolesGuard)
+    @SetMetadata('roles', ['CLIENT'])
+    @UseGuards(UserGuard, RolesGuard)
     @ApiHeader({
         name: 'auth',
     })
@@ -41,11 +41,13 @@ export class SetClientInfoController
         @Body() body: SetClientInfoDTO,
     ): Promise<{ message: string }> {
         const possibleClient = await this.clientRepo.findOneBy({
-            user
+            user,
         })
-        const clientId = possibleClient? possibleClient.id : this.idGen.generate()
+        const clientId = possibleClient
+            ? possibleClient.id
+            : this.idGen.generate()
         const clientInfo = {
-            id:clientId,
+            id: clientId,
             user,
             ...body,
         }

@@ -29,7 +29,7 @@ import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
     docTitle: VIDEO_DOC_PREFIX,
 })
 export class UploadVideoController
-implements
+    implements
         ControllerContract<
             [file: Express.Multer.File, body: UploadVideoDTO],
             {

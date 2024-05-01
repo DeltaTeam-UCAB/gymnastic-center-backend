@@ -4,11 +4,10 @@ export type ClientGenders = 'F' | 'M' | 'X'
 
 @Entity()
 export class Client {
-    
     @PrimaryColumn({
-        type: 'uuid'
+        type: 'uuid',
     })
-    id:string
+    id: string
     @Column({
         type: 'uuid',
     })
