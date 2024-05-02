@@ -45,14 +45,14 @@ export class Course {
         type: 'varchar',
     })
     category: string
-    @OneToOne(() => Video, video => video.id)
+    @OneToOne(() => Video, (video) => video.id)
     @JoinColumn()
     @Column({
         nullable: true,
         type: 'varchar',
     })
     video?: string | null
-    @OneToOne(() => Image, image => image.id)
+    @OneToOne(() => Image, (image) => image.id)
     @JoinColumn()
     @Column({
         nullable: true,
