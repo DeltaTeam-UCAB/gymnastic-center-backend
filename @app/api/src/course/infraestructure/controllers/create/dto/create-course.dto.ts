@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNumber, IsOptional, IsString } from 'class-validator'
-import { Image } from 'src/image/infraestructure/models/postgres/image'
-import { Video } from 'src/video/infraestructure/models/postgres/video'
+import { IsNumber, IsOptional, IsString, IsUUID, isUUID } from 'class-validator'
 
 export class CreateCourseDTO {
     @ApiProperty()
@@ -21,7 +19,9 @@ export class CreateCourseDTO {
     category: string
     @ApiProperty()
     @IsOptional()
-    video: Video
+    @IsUUID()
+    video: string
     @ApiProperty()
-    image: Image
+    @IsUUID()
+    image: string
 }

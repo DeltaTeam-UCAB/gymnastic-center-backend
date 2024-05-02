@@ -45,18 +45,19 @@ export class Course {
         type: 'varchar',
     })
     category: string
-    @OneToOne(() => Video)
+    @OneToOne(() => Video, video => video.id)
     @JoinColumn()
     @Column({
         nullable: true,
         type: 'varchar',
     })
-    video?: Video | null
-    @OneToOne(() => Image)
+    video?: string | null
+    @OneToOne(() => Image, image => image.id)
     @JoinColumn()
     @Column({
+        nullable: true,
         type: 'varchar',
     })
-    image: Image
+    image: string
     // tags:  Lista de tags para el curso, falta crear clase tags.
 }
