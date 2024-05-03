@@ -22,7 +22,7 @@ import { User } from 'src/user/infraestructure/models/postgres/user.entity'
 export class SetClientInfoController
     implements
         ControllerContract<
-            [client: Client, user:User, body: SetClientInfoDTO],
+            [client: Client, user: User, body: SetClientInfoDTO],
             {
                 message: string
             }
@@ -43,9 +43,7 @@ export class SetClientInfoController
         @UserDecorator() user: User,
         @Body() body: SetClientInfoDTO,
     ): Promise<{ message: string }> {
-        const clientId = client
-            ? client.id
-            : this.idGen.generate()
+        const clientId = client ? client.id : this.idGen.generate()
         const clientInfo = {
             id: clientId,
             user,

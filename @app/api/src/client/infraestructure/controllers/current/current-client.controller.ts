@@ -4,7 +4,7 @@ import { Get, UseGuards } from '@nestjs/common'
 import { ApiHeader } from '@nestjs/swagger'
 import { Client } from '../../models/postgres/client.entity'
 import { Roles, RolesGuard } from '../../guards/roles.guard'
-import { Client as ClientDecorator} from '../../decorators/client.decorator'
+import { Client as ClientDecorator } from '../../decorators/client.decorator'
 import { ClientGuard } from '../../guards/client.guard'
 import { UserGuard } from '../../guards/user.guard'
 
@@ -17,7 +17,7 @@ export class CurrentClientController
 {
     @Get('current')
     @Roles('CLIENT')
-    @UseGuards(ClientGuard, UserGuard ,RolesGuard)
+    @UseGuards(ClientGuard, UserGuard, RolesGuard)
     @ApiHeader({
         name: 'auth',
     })
