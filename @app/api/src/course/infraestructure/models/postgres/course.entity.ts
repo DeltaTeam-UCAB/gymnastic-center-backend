@@ -47,17 +47,9 @@ export class Course {
     category: string
     @OneToOne(() => Video, (video) => video.id)
     @JoinColumn()
-    @Column({
-        nullable: true,
-        type: 'varchar',
-    })
     video?: string | null
     @OneToOne(() => Image, (image) => image.id)
     @JoinColumn()
-    @Column({
-        nullable: true,
-        type: 'varchar',
-    })
     image: string
     // tags:  Lista de tags para el curso, falta crear clase tags.
 }
