@@ -5,3 +5,4 @@ dist_test
 esm
 commonjs
 *.env
+public
