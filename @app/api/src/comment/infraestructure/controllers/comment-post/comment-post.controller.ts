@@ -52,8 +52,9 @@ export class CommentPostController
         //     description: body.description
         // }
         // this.commentRepo.save(commentInfo)
-        return {
-            message: 'Not implemented yet',
-        }
+        // return {
+        //     message: 'Not implemented yet',
+        // }
+        throw new HttpException('Not implemented yet',501)
     }
 }
