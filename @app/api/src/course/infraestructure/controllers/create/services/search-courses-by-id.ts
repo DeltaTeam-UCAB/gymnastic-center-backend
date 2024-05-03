@@ -34,9 +34,13 @@ export class CoursesSearchService {
     findAll(paginationDto: PaginationDto) {
         const { limit = 10, offset = 5 } = paginationDto
 
-        return this.courseRepository.find({
+        const courses = this.courseRepository.find({
             take: limit,
             skip: offset,
         })
+
+        return courses.map((course) => ({
+            ...course,
+        }))
     }
 }
