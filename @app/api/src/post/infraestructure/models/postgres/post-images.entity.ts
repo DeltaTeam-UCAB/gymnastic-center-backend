@@ -1,5 +1,6 @@
+import { Image } from 'src/image/infraestructure/models/postgres/image';
 import { Posts } from './post.entity'
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn} from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn} from 'typeorm'
 
 
 @Entity({ name: 'post_image' })
@@ -20,6 +21,10 @@ export class PostImages {
     })
     url: string;
 
+    @OneToOne(
+        () => Image, 
+        (image) => image.id
+    )
     @ManyToOne(
         () => Posts,
     )

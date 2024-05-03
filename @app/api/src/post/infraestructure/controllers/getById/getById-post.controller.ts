@@ -22,7 +22,7 @@ export class GetPostByIdController implements ControllerContract<[id: string] , 
     ){}
 
     @Get('getById/:id')
-    //@UseGuards(UserGuard)
+    @UseGuards(UserGuard)
     async execute(@Param('id') id: string): Promise<(Posts & {images: PostImages[]})>{
 
         const post = await this.postRepo.findOneBy({ id });

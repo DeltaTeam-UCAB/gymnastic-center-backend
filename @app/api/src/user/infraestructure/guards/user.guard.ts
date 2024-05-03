@@ -18,13 +18,13 @@ export class UserGuard implements CanActivate {
         @InjectRepository(User) private userRepo: Repository<User>,
         @Inject(JWT_PROVIDER_TOKEN) private jwtProvider: JwtProviderService,
     ) {}
-    canActivate(context: ExecutionContext): boolean | Promise<boolean> {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest()
         const token = request.headers.auth
         const result = this.jwtProvider.create<JwtPayload>().verify(token)
         if (result.isError()) throw new UnauthorizedException()
         const data = result.unwrap()
-        const user = this.userRepo.findOneBy({
+        const user = await this.userRepo.findOneBy({
             id: data.id,
         })
         request.user = user
