@@ -51,7 +51,7 @@ export class SetClientInfoController
         }
         this.clientRepo.save(clientInfo)
         return {
-            message: 'Succesfull',
+            message: 'Succesful',
         }
     }
 }
