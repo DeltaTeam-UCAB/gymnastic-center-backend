@@ -5,6 +5,7 @@ import {
     CreateDateColumn,
     Entity,
     JoinColumn,
+    ManyToOne,
     OneToOne,
     PrimaryColumn,
     UpdateDateColumn,
@@ -48,7 +49,7 @@ export class Course {
     @OneToOne(() => Video, (video) => video.id)
     @JoinColumn()
     video?: string | null
-    @OneToOne(() => Image, (image) => image.id)
+    @ManyToOne(() => Image, (image) => image.id)
     @JoinColumn()
     image: string
     // tags:  Lista de tags para el curso, falta crear clase tags.
