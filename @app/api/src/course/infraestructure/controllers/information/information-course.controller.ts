@@ -7,19 +7,14 @@ import {
     ParseUUIDPipe,
     UseGuards,
 } from '@nestjs/common'
-import {
-    Roles,
-    RolesGuard,
-} from 'src/client/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/client/infraestructure/guards/user.guard'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Course } from '../../models/postgres/course.entity'
 import { Repository } from 'typeorm'
 import { ApiHeader } from '@nestjs/swagger'
 import { Image } from '../../../../image/infraestructure/models/postgres/image'
-import { COURSE_DOC_PREFIX, COURSE_ROUTE_PREFIX } from '../prefix.ts'
-import { informationCourseProperty } from './api_property/information-course.property.ts'
-
+import { COURSE_DOC_PREFIX, COURSE_ROUTE_PREFIX } from '../prefix'
+import { informationCourseProperty } from './api_property/information-course.property'
 @Controller({
     path: COURSE_ROUTE_PREFIX,
     docTitle: COURSE_DOC_PREFIX,
@@ -35,8 +30,7 @@ export class CourseInformationController
     @ApiHeader({
         name: 'auth',
     })
-    @Roles('CLIENT')
-    @UseGuards(UserGuard, RolesGuard)
+    @UseGuards(UserGuard)
     async execute(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<informationCourseProperty> {
@@ -48,6 +42,7 @@ export class CourseInformationController
         const imgSrc = await this.imageRepo.findOneBy({
             id: possibleCourse.image,
         })
+
         if (!imgSrc) {
             throw new NotFoundException()
         }
