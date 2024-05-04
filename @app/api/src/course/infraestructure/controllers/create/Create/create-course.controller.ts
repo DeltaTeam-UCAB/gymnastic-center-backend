@@ -10,7 +10,7 @@ import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.modul
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { ApiHeader } from '@nestjs/swagger'
-import { COURSE_ROUTE_PREFIX } from '../../prefix';
+import { COURSE_ROUTE_PREFIX } from '../../prefix'
 import { COURSE_DOC_PREFIX } from '../../prefix'
 @Controller({
     path: COURSE_ROUTE_PREFIX,
