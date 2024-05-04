@@ -33,7 +33,7 @@ export class DeleteLikeController
 
     @Delete('delete')
     @Roles('CLIENT')
-    @UseGuards(ClientGuard, UserGuard, RolesGuard)
+    @UseGuards(UserGuard, RolesGuard, ClientGuard)
     @ApiHeader({
         name: 'auth',
     })

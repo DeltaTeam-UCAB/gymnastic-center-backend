@@ -34,7 +34,7 @@ export class SetClientInfoController
     ) {}
     @Post('set-info')
     @Roles('CLIENT')
-    @UseGuards(ClientGuard, UserGuard, RolesGuard)
+    @UseGuards(UserGuard, RolesGuard, ClientGuard)
     @ApiHeader({
         name: 'auth',
     })

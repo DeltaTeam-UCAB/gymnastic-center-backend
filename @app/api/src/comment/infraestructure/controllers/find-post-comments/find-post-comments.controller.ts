@@ -20,7 +20,7 @@ import { UserGuard } from '../../guards/user.guard'
     path: 'find-post-comments',
     docTitle: 'Comment',
 })
-export class CommentPostController
+export class FindPostCommentsController
     implements
         ControllerContract<[query: PaginationDto, param: string], Comment[]>
 {

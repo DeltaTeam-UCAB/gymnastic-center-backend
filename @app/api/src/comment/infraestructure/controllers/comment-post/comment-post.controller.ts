@@ -34,7 +34,7 @@ export class CommentPostController
 
     @Post('create')
     @Roles('CLIENT')
-    @UseGuards(ClientGuard, UserGuard, RolesGuard)
+    @UseGuards(UserGuard, RolesGuard, ClientGuard)
     @ApiHeader({
         name: 'auth',
     })
