@@ -11,8 +11,8 @@ import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 
 @Controller({
-    path: 'lesson',
-    docTitle: 'Lesson',
+    path: 'course',
+    docTitle: 'Course',
 })
 export class createLessonController
     implements

@@ -7,8 +7,8 @@ import { Repository } from 'typeorm'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 
 @Controller({
-    path: 'lesson',
-    docTitle: 'Lesson',
+    path: 'course',
+    docTitle: 'Course',
 })
 export class deleteLessonController {
     constructor(
