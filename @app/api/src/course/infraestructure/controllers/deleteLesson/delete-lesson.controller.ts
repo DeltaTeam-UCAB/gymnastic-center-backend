@@ -5,26 +5,36 @@ import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Lesson } from '../../models/postgres/lesson.entity'
 import { Repository } from 'typeorm'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
+import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 
 @Controller({
     path: 'course',
     docTitle: 'Course',
 })
-export class deleteLessonController {
+export class deleteLessonController 
+    implements
+        ControllerContract<
+            [id: string],
+            {
+                id: string,
+            }
+        >
+{
     constructor(
-        //@Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
         @InjectRepository(Lesson) private lessonRepo: Repository<Lesson>,
     ) {}
 
-    @Delete('lessons/:id') // Route with ID parameter
+    @Delete('lessons/:id')
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
-    async delete(@Param('id') id: string) {
+    async execute(@Param('id') id: string): Promise< {id: string }> {
         const lesson = await this.lessonRepo.findOneBy({ id })
         if (!lesson) {
             throw new HttpException('Lesson not found', 404)
         }
-        await this.lessonRepo.delete(lesson.id) // Delete the lesson object
-        return { message: 'Lesson deleted successfully' } // Optional success message
+        const deleted = lesson.id
+        await this.lessonRepo.delete(lesson.id)
+        return {id: deleted}
     }
+
 }
