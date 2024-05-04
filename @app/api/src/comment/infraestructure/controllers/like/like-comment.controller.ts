@@ -46,13 +46,13 @@ export class LikeCommentController
         })
         if (!possibleComment) throw new HttpException('Comment not found', 400)
         const possibleLike = await this.likeRepo.findOne({
-            where:{
+            where: {
                 commentId: body.idComment,
                 clientId: client.id,
-                like: true
-            }
+                like: true,
+            },
         })
-        if(possibleLike) throw new HttpException('Comment already liked',400)
+        if (possibleLike) throw new HttpException('Comment already liked', 400)
         const likeInfo = {
             clientId: client.id,
             commentId: possibleComment.id,

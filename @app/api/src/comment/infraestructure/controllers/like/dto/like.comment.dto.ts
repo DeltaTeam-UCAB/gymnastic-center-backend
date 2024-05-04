@@ -1,10 +1,8 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsUUID } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger'
+import { IsUUID } from 'class-validator'
 
-export class LikeCommentDTO{
-
+export class LikeCommentDTO {
     @ApiProperty()
     @IsUUID()
     idComment: string
-
 }

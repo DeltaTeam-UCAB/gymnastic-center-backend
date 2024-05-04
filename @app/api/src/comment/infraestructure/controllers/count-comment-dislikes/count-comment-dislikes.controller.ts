@@ -1,4 +1,10 @@
-import { Get, HttpException, Param, ParseUUIDPipe, UseGuards } from '@nestjs/common'
+import {
+    Get,
+    HttpException,
+    Param,
+    ParseUUIDPipe,
+    UseGuards,
+} from '@nestjs/common'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -18,7 +24,7 @@ export class CountCommentDislikesController
         ControllerContract<
             [param: string],
             {
-                dislikes:number
+                dislikes: number
             }
         >
 {
@@ -28,28 +34,28 @@ export class CountCommentDislikesController
     ) {}
 
     @Get(':id')
-    @Roles('CLIENT','ADMIN')
+    @Roles('CLIENT', 'ADMIN')
     @UseGuards(UserGuard, RolesGuard)
     @ApiHeader({
         name: 'auth',
     })
     async execute(
-        @Param('id',ParseUUIDPipe) param:string,
-    ): Promise<{ dislikes:number }> {
+        @Param('id', ParseUUIDPipe) param: string,
+    ): Promise<{ dislikes: number }> {
         const possibleComment = await this.commentRepo.findOne({
-            where:{
+            where: {
                 id: param,
-            }
+            },
         })
-        if(!possibleComment) throw new HttpException('Comment not found',400)
+        if (!possibleComment) throw new HttpException('Comment not found', 400)
         const dislikes = await this.likeRepo.count({
-            where:{
+            where: {
                 commentId: param,
-                like:false
-            }
+                like: false,
+            },
         })
         return {
-            dislikes
+            dislikes,
         }
     }
 }

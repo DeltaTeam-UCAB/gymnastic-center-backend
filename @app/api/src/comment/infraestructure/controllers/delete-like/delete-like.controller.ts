@@ -42,12 +42,12 @@ export class DeleteLikeController
         @Body() body: DeleteLikeDTO,
     ): Promise<{ message: string }> {
         const possibleLike = await this.likeRepo.findOne({
-            where:{
+            where: {
                 commentId: body.idComment,
                 clientId: client.id,
-            }
+            },
         })
-        if(!possibleLike) throw new HttpException('Like not found',400)
+        if (!possibleLike) throw new HttpException('Like not found', 400)
         this.likeRepo.delete({
             commentId: body.idComment,
             clientId: client.id,

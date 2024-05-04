@@ -46,13 +46,14 @@ export class CommentCourseController
         })
         if (!possibleComment) throw new HttpException('Comment not found', 400)
         const possibleDislike = await this.likeRepo.findOne({
-            where:{
+            where: {
                 commentId: body.idComment,
                 clientId: client.id,
-                like: false
-            }
+                like: false,
+            },
         })
-        if(possibleDislike) throw new HttpException('Comment already disliked',400)
+        if (possibleDislike)
+            throw new HttpException('Comment already disliked', 400)
         const likeInfo = {
             clientId: client.id,
             commentId: possibleComment.id,
