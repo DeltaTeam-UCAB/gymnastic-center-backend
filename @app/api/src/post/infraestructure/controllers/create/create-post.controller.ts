@@ -10,6 +10,7 @@ import { PostImages } from '../../models/postgres/post-images.entity'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { ApiHeader } from '@nestjs/swagger'
 
 @Controller({
     path: 'post',
@@ -32,6 +33,9 @@ implements ControllerContract<[body: CreatePostDTO], { id: string }>
     @Post('create')
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
+    @ApiHeader({
+        name: 'auth',
+    })
     async execute(@Body() body: CreatePostDTO): Promise<{ id: string }> {
         const { images = [], ...postDetails } = body
 
