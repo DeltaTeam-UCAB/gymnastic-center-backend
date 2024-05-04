@@ -13,6 +13,7 @@ import { Client as ClientDecorator } from '../../decorators/client.decorator'
 import { UserGuard } from '../../guards/user.guard'
 import { ApiHeader } from '@nestjs/swagger'
 import { Client } from 'src/client/infraestructure/models/postgres/client.entity'
+import { Posts } from 'src/post/infraestructure/models/postgres/post.entity'
 
 @Controller({
     path: 'comment-post',
@@ -29,7 +30,8 @@ export class CommentPostController
 {
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
-        @InjectRepository(Comment) private commentRepo: Repository<Comment>, //@InjectRepository(Post) private postRepo: Repository<Post>,
+        @InjectRepository(Comment) private commentRepo: Repository<Comment>,
+        @InjectRepository(Posts) private postRepo: Repository<Posts>,
     ) {}
 
     @Post('create')
@@ -42,18 +44,18 @@ export class CommentPostController
         @ClientDecorator() client: Client,
         @Body() body: CommentPostDTO,
     ): Promise<{ message: string }> {
-        // const possiblePost = await this.postRepo.findOneBy({id:body.idPost})
-        // if(!possiblePost) throw new HttpException('Post not found',400)
-        // const commentInfo = {
-        //     id: this.idGen.generate(),
-        //     clientId: client.id,
-        //     postId: possiblePost.id,
-        //     description: body.description
-        // }
-        // this.commentRepo.save(commentInfo)
-        // return {
-        //     message: 'Not implemented yet',
-        // }
-        throw new HttpException('Not implemented yet', 501)
+        const possiblePost = await this.postRepo.findOneBy({id:body.idPost})
+        if(!possiblePost) throw new HttpException('Post not found',400)
+        const commentInfo = {
+            id: this.idGen.generate(),
+            clientId: client.id,
+            postId: possiblePost.id,
+            description: body.description
+        }
+        this.commentRepo.save(commentInfo)
+        return {
+            message: 'Successful',
+        }
+
     }
 }
