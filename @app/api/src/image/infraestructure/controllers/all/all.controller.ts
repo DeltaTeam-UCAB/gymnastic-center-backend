@@ -14,7 +14,7 @@ import { Image } from '../../models/postgres/image'
     docTitle: IMAGE_DOC_PREFIX,
 })
 export class FindImageController
-implements ControllerContract<undefined, Image[]>
+    implements ControllerContract<undefined, Image[]>
 {
     constructor(
         @InjectRepository(Image) private imageRepo: Repository<Image>,
