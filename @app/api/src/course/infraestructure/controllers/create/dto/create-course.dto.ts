@@ -9,13 +9,13 @@ export class CreateCourseDTO {
     @IsString()
     description: string
     @ApiProperty()
-    @IsString()
+    @IsNumber()
     calories: number
     @ApiProperty()
     @IsString()
     instructor: string
     @ApiProperty()
-    @IsNumber()
+    @IsString()
     category: string
     @ApiProperty()
     @IsOptional()
