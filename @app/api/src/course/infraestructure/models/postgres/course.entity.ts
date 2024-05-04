@@ -6,7 +6,6 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
-    OneToOne,
     PrimaryColumn,
     UpdateDateColumn,
 } from 'typeorm'
@@ -46,7 +45,7 @@ export class Course {
         type: 'varchar',
     })
     category: string
-    @OneToOne(() => Video, (video) => video.id)
+    @ManyToOne(() => Video, (video) => video.id)
     @JoinColumn()
     video?: string | null
     @ManyToOne(() => Image, (image) => image.id)

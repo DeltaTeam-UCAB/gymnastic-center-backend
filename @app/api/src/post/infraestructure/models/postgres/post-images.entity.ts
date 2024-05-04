@@ -16,18 +16,23 @@ export class PostImages {
     })
     postId: string
 
+    @Column({
+        type: 'uuid',
+    })
+    imageId: string
+
     @PrimaryColumn({
         type: 'uuid',
     })
     id: string
 
-    @Column({
-        type: 'varchar',
+    @ManyToOne(() => Image, (image) => image.id)
+    @JoinColumn({
+        name: 'imageId',
     })
-    url: string
+    image: Image
 
-    @OneToOne(() => Image, (image) => image.id)
-    @ManyToOne(() => Posts)
+    @OneToOne(() => Posts)
     @JoinColumn({
         name: 'postId',
     })

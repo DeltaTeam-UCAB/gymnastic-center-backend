@@ -17,7 +17,7 @@ import { ApiHeader } from '@nestjs/swagger'
     docTitle: 'Post',
 })
 export class CreatePostController
-implements ControllerContract<[body: CreatePostDTO], { id: string }>
+    implements ControllerContract<[body: CreatePostDTO], { id: string }>
 {
     constructor(
         @Inject(UUID_GEN_NATIVE)
@@ -57,8 +57,8 @@ implements ControllerContract<[body: CreatePostDTO], { id: string }>
             const imageId = this.idGen.generate()
             const imageEntity = this.imagePostRepo.create({
                 id: imageId,
-                url: image,
                 postId,
+                imageId: image,
             })
             await this.imagePostRepo.save(imageEntity)
         }

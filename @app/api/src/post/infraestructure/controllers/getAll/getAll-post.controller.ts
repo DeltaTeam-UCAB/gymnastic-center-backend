@@ -7,6 +7,7 @@ import { Repository } from 'typeorm'
 import { PostImages } from '../../models/postgres/post-images.entity'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { ApiHeader } from '@nestjs/swagger'
+import { Image } from 'src/image/infraestructure/models/postgres/image'
 
 @Controller({
     path: 'post',
@@ -16,7 +17,7 @@ export class GetAllPostController
 implements
         ControllerContract<
             [limit: number, offset: number],
-            (Posts & { images: PostImages[] })[]
+            (Posts & { images: Image[] })[]
         >
 {
     constructor(
@@ -25,6 +26,9 @@ implements
 
         @InjectRepository(PostImages)
         private readonly postImageRepo: Repository<PostImages>,
+
+        @InjectRepository(Image)
+        private readonly imageRepo: Repository<Image>,
     ) {}
 
     @Get('getAll')
@@ -37,7 +41,7 @@ implements
         @Query('offset', ParseIntPipe) offset: number,
     ): Promise<
         (Posts & {
-            images: PostImages[]
+            images: Image[]
         })[]
     > {
         const posts = await this.postRepo.find({
@@ -49,9 +53,15 @@ implements
             ...post,
             body: '',
             tags: [''],
-            images: await this.postImageRepo.findBy({
-                postId: post.id,
-            }),
+            images: await this.postImageRepo
+                .findBy({
+                    postId: post.id,
+                })
+                .map((e) =>
+                    this.imageRepo.findOneByOrFail({
+                        id: e.imageId,
+                    }),
+                ),
         }))
     }
 }
