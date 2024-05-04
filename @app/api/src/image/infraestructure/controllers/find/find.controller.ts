@@ -19,7 +19,7 @@ import { IMAGE_DOC_PREFIX, IMAGE_ROUTE_PREFIX } from '../prefix'
     docTitle: IMAGE_DOC_PREFIX,
 })
 export class FindImageController
-implements ControllerContract<[id: string], Image>
+    implements ControllerContract<[id: string], Image>
 {
     constructor(
         @InjectRepository(Image) private imageRepo: Repository<Image>,

@@ -10,7 +10,7 @@ export class Client {
     id: string
     @Column({
         type: 'uuid',
-        unique: true
+        unique: true,
     })
     userId: string
     @OneToOne(() => User)

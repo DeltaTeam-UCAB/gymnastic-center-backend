@@ -202,9 +202,7 @@ function visitor(_opt: Opts, ctx: ts.TransformationContext, sf: ts.SourceFile) {
                 .find((e) => pathImport.startsWith(e))
             if (pathMatched) {
                 const baseUrl = ctx.getCompilerOptions().baseUrl || ''
-                const current = (sf.fileName)
-                    .replaceAll('\\', '/')
-                    .split('/')
+                const current = sf.fileName.replaceAll('\\', '/').split('/')
                 current.splice(-1)
                 const currentPath = current.join(
                     process.platform !== 'win32' ? '/' : '\\',

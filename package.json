@@ -25,7 +25,6 @@
     "@commitlint/config-conventional": "^17.4.4",
     "@jest/globals": "^29.7.0",
     "@s-ui/mono": "^2.34.0",
-    "@types/multer": "^1.4.11",
     "@types/node": "^20.8.8",
     "@typescript-eslint/eslint-plugin": "^6.8.0",
     "@typescript-eslint/parser": "^6.8.0",

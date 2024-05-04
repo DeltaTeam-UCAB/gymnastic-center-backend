@@ -10,7 +10,6 @@ import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.modul
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { ApiHeader } from '@nestjs/swagger'
-import { COURSE_DOC_PREFIX, COURSE_ROUTE_PREFIX } from '../prefix'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -36,6 +35,9 @@ export class CreateCourseController
     })
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
+    @ApiHeader({
+        name: 'auth',
+    })
     async execute(@Body() body: CreateCourseDTO): Promise<{ id: string }> {
         const possibleCourse = await this.courseRepo.findOneBy({
             title: body.title,
