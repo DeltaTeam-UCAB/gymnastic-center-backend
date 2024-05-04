@@ -16,7 +16,7 @@
       "postinstall": "tsc --project tsconfig_common.json && tscc"
   },
     "devDependencies": {
-        "@mono/compiler": "*"
+        "@mono/compiler": "workspace:*"
     },
   "version": "0.0.1"
 }
