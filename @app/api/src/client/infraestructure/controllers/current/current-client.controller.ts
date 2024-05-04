@@ -17,7 +17,7 @@ export class CurrentClientController
 {
     @Get('current')
     @Roles('CLIENT')
-    @UseGuards(ClientGuard, UserGuard, RolesGuard)
+    @UseGuards(UserGuard, RolesGuard, ClientGuard)
     @ApiHeader({
         name: 'auth',
     })

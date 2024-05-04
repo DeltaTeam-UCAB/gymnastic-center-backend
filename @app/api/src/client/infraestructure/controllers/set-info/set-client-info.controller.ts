@@ -34,7 +34,7 @@ export class SetClientInfoController
     ) {}
     @Post('set-info')
     @Roles('CLIENT')
-    @UseGuards(ClientGuard, UserGuard, RolesGuard)
+    @UseGuards(UserGuard, RolesGuard, ClientGuard)
     @ApiHeader({
         name: 'auth',
     })
@@ -51,7 +51,7 @@ export class SetClientInfoController
         }
         this.clientRepo.save(clientInfo)
         return {
-            message: 'Succesfull',
+            message: 'Succesful',
         }
     }
 }

@@ -9,6 +9,7 @@ import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
+import { ApiHeader } from '@nestjs/swagger'
 
 @Controller({
     path: 'course',
@@ -31,6 +32,9 @@ export class CreateCourseController
     @Post('create')
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
+    @ApiHeader({
+        name: 'auth',
+    })
     async execute(@Body() body: CreateCourseDTO): Promise<{ id: string }> {
         const possibleCourse = await this.courseRepo.findOneBy({
             title: body.title,

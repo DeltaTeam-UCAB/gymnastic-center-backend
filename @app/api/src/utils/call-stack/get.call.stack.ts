@@ -5,5 +5,5 @@ export const getCallStack = (): string[] => {
     const err: any = new Error()
     err.stack.shift()
     Error.prepareStackTrace = _pst
-    return err.stack
+    return err.stack.map((e) => (process.platform === 'darwin' ? '/' + e : e))
 }

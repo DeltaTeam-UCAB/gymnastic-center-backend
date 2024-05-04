@@ -10,12 +10,12 @@ import { Repository } from 'typeorm'
 import { JWT_PROVIDER_TOKEN } from 'src/core/infraestructure/token/jwt/module/jwt.provider.module'
 import { JwtProviderService } from 'src/core/infraestructure/token/jwt/service/jwt.provider.service'
 import { JwtPayload } from '../payloads/jwt.payload'
-import { Client } from 'src/client/infraestructure/models/postgres/client.entity'
+import { User } from 'src/user/infraestructure/models/postgres/user.entity'
 
 @Injectable()
-export class ClientGuard implements CanActivate {
+export class UserGuard implements CanActivate {
     constructor(
-        @InjectRepository(Client) private clientRepo: Repository<Client>,
+        @InjectRepository(User) private userRepo: Repository<User>,
         @Inject(JWT_PROVIDER_TOKEN) private jwtProvider: JwtProviderService,
     ) {}
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -24,10 +24,10 @@ export class ClientGuard implements CanActivate {
         const result = this.jwtProvider.create<JwtPayload>().verify(token)
         if (result.isError()) throw new UnauthorizedException()
         const data = result.unwrap()
-        const client = await this.clientRepo.findOneBy({
-            userId: data.id,
+        const user = await this.userRepo.findOneBy({
+            id: data.id,
         })
-        request.client = client
+        request.user = user
         return true
     }
 }
