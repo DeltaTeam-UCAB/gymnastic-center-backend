@@ -27,16 +27,18 @@ import { Client as ClientDecorator } from '../../decorators/client.decorator'
 })
 export class FindPostCommentsController
     implements
-        ControllerContract<[query: PaginationDto, param: string, client: Client],
-        {
-            comment: Comment
-            likes: number
-            dislikes: number
-            userLiked: boolean
-        }[]>
+        ControllerContract<
+            [query: PaginationDto, param: string, client: Client],
+            {
+                comment: Comment
+                likes: number
+                dislikes: number
+                userLiked: boolean
+            }[]
+        >
 {
     constructor(
-        @InjectRepository(Comment) private commentRepo: Repository<Comment>, 
+        @InjectRepository(Comment) private commentRepo: Repository<Comment>,
         @InjectRepository(Posts) private postRepo: Repository<Posts>,
         @InjectRepository(Like) private likeRepo: Repository<Like>,
     ) {}
@@ -59,32 +61,32 @@ export class FindPostCommentsController
             userLiked: boolean
         }[]
     > {
-        const possibleCourse = await this.postRepo.findOneBy({id:param})
-        if(!possibleCourse) throw new HttpException('Course not found',400)
-        const {offset = 0, limit = 10} = query
+        const possibleCourse = await this.postRepo.findOneBy({ id: param })
+        if (!possibleCourse) throw new HttpException('Course not found', 400)
+        const { offset = 0, limit = 10 } = query
         const comments = await this.commentRepo.find({
             take: limit,
             skip: offset,
-            where: {postId: param}
+            where: { postId: param },
         })
-        const commentsWithLikes = comments.asyncMap( async (e) => {
+        const commentsWithLikes = comments.asyncMap(async (e) => {
             const likes = await this.likeRepo.count({
-                where:{
-                    commentId:e.id,
+                where: {
+                    commentId: e.id,
                     like: true,
-                }
+                },
             })
             const dislikes = await this.likeRepo.count({
-                where:{
-                    commentId:e.id,
+                where: {
+                    commentId: e.id,
                     like: false,
-                }
+                },
             })
             const userLiked = await this.likeRepo.exists({
-                where:{
-                    commentId:e.id,
-                    clientId:client.id,
-                }
+                where: {
+                    commentId: e.id,
+                    clientId: client.id,
+                },
             })
             return {
                 comment: e,
