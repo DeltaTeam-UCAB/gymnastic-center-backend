@@ -13,11 +13,8 @@ const initializeModules = () => {
     return data.asyncMap(async (e) => {
         const module = await import('file:///' + e)
         return objectValues(module)[0]
-        
     })
 }
 
 @BarrelModule(await initializeModules())
 export class ControllersModule {}
-
-

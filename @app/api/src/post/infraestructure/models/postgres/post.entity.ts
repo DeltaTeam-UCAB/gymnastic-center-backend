@@ -1,39 +1,37 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm'
 
 @Entity()
 export class Posts {
-
     @PrimaryColumn({
         type: 'uuid',
     })
-    id: string;
+    id: string
 
     @Column({
         type: 'varchar',
         unique: true,
     })
-    title: string;
+    title: string
 
     @Column({
         type: 'varchar',
     })
-        body: string;
+        body: string
 
     @Column('varchar', {
         array: true,
         default: [],
-    
     })
-    tags: string[];
+    tags: string[]
 
     @Column({
         type: 'varchar',
     })
-    autor: string;
+    autor: string
 
     @Column({
         type: 'timestamp',
         default: () => 'CURRENT_TIMESTAMP',
     })
-    date: Date;
+    date: Date
 }

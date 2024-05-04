@@ -1,35 +1,35 @@
-import { Image } from 'src/image/infraestructure/models/postgres/image';
+import { Image } from 'src/image/infraestructure/models/postgres/image'
 import { Posts } from './post.entity'
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn} from 'typeorm'
-
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToOne,
+    PrimaryColumn,
+} from 'typeorm'
 
 @Entity({ name: 'post_image' })
 export class PostImages {
-
     @Column({
         type: 'uuid',
     })
-    postId: string;
+    postId: string
 
     @PrimaryColumn({
-        type: 'uuid'
+        type: 'uuid',
     })
-    id: string;
+    id: string
 
     @Column({
         type: 'varchar',
     })
-    url: string;
+    url: string
 
-    @OneToOne(
-        () => Image, 
-        (image) => image.id
-    )
-    @ManyToOne(
-        () => Posts,
-    )
+    @OneToOne(() => Image, (image) => image.id)
+    @ManyToOne(() => Posts)
     @JoinColumn({
-        name: 'postId'
+        name: 'postId',
     })
-    post: Posts;
+    post: Posts
 }
