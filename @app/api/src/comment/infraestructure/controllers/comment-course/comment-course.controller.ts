@@ -1,4 +1,4 @@
-import { Body, HttpException, Inject, Post, UseGuards} from '@nestjs/common'
+import { Body, HttpException, Inject, Post, UseGuards } from '@nestjs/common'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { CommentCourseDTO } from './dto/comment.course.dto'
@@ -22,9 +22,9 @@ import { Course } from 'src/course/infraestructure/models/postgres/course.entity
 export class CommentCourseController
     implements
         ControllerContract<
-            [client:Client,body: CommentCourseDTO],
+            [client: Client, body: CommentCourseDTO],
             {
-                message:string
+                message: string
             }
         >
 {
@@ -32,7 +32,6 @@ export class CommentCourseController
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
         @InjectRepository(Comment) private commentRepo: Repository<Comment>,
         @InjectRepository(Course) private courseRepo: Repository<Course>,
-
     ) {}
 
     @Post('create')
@@ -42,16 +41,18 @@ export class CommentCourseController
         name: 'auth',
     })
     async execute(
-        @ClientDecorator() client:Client,
-        @Body() body:CommentCourseDTO,
-    ): Promise<{ message:string }> {
-        const possibleCourse = await this.courseRepo.findOneBy({id:body.idCourse})
-        if(!possibleCourse) throw new HttpException('Course not found',400)
+        @ClientDecorator() client: Client,
+        @Body() body: CommentCourseDTO,
+    ): Promise<{ message: string }> {
+        const possibleCourse = await this.courseRepo.findOneBy({
+            id: body.idCourse,
+        })
+        if (!possibleCourse) throw new HttpException('Course not found', 400)
         const commentInfo = {
             id: this.idGen.generate(),
             clientId: client.id,
             courseId: possibleCourse.id,
-            description: body.description
+            description: body.description,
         }
         this.commentRepo.save(commentInfo)
         return {

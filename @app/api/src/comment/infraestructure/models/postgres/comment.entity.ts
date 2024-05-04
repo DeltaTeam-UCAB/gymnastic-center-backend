@@ -1,6 +1,13 @@
 import { Client } from 'src/client/infraestructure/models/postgres/client.entity'
 import { Course } from 'src/course/infraestructure/models/postgres/course.entity'
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm'
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToMany,
+    PrimaryColumn,
+} from 'typeorm'
 
 @Entity()
 export class Comment {
@@ -17,7 +24,7 @@ export class Comment {
     client: Client
     @Column({
         type: 'uuid',
-        nullable: true
+        nullable: true,
     })
     courseId: string
     @ManyToMany(() => Course)
@@ -25,7 +32,7 @@ export class Comment {
     course: Course
     @Column({
         type: 'uuid',
-        nullable: true
+        nullable: true,
     })
     postId: string
     @Column({

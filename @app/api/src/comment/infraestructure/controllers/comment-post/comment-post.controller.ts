@@ -1,4 +1,4 @@
-import { Body, HttpException, Inject, Post, UseGuards} from '@nestjs/common'
+import { Body, HttpException, Inject, Post, UseGuards } from '@nestjs/common'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { CommentPostDTO } from './dto/comment.post.dto'
@@ -21,16 +21,15 @@ import { Client } from 'src/client/infraestructure/models/postgres/client.entity
 export class CommentPostController
     implements
         ControllerContract<
-            [client:Client,body: CommentPostDTO],
+            [client: Client, body: CommentPostDTO],
             {
-                message:string
+                message: string
             }
         >
 {
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
-        @InjectRepository(Comment) private commentRepo: Repository<Comment>,
-        //@InjectRepository(Post) private postRepo: Repository<Post>,
+        @InjectRepository(Comment) private commentRepo: Repository<Comment>, //@InjectRepository(Post) private postRepo: Repository<Post>,
     ) {}
 
     @Post('create')
@@ -40,9 +39,9 @@ export class CommentPostController
         name: 'auth',
     })
     async execute(
-        @ClientDecorator() client:Client,
-        @Body() body:CommentPostDTO,
-    ): Promise<{ message:string }> {
+        @ClientDecorator() client: Client,
+        @Body() body: CommentPostDTO,
+    ): Promise<{ message: string }> {
         // const possiblePost = await this.postRepo.findOneBy({id:body.idPost})
         // if(!possiblePost) throw new HttpException('Post not found',400)
         // const commentInfo = {
@@ -55,6 +54,6 @@ export class CommentPostController
         // return {
         //     message: 'Not implemented yet',
         // }
-        throw new HttpException('Not implemented yet',501)
+        throw new HttpException('Not implemented yet', 501)
     }
 }

@@ -12,7 +12,6 @@ import { JwtProviderService } from 'src/core/infraestructure/token/jwt/service/j
 import { JwtPayload } from '../payloads/jwt.payload'
 import { Client } from 'src/client/infraestructure/models/postgres/client.entity'
 
-
 @Injectable()
 export class ClientGuard implements CanActivate {
     constructor(

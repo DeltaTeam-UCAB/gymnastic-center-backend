@@ -3,21 +3,18 @@ import { Type } from 'class-transformer'
 import { IsOptional, IsPositive, Min } from 'class-validator'
 
 export class PaginationDto {
-    
     @ApiProperty({
-        required: false
+        required: false,
     })
     @IsOptional()
     @IsPositive()
     @Type(() => Number)
     limit?: number
-
     @ApiProperty({
-        required: false
+        required: false,
     })
     @IsOptional()
     @Min(0)
-    @Type( () => Number )
+    @Type(() => Number)
     offset?: number
-    
 }

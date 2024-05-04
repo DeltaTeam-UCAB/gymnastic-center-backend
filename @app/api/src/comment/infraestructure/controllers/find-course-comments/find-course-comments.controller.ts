@@ -1,7 +1,13 @@
-import { Body, Get, HttpException, Param, ParseUUIDPipe, Query, UseGuards} from '@nestjs/common'
+import {
+    Get,
+    HttpException,
+    Param,
+    ParseUUIDPipe,
+    Query,
+    UseGuards,
+} from '@nestjs/common'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Comment } from '../../models/postgres/comment.entity'
 import { Repository } from 'typeorm'
@@ -17,10 +23,7 @@ import { UserGuard } from '../../guards/user.guard'
 })
 export class CommentPostController
     implements
-        ControllerContract<
-            [query:PaginationDto,param: string,],
-            Comment[]
-        >
+        ControllerContract<[query: PaginationDto, param: string], Comment[]>
 {
     constructor(
         @InjectRepository(Comment) private commentRepo: Repository<Comment>,
@@ -28,22 +31,22 @@ export class CommentPostController
     ) {}
 
     @Get(':id')
-    @Roles('CLIENT','ADMIN')
-    @UseGuards(UserGuard,RolesGuard)
+    @Roles('CLIENT', 'ADMIN')
+    @UseGuards(UserGuard, RolesGuard)
     @ApiHeader({
         name: 'auth',
     })
     async execute(
         @Query() query: PaginationDto,
-        @Param('id',ParseUUIDPipe) param: string,
+        @Param('id', ParseUUIDPipe) param: string,
     ): Promise<Comment[]> {
-        const possibleCourse = await this.courseRepo.findOneBy({id:param})
-        if(!possibleCourse) throw new HttpException('Course not found',400)
-        const {offset = 0, limit = 10} = query
+        const possibleCourse = await this.courseRepo.findOneBy({ id: param })
+        if (!possibleCourse) throw new HttpException('Course not found', 400)
+        const { offset = 0, limit = 10 } = query
         const comments = this.commentRepo.find({
             take: limit,
             skip: offset,
-            where: {courseId: param}
+            where: { courseId: param },
         })
         return comments
     }
