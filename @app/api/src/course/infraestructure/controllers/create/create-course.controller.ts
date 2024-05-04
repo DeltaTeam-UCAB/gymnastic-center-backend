@@ -9,10 +9,12 @@ import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
+import { ApiHeader } from '@nestjs/swagger'
+import { COURSE_DOC_PREFIX, COURSE_ROUTE_PREFIX } from '../prefix'
 
 @Controller({
-    path: 'course',
-    docTitle: 'Course',
+    path: COURSE_ROUTE_PREFIX,
+    docTitle: COURSE_DOC_PREFIX,
 })
 export class CreateCourseController
     implements
@@ -29,6 +31,9 @@ export class CreateCourseController
     ) {}
 
     @Post('create')
+    @ApiHeader({
+        name: 'auth',
+    })
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
     async execute(@Body() body: CreateCourseDTO): Promise<{ id: string }> {
