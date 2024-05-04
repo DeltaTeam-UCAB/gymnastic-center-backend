@@ -6,3 +6,4 @@ esm
 commonjs
 *.env
 public
+.DS_Store
