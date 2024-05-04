@@ -44,18 +44,17 @@ export class CommentPostController
         @ClientDecorator() client: Client,
         @Body() body: CommentPostDTO,
     ): Promise<{ message: string }> {
-        const possiblePost = await this.postRepo.findOneBy({id:body.idPost})
-        if(!possiblePost) throw new HttpException('Post not found',400)
+        const possiblePost = await this.postRepo.findOneBy({ id: body.idPost })
+        if (!possiblePost) throw new HttpException('Post not found', 400)
         const commentInfo = {
             id: this.idGen.generate(),
             clientId: client.id,
             postId: possiblePost.id,
-            description: body.description
+            description: body.description,
         }
         this.commentRepo.save(commentInfo)
         return {
             message: 'Successful',
         }
-
     }
 }
