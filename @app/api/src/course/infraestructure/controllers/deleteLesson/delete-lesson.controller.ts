@@ -11,12 +11,12 @@ import { ControllerContract } from 'src/core/infraestructure/controllers/control
     path: 'course',
     docTitle: 'Course',
 })
-export class deleteLessonController 
+export class deleteLessonController
     implements
         ControllerContract<
             [id: string],
             {
-                id: string,
+                id: string
             }
         >
 {
@@ -27,14 +27,13 @@ export class deleteLessonController
     @Delete('lessons/:id')
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
-    async execute(@Param('id') id: string): Promise< {id: string }> {
+    async execute(@Param('id') id: string): Promise<{ id: string }> {
         const lesson = await this.lessonRepo.findOneBy({ id })
         if (!lesson) {
             throw new HttpException('Lesson not found', 404)
         }
         const deleted = lesson.id
         await this.lessonRepo.delete(lesson.id)
-        return {id: deleted}
+        return { id: deleted }
     }
-
 }
