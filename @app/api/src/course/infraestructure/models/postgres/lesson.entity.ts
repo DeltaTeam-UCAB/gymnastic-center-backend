@@ -5,7 +5,6 @@ import {
     JoinColumn,
     ManyToOne,
     OneToMany,
-    OneToOne,
     PrimaryColumn,
 } from 'typeorm'
 import { Course } from './course.entity'
@@ -15,45 +14,45 @@ export class Lesson {
     @PrimaryColumn({
         type: 'uuid',
     })
-    id: string
+        id: string
     @Column({
         type: 'varchar',
     })
-    name: string
+        name: string
     @Column({
         type: 'varchar',
     })
-    description: string
+        description: string
     @ManyToOne(() => Course, (course) => course.id)
     @JoinColumn({
         name: 'courseId',
     })
-    course: Course
+        course: Course
 
     @Column({
         type: 'uuid',
     })
-    courseId: string
+        courseId: string
 
     @OneToMany(() => Video, (video) => video.id)
     @JoinColumn({
         name: 'videoId',
     })
-    video: Video
+        video: Video
     @Column({
         type: 'uuid',
     })
-    videoId: string
+        videoId: string
     @Column({
         type: 'numeric',
     })
-    order: number
+        order: number
     @Column({
         type: 'numeric',
     })
-    waitTime?: number | null
+        waitTime?: number | null
     @Column({
         type: 'numeric',
     })
-    burnedCalories: number
+        burnedCalories: number
 }

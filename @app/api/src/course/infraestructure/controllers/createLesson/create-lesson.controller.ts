@@ -1,4 +1,4 @@
-import { Body, HttpException, Inject, Post, UseGuards } from '@nestjs/common'
+import { Body, Inject, Post, UseGuards } from '@nestjs/common'
 import { CreateLessonDTO } from './dto/create-lesson.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
@@ -17,7 +17,7 @@ import { ApiHeader } from '@nestjs/swagger'
     docTitle: COURSE_DOC_PREFIX,
 })
 export class createLessonController
-    implements
+implements
         ControllerContract<
             [body: CreateLessonDTO],
             {

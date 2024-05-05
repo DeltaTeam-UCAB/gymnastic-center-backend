@@ -16,13 +16,13 @@ import { Image } from '../../../../image/infraestructure/models/postgres/image'
 import { COURSE_DOC_PREFIX, COURSE_ROUTE_PREFIX } from '../prefix'
 import { informationCourseProperty } from './api_property/information-course.property'
 import { Lesson } from '../../models/postgres/lesson.entity'
-import { Video } from 'src/video/infraestructure/models/postgres/video'
+
 @Controller({
     path: COURSE_ROUTE_PREFIX,
     docTitle: COURSE_DOC_PREFIX,
 })
 export class CourseInformationController
-implements ControllerContract<[id: string], informationCourseProperty>
+    implements ControllerContract<[id: string], informationCourseProperty>
 {
     constructor(
         @InjectRepository(Course) private courseRepo: Repository<Course>,
