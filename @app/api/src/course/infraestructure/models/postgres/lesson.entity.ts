@@ -1,5 +1,14 @@
 import { Video } from 'src/video/infraestructure/models/postgres/video'
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    OneToOne,
+    PrimaryColumn,
+} from 'typeorm'
+import { Course } from './course.entity'
 
 @Entity()
 export class Lesson {
@@ -15,9 +24,26 @@ export class Lesson {
         type: 'varchar',
     })
     description: string
-    @ManyToOne(() => Video, (video) => video.id)
-    @JoinColumn()
-    video: string
+    @ManyToOne(() => Course, (course) => course.id)
+    @JoinColumn({
+        name: 'courseId',
+    })
+    course: Course
+
+    @Column({
+        type: 'uuid',
+    })
+    courseId: string
+
+    @OneToMany(() => Video, (video) => video.id)
+    @JoinColumn({
+        name: 'videoId',
+    })
+    video: Video
+    @Column({
+        type: 'uuid',
+    })
+    videoId: string
     @Column({
         type: 'numeric',
     })

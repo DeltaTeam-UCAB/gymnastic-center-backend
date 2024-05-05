@@ -10,7 +10,10 @@ export class CreateLessonDTO {
     description: string
     @ApiProperty()
     @IsUUID()
-    video: string
+    courseId: string
+    @ApiProperty()
+    @IsUUID()
+    videoId: string
     @ApiProperty()
     @IsOptional()
     @IsNumber()

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNumber, IsString } from 'class-validator'
+import { Lesson } from 'src/course/infraestructure/models/postgres/lesson.entity'
 
 export class informationCourseProperty {
     @ApiProperty()
@@ -18,5 +19,8 @@ export class informationCourseProperty {
     @IsNumber()
     category: string
     @ApiProperty()
+    @IsString()
     image: string
+    @ApiProperty()
+    lessons: Lesson[]
 }

@@ -6,10 +6,12 @@ import { Lesson } from '../../models/postgres/lesson.entity'
 import { Repository } from 'typeorm'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
+import { ApiHeader } from '@nestjs/swagger'
+import { COURSE_DOC_PREFIX, COURSE_ROUTE_PREFIX } from '../prefix'
 
 @Controller({
-    path: 'course',
-    docTitle: 'Course',
+    path: COURSE_ROUTE_PREFIX,
+    docTitle: COURSE_DOC_PREFIX,
 })
 export class deleteLessonController
     implements
@@ -25,6 +27,9 @@ export class deleteLessonController
     ) {}
 
     @Delete('lessons/:id')
+    @ApiHeader({
+        name: 'auth',
+    })
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
     async execute(@Param('id') id: string): Promise<{ id: string }> {
