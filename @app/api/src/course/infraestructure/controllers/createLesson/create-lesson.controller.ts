@@ -9,10 +9,12 @@ import { ControllerContract } from 'src/core/infraestructure/controllers/control
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
+import { COURSE_DOC_PREFIX, COURSE_ROUTE_PREFIX } from '../prefix'
+import { ApiHeader } from '@nestjs/swagger'
 
 @Controller({
-    path: 'course',
-    docTitle: 'Course',
+    path: COURSE_ROUTE_PREFIX,
+    docTitle: COURSE_DOC_PREFIX,
 })
 export class createLessonController
     implements
@@ -28,19 +30,19 @@ export class createLessonController
         @InjectRepository(Lesson) private lessonRepo: Repository<Lesson>,
     ) {}
 
-    @Post('create')
+    @Post('create-lesson')
+    @ApiHeader({
+        name: 'auth',
+    })
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
     async execute(@Body() body: CreateLessonDTO): Promise<{ id: string }> {
-        const possibleLesson = await this.lessonRepo.findOneBy({
-            name: body.name,
-        })
-        if (possibleLesson) throw new HttpException('Wrong credentials', 400)
         const lessonId = this.idGen.generate()
         await this.lessonRepo.save({
             id: lessonId,
             ...body,
         })
+
         return {
             id: lessonId,
         }
