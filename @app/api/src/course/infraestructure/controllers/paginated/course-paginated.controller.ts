@@ -38,11 +38,9 @@ export class GetCoursesPaginated
             .map(async (e) => ({
                 ...e,
                 description: '',
-                image: (
-                    await this.imageRepo.findOneByOrFail({
-                        id: e.image,
-                    })
-                ).src,
+                image: await this.imageRepo.findOneByOrFail({
+                    id: e.imageId,
+                }),
             }))
     }
 }

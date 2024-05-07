@@ -20,8 +20,8 @@ export class CreateCourseDTO {
     @ApiProperty()
     @IsOptional()
     @IsUUID()
-    video?: string
+    videoId?: string
     @ApiProperty()
     @IsUUID()
-    image: string
+    imageId: string
 }

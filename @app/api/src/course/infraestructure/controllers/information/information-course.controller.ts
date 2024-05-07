@@ -22,7 +22,7 @@ import { Lesson } from '../../models/postgres/lesson.entity'
     docTitle: COURSE_DOC_PREFIX,
 })
 export class CourseInformationController
-    implements ControllerContract<[id: string], informationCourseProperty>
+implements ControllerContract<[id: string], informationCourseProperty>
 {
     constructor(
         @InjectRepository(Course) private courseRepo: Repository<Course>,
@@ -44,7 +44,7 @@ export class CourseInformationController
         }
 
         const imgSrc = await this.imageRepo.findOneBy({
-            id: possibleCourse.image,
+            id: possibleCourse.imageId,
         })
 
         if (!imgSrc) {

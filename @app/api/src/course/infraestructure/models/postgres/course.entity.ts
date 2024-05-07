@@ -15,41 +15,52 @@ export class Course {
     @PrimaryColumn({
         type: 'uuid',
     })
-    id: string
+        id: string
     @Column({
         type: 'varchar',
         unique: true,
     })
-    title: string
+        title: string
     @Column({
         type: 'varchar',
     })
-    description: string
+        description: string
     @Column({
         type: 'varchar',
     })
-    instructor: string
+        instructor: string
     @Column({
         type: 'numeric',
     })
-    calories: number
+        calories: number
     @CreateDateColumn({
         type: 'date',
     })
-    creationDate: Date
+        creationDate: Date
     @UpdateDateColumn({
         type: 'date',
     })
-    updateDate: Date
+        updateDate: Date
     @Column({
         type: 'varchar',
     })
-    category: string
+        category: string
     @ManyToOne(() => Video, (video) => video.id)
     @JoinColumn()
-    video?: string | null
+        video?: Video
+    @Column({
+        type: 'uuid',
+        nullable: true,
+    })
+        videoId?: string
     @ManyToOne(() => Image, (image) => image.id)
-    @JoinColumn()
-    image: string
+    @JoinColumn({
+        name: 'imageId',
+    })
+        image: Image
+    @Column({
+        type: 'uuid',
+    })
+        imageId: string
     // tags:  Lista de tags para el curso, falta crear clase tags.
 }
