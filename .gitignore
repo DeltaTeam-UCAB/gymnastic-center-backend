@@ -5,3 +5,5 @@ dist_test
 esm
 commonjs
 *.env
+public
+.DS_Store
