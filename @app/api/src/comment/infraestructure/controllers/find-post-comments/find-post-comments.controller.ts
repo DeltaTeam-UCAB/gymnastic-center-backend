@@ -20,6 +20,7 @@ import { Posts } from 'src/post/infraestructure/models/postgres/post.entity'
 import { Like } from '../../models/postgres/like.entity'
 import { Client } from 'src/client/infraestructure/models/postgres/client.entity'
 import { Client as ClientDecorator } from '../../decorators/client.decorator'
+import { User } from 'src/user/infraestructure/models/postgres/user.entity'
 
 @Controller({
     path: 'find-post-comments',
@@ -30,6 +31,7 @@ export class FindPostCommentsController
         ControllerContract<
             [query: PaginationDto, param: string, client: Client],
             {
+                user: string
                 comment: Comment
                 likes: number
                 dislikes: number
@@ -41,6 +43,8 @@ export class FindPostCommentsController
         @InjectRepository(Comment) private commentRepo: Repository<Comment>,
         @InjectRepository(Posts) private postRepo: Repository<Posts>,
         @InjectRepository(Like) private likeRepo: Repository<Like>,
+        @InjectRepository(Client) private clientRepo: Repository<Client>,
+        @InjectRepository(User) private userRepo: Repository<User>,
     ) {}
 
     @Get(':id')
@@ -55,6 +59,7 @@ export class FindPostCommentsController
         @ClientDecorator() client: Client,
     ): Promise<
         {
+            user: string
             comment: Comment
             likes: number
             dislikes: number
@@ -88,11 +93,19 @@ export class FindPostCommentsController
                     clientId: client.id,
                 },
             })
+            const user = await this.userRepo.findOneByOrFail({
+                id: (
+                    await this.clientRepo.findOneByOrFail({
+                        id: e.clientId,
+                    })
+                ).userId,
+            })
             return {
                 comment: e,
                 likes,
                 dislikes,
                 userLiked,
+                user: user.name,
             }
         })
         return commentsWithLikes
