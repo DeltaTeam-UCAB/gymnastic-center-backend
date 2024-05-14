@@ -6,19 +6,15 @@ import { LoginDTO } from '../../../../../src/user/application/commads/login/type
 import { Result } from '../../../../../src/core/application/result-handler/result.handler'
 import { LoginResponse } from '../../../../../src/user/application/commads/login/types/response'
 import { WRONG_CREDENTIALS } from '../../../../../src/user/application/errors/wrong.credentials'
+import { createUser } from './utils/user.factory'
 
 export const name = 'Should not login without correct password'
 export const body = async () => {
     const userRepo = new UserRepositoryMock([
-        {
-            id: '11111111',
-            name: 'test user exist',
+        createUser({
             email: 'test@mail.com',
-            type: 'CLIENT',
             password: '1234567',
-            phone: '1111111',
-            verified: true,
-        },
+        }),
     ])
     const userBaseData = {
         email: 'test@mail.com',

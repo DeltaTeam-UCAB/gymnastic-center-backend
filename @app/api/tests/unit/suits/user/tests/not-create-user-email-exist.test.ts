@@ -7,6 +7,7 @@ import { UserRepositoryMock } from './utils/user.repository.mock'
 import { RandomCodeMock } from './utils/random.code.mock'
 import { CreateUserResponse } from '../../../../../src/user/application/commads/create/types/response'
 import { INVALID_CREDENTIALS } from '../../../../../src/user/application/errors/invalid.credentials'
+import { createUser } from './utils/user.factory'
 
 export const name = 'Should not create user with an existing email'
 export const body = async () => {
@@ -18,15 +19,9 @@ export const body = async () => {
         phone: '1111111',
     } satisfies CreateUserDTO
     const userRepo = new UserRepositoryMock([
-        {
-            id: '11111111',
-            name: 'test user exist',
+        createUser({
             email: 'test@mail.com',
-            type: 'CLIENT',
-            password: '1234567',
-            phone: '1111111',
-            verified: true,
-        },
+        }),
     ])
     const result: Result<CreateUserResponse> = await new CreateUserCommand(
         new IDGeneratorMock(),

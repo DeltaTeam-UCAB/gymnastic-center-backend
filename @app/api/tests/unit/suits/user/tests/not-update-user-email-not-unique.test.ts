@@ -3,30 +3,21 @@ import { UpdateUserResponse } from '../../../../../src/user/application/commads/
 import { UpdateUserCommand } from '../../../../../src/user/application/commads/update/update.user.command'
 import { INVALID_CREDENTIALS } from '../../../../../src/user/application/errors/invalid.credentials'
 import { CryptoMock } from './utils/crypto.mock'
+import { createUser } from './utils/user.factory'
 import { UserRepositoryMock } from './utils/user.repository.mock'
 
 export const name = 'Should not update user without unique email'
 export const body = async () => {
     const userId = '11111111'
     const userRepo = new UserRepositoryMock([
-        {
+        createUser({
             id: userId,
-            name: 'test user',
             email: 'test@mail.com',
-            type: 'CLIENT',
-            password: '123',
-            phone: '1111111',
-            verified: true,
-        },
-        {
+        }),
+        createUser({
             id: '123456789',
-            name: 'test user 1',
             email: 'test1@mail.com',
-            type: 'CLIENT',
-            password: '123',
-            phone: '1111111',
-            verified: true,
-        },
+        }),
     ])
     const result: Result<UpdateUserResponse> = await new UpdateUserCommand(
         new CryptoMock(),

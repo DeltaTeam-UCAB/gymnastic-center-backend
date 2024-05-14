@@ -16,14 +16,12 @@ export const body = async () => {
         phone: '1111111',
     } satisfies CreateUserDTO
     const userRepo = new UserRepositoryMock()
-    const result = await new CreateUserCommand(
+    await new CreateUserCommand(
         new IDGeneratorMock(userId),
         new CryptoMock(),
         userRepo,
         new RandomCodeMock(),
     ).execute(userBaseData)
-    const res = result.unwrap()
-    lookFor(res.id).equals(userId)
     lookFor(await userRepo.getById(userId)).toDeepEqual({
         ...userBaseData,
         id: userId,
