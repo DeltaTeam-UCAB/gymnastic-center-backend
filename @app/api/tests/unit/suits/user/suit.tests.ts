@@ -1,0 +1,3 @@
+suiteDeclare('user suite')
+
+export {}

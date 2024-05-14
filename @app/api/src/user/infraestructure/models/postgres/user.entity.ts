@@ -1,6 +1,5 @@
+import { UserType, userTypes } from 'src/user/application/models/user'
 import { Check, Column, Entity, PrimaryColumn } from 'typeorm'
-
-export type UserRoles = 'CLIENT' | 'ADMIN'
 
 @Entity()
 @Check('"email" ~* \'^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$\'')
@@ -8,24 +7,39 @@ export class User {
     @PrimaryColumn({
         type: 'uuid',
     })
-    id: string
+        id: string
     @Column({
         type: 'varchar',
         unique: true,
     })
-    email: string
+        email: string
     @Column({
         type: 'varchar',
     })
-    password: string
+        password: string
     @Column({
         type: 'enum',
-        enum: ['CLIENT', 'ADMIN'],
+        enum: userTypes,
         default: 'CLIENT',
     })
-    type: UserRoles
+        type: UserType
     @Column({
         type: 'varchar',
     })
-    name: string
+        name: string
+    @Column({
+        type: 'varchar',
+        default: '11111111',
+    })
+        phone: string
+    @Column({
+        type: 'boolean',
+        default: false,
+    })
+        verified: boolean
+    @Column({
+        type: 'varchar',
+        nullable: true,
+    })
+        code: string
 }
