@@ -1,39 +1,42 @@
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { VIDEO_DOC_PREFIX, VIDEO_ROUTE_PREFIX } from '../prefix'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
-import { Video } from '../../models/postgres/video'
 import {
     Get,
-    NotFoundException,
+    HttpException,
     Param,
     ParseUUIDPipe,
     UseGuards,
 } from '@nestjs/common'
 import { ApiHeader } from '@nestjs/swagger'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { GetVideoByIdResponse } from 'src/video/application/queries/get-by-id/types/response'
+import { VideoPostgresRepository } from '../../repositories/postgres/video.repository'
+import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
+import { GetVideoByIdQuery } from 'src/video/application/queries/get-by-id/get.video.id.query'
 
 @Controller({
     path: VIDEO_ROUTE_PREFIX,
     docTitle: VIDEO_DOC_PREFIX,
 })
 export class FindVideoController
-    implements ControllerContract<[id: string], Video>
+implements ControllerContract<[id: string], GetVideoByIdResponse>
 {
-    constructor(
-        @InjectRepository(Video) private videoRepo: Repository<Video>,
-    ) {}
+    constructor(private videoRepository: VideoPostgresRepository) {}
     @Get('one/:id')
     @ApiHeader({
         name: 'auth',
     })
     @UseGuards(UserGuard)
-    async execute(@Param('id', ParseUUIDPipe) id: string): Promise<Video> {
-        const video = await this.videoRepo.findOneBy({
+    async execute(
+        @Param('id', ParseUUIDPipe) id: string,
+    ): Promise<GetVideoByIdResponse> {
+        const result = await new ErrorDecorator(
+            new GetVideoByIdQuery(this.videoRepository),
+            (e) => new HttpException(e.message, 404),
+        ).execute({
             id,
         })
-        if (!video) throw new NotFoundException()
-        return video
+        return result.unwrap()
     }
 }

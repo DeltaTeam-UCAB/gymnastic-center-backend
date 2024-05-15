@@ -1,0 +1,1 @@
+suiteDeclare('Video suit')
