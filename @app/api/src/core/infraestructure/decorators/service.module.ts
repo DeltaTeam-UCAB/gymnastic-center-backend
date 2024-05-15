@@ -18,9 +18,9 @@ export function ServiceModule(
     return function <T extends { new (...args: any[]): object }>(target: T) {
         ;(target as any).__isServiceModule = true
         return Module({
+            imports: dependencies,
             providers: services,
             exports: services,
-            imports: dependencies,
         })(target)
     }
 }
