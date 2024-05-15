@@ -12,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Course } from '../../models/postgres/course.entity'
 import { Repository } from 'typeorm'
 import { ApiHeader } from '@nestjs/swagger'
-import { Image } from '../../../../image/infraestructure/models/postgres/image'
+import { Image } from '../../../../image/infraestructure/models/postgres/image.entity'
 import { COURSE_DOC_PREFIX, COURSE_ROUTE_PREFIX } from '../prefix'
 import { informationCourseProperty } from './api_property/information-course.property'
 import { Lesson } from '../../models/postgres/lesson.entity'
@@ -22,7 +22,7 @@ import { Lesson } from '../../models/postgres/lesson.entity'
     docTitle: COURSE_DOC_PREFIX,
 })
 export class CourseInformationController
-implements ControllerContract<[id: string], informationCourseProperty>
+    implements ControllerContract<[id: string], informationCourseProperty>
 {
     constructor(
         @InjectRepository(Course) private courseRepo: Repository<Course>,

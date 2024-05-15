@@ -7,14 +7,14 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { ApiHeader } from '@nestjs/swagger'
-import { Image } from 'src/image/infraestructure/models/postgres/image'
+import { Image } from 'src/image/infraestructure/models/postgres/image.entity'
 
 @Controller({
     path: 'post',
     docTitle: 'Post',
 })
 export class GetPostByIdController
-    implements ControllerContract<[id: string], Posts & { images: Image[] }>
+implements ControllerContract<[id: string], Posts & { images: Image[] }>
 {
     constructor(
         @InjectRepository(Posts)

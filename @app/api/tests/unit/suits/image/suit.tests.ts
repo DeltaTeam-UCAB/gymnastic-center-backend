@@ -1,0 +1,1 @@
+suiteDeclare('Image suit')

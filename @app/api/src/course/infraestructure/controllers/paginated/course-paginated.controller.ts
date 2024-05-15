@@ -6,14 +6,14 @@ import { Repository } from 'typeorm'
 import { Get, Query, UseGuards } from '@nestjs/common'
 import { UserGuard } from 'src/client/infraestructure/guards/user.guard'
 import { ApiHeader } from '@nestjs/swagger'
-import { Image } from 'src/image/infraestructure/models/postgres/image'
+import { Image } from 'src/image/infraestructure/models/postgres/image.entity'
 
 @Controller({
     path: 'course',
     docTitle: 'Course',
 })
 export class GetCoursesPaginated
-    implements ControllerContract<[limit: number, offset: number], Course[]>
+implements ControllerContract<[limit: number, offset: number], Course[]>
 {
     constructor(
         @InjectRepository(Course) private courseRepo: Repository<Course>,

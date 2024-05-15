@@ -1,4 +1,4 @@
-import { Image } from 'src/image/infraestructure/models/postgres/image'
+import { Image } from 'src/image/infraestructure/models/postgres/image.entity'
 import { Posts } from './post.entity'
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 
