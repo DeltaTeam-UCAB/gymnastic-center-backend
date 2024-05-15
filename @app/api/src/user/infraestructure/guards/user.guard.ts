@@ -5,29 +5,31 @@ import {
     Injectable,
     UnauthorizedException,
 } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { User } from '../models/postgres/user.entity'
-import { Repository } from 'typeorm'
 import { JWT_PROVIDER_TOKEN } from 'src/core/infraestructure/token/jwt/module/jwt.provider.module'
 import { JwtProviderService } from 'src/core/infraestructure/token/jwt/service/jwt.provider.service'
-import { JwtPayload } from '../payloads/jwt.payload'
+import { UserPostgresRepository } from '../repositories/postgres/user.repository'
+import { CurrentUserQuery } from 'src/user/application/queries/current/current.query'
 
 @Injectable()
 export class UserGuard implements CanActivate {
     constructor(
-        @InjectRepository(User) private userRepo: Repository<User>,
+        private userRepo: UserPostgresRepository,
         @Inject(JWT_PROVIDER_TOKEN) private jwtProvider: JwtProviderService,
     ) {}
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest()
         const token = request.headers.auth
-        const result = this.jwtProvider.create<JwtPayload>().verify(token)
-        if (result.isError()) throw new UnauthorizedException()
-        const data = result.unwrap()
-        const user = await this.userRepo.findOneBy({
-            id: data.id,
+        const result = await new CurrentUserQuery(
+            this.userRepo,
+            this.jwtProvider.create(),
+        ).execute({
+            token,
         })
-        request.user = user
+        if (result.isError())
+            result.handleError(() => {
+                throw new UnauthorizedException()
+            })
+        request.user = result.unwrap()
         return true
     }
 }

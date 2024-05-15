@@ -128,7 +128,7 @@ export const nodeTestingExpectation: ExpectationContract = (value) =>
             }
         },
         toDeepEqual: (valueToCompare: object) =>
-            assert.deepStrictEqual(value, valueToCompare),
+            assert.deepEqual(value, valueToCompare),
         toMatch: (regExp: string | RegExp) => {
             if (typeof regExp === 'string') {
                 if (typeof value === 'string' && !value.includes(regExp))

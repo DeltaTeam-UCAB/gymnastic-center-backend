@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEmail, IsOptional, IsString, Length, Matches } from 'class-validator'
+import {
+    IsEmail,
+    IsOptional,
+    IsString,
+    Length,
+    Matches,
+    IsPhoneNumber,
+} from 'class-validator'
 import { passwordRegExp } from 'src/utils/regexps/password'
 
 export class UpdateUserDTO {
@@ -16,4 +23,8 @@ export class UpdateUserDTO {
     @Length(7)
     @IsOptional()
     name?: string
+    @ApiProperty()
+    @IsPhoneNumber()
+    @IsOptional()
+    phone: string
 }
