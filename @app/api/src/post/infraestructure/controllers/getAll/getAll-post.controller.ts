@@ -7,7 +7,7 @@ import { Repository } from 'typeorm'
 import { PostImages } from '../../models/postgres/post-images.entity'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { ApiHeader } from '@nestjs/swagger'
-import { Image } from 'src/image/infraestructure/models/postgres/image'
+import { Image } from 'src/image/infraestructure/models/postgres/image.entity'
 
 @Controller({
     path: 'post',
