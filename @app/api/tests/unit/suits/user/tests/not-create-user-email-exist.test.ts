@@ -4,7 +4,6 @@ import { CreateUserCommand } from '../../../../../src/user/application/commads/c
 import { IDGeneratorMock } from './utils/id.generator.mock'
 import { CryptoMock } from './utils/crypto.mock'
 import { UserRepositoryMock } from './utils/user.repository.mock'
-import { RandomCodeMock } from './utils/random.code.mock'
 import { CreateUserResponse } from '../../../../../src/user/application/commads/create/types/response'
 import { INVALID_CREDENTIALS } from '../../../../../src/user/application/errors/invalid.credentials'
 import { createUser } from './utils/user.factory'
@@ -27,7 +26,6 @@ export const body = async () => {
         new IDGeneratorMock(),
         new CryptoMock(),
         userRepo,
-        new RandomCodeMock(),
     ).execute(userBaseData)
     result.handleError((e) => {
         lookFor(e.name).equals(INVALID_CREDENTIALS)

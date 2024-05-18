@@ -10,5 +10,5 @@ export type User = {
     phone: string
     type: UserType
     code?: string
-    verified: boolean
+    recoveryTime?: Date
 }

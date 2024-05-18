@@ -7,8 +7,8 @@ import { ApiHeader } from '@nestjs/swagger'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
 
 @Controller({
-    path: 'user',
-    docTitle: 'User',
+    path: 'auth',
+    docTitle: 'Auth',
 })
 export class CurrentUserController
     implements

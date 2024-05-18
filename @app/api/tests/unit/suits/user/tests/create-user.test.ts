@@ -3,7 +3,6 @@ import { CreateUserCommand } from '../../../../../src/user/application/commads/c
 import { IDGeneratorMock } from './utils/id.generator.mock'
 import { CryptoMock } from './utils/crypto.mock'
 import { UserRepositoryMock } from './utils/user.repository.mock'
-import { RandomCodeMock } from './utils/random.code.mock'
 
 export const name = 'Should create user with valid data'
 export const body = async () => {
@@ -20,12 +19,9 @@ export const body = async () => {
         new IDGeneratorMock(userId),
         new CryptoMock(),
         userRepo,
-        new RandomCodeMock(),
     ).execute(userBaseData)
     lookFor(await userRepo.getById(userId)).toDeepEqual({
         ...userBaseData,
         id: userId,
-        code: '100000',
-        verified: true,
     })
 }
