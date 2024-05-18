@@ -26,6 +26,5 @@ export const body = async () => {
         type: 'CLIENT',
         password: '123',
         phone: '111111111',
-        verified: true,
     })
 }

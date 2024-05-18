@@ -9,30 +9,24 @@ import { SHA256_CRYPTO } from 'src/core/infraestructure/crypto/sha256/sha256.mod
 import { UserPostgresRepository } from '../../repositories/postgres/user.repository'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { CreateUserCommand } from 'src/user/application/commads/create/create.user.command'
-import { CryptoRandomCodeGenerator } from 'src/core/infraestructure/random-code/random-code.crypto.generator'
 import { CreateUserResponse } from 'src/user/application/commads/create/types/response'
 
 @Controller({
-    path: 'user',
-    docTitle: 'User',
+    path: 'auth',
+    docTitle: 'Auth',
 })
 export class CreateUserController
-implements ControllerContract<[body: CreateUserDTO], CreateUserResponse>
+    implements ControllerContract<[body: CreateUserDTO], CreateUserResponse>
 {
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
         @Inject(SHA256_CRYPTO) private crypto: Crypto,
         private userRepo: UserPostgresRepository,
     ) {}
-    @Post('create')
+    @Post('register')
     async execute(@Body() body: CreateUserDTO): Promise<CreateUserResponse> {
         const result = await new ErrorDecorator(
-            new CreateUserCommand(
-                this.idGen,
-                this.crypto,
-                this.userRepo,
-                new CryptoRandomCodeGenerator(),
-            ),
+            new CreateUserCommand(this.idGen, this.crypto, this.userRepo),
             (e) => new HttpException(e.message, 400),
         ).execute(body)
         return result.unwrap()
