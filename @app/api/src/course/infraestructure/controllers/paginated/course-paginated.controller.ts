@@ -1,4 +1,4 @@
-import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
+/*import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Course } from '../../models/postgres/course.entity'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -44,3 +44,4 @@ implements ControllerContract<[limit: number, offset: number], Course[]>
             }))
     }
 }
+*/
