@@ -1,0 +1,3 @@
+suiteDeclare('course suite')
+
+export {}
