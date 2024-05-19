@@ -6,6 +6,7 @@ import { TrainerRepository } from 'src/trainer/application/repositories/trainer.
 import { Trainer as TrainerORM } from '../../models/postgres/trainer.entity'
 import { Repository } from 'typeorm'
 import { Follow } from '../../models/postgres/follow.entity'
+import { isNotNull } from 'src/utils/null-manager/null-checker'
 
 export class TrainerPostgresRepository implements TrainerRepository {
     constructor(
@@ -27,25 +28,22 @@ export class TrainerPostgresRepository implements TrainerRepository {
         const trainer = await this.trainerRepository.findOneBy({
             id,
         })
-        return trainer
-    }
-
-    async getFollowers(id: string): Promise<Optional<number>> {
-        const followers = await this.followRepository.countBy({
-            trainerId: id,
+        if (!isNotNull(trainer)) {
+            return null
+        }
+        const follows = await this.followRepository.find({
+            where: {
+                trainerId: id,
+            },
+            select: {
+                userId: true,
+            },
         })
-        return followers
-    }
-
-    async isUserFollowing(
-        userId: string,
-        trainerId: string,
-    ): Promise<Optional<boolean>> {
-        const userFollow = await this.followRepository.existsBy({
-            trainerId,
-            userId,
-        })
-        return userFollow
+        const followers = follows.map((f) => f.userId)
+        return {
+            ...trainer,
+            followers,
+        }
     }
 
     async followTrainer(

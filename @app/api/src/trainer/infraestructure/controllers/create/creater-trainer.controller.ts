@@ -26,7 +26,7 @@ export class CreateTrainerController
     ) {}
 
     @Post()
-    @Roles('CLIENT')
+    @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
     @ApiHeader({
         name: 'auth',

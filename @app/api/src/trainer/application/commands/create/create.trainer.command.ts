@@ -20,6 +20,7 @@ export class CreateTrainerCommand
         const trainer = {
             id: trainerId,
             ...data,
+            followers: [],
         } satisfies Trainer
         const result = await this.trainerRepository.save(trainer)
         if (result.isError()) return result.convertToOther()
