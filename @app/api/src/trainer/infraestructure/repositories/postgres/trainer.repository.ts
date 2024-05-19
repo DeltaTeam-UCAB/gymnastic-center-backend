@@ -46,6 +46,13 @@ export class TrainerPostgresRepository implements TrainerRepository {
         }
     }
 
+    async existByName(name: string): Promise<boolean> {
+        const exists = await this.trainerRepository.existsBy({
+            name,
+        })
+        return exists
+    }
+
     async followTrainer(
         userId: string,
         trainerId: string,
