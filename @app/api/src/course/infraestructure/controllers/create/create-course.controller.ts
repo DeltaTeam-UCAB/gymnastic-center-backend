@@ -3,7 +3,6 @@ import { ControllerContract } from 'src/core/infraestructure/controllers/control
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Repository } from 'typeorm'
 import { Course } from '../../models/postgres/course.entity'
-import { InjectRepository } from '@nestjs/typeorm'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
@@ -12,6 +11,10 @@ import { ApiHeader } from '@nestjs/swagger'
 import { COURSE_ROUTE_PREFIX } from '../prefix'
 import { COURSE_DOC_PREFIX } from '../prefix'
 import { CreateCourseDTO } from './dto/create-course.dto'
+import { CoursePostgresRepository } from '../../repositories/postgres/course.repository'
+import { CreateCourseResponse } from 'src/course/application/commands/createCourse/types/response'
+import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
+import { CreateCourseCommand } from 'src/course/application/commands/createCourse/create.course.command'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -28,7 +31,7 @@ export class CreateCourseController
 {
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
-        @InjectRepository(Course) private courseRepo: Repository<Course>,
+        private courseRepo: CoursePostgresRepository,
     ) {}
 
     @Post('create')
@@ -37,23 +40,11 @@ export class CreateCourseController
     })
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
-    async execute(@Body() body: CreateCourseDTO): Promise<{ id: string }> {
-        const possibleCourse = await this.courseRepo.findOneBy({
-            title: body.title,
-        })
-        if (possibleCourse) throw new HttpException('Wrong credentials', 400)
-        const courseId = this.idGen.generate()
-        const creationDate = new Date()
-        await this.courseRepo.save({
-            id: courseId,
-            createDate: creationDate,
-            ...body,
-        })
-        return {
-            id: courseId,
-        }
+    async execute(@Body() body: CreateCourseDTO): Promise<CreateCourseResponse> {
+        const result = await new ErrorDecorator(
+            new CreateCourseCommand(this.idGen,  this.courseRepo),
+            (e) => new HttpException(e.message, 400),
+        ).execute(body)
+        return result.unwrap()
     }
 }
