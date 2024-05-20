@@ -1,8 +1,6 @@
 import { Body, HttpException, Inject, Post, UseGuards } from '@nestjs/common'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { Repository } from 'typeorm'
-import { Course } from '../../models/postgres/course.entity'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
@@ -40,9 +38,11 @@ export class CreateCourseController
     })
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
-    async execute(@Body() body: CreateCourseDTO): Promise<CreateCourseResponse> {
+    async execute(
+        @Body() body: CreateCourseDTO,
+    ): Promise<CreateCourseResponse> {
         const result = await new ErrorDecorator(
-            new CreateCourseCommand(this.idGen,  this.courseRepo),
+            new CreateCourseCommand(this.idGen, this.courseRepo),
             (e) => new HttpException(e.message, 400),
         ).execute(body)
         return result.unwrap()

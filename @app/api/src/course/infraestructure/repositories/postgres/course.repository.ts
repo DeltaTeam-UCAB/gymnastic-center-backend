@@ -14,7 +14,9 @@ export class CoursePostgresRepository implements CourseRepository {
     ) {}
 
     async save(course: Course): Promise<Result<Course>> {
-        await this.courseProvider.upsert(this.courseProvider.create(course), ['id'])
+        await this.courseProvider.upsert(this.courseProvider.create(course), [
+            'id',
+        ])
         return Result.success(course)
     }
 
