@@ -1,9 +1,9 @@
-import { ImageRepositoryMock } from '../../image/tests/utils/image.repository.mock'
 import { CreateCategoryCommand } from '../../../../../src/category/application/commands/create/create.category.command'
 import { IDGeneratorMock } from './utils/id.generator.mock'
 import { CategoryRepositoryMock } from './utils/category.repository.mock'
 import { Result } from '../../../../../src/core/application/result-handler/result.handler'
 import { CreateCategoryResponse } from '../../../../../src/category/application/commands/create/types/reponse'
+import { ImageRepositoryMock } from './utils/image.repository.mock'
 
 export const name = 'Should create category with valid data'
 export const body = async () => {
