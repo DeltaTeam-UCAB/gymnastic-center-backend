@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
-import { ImagePostgresRepository } from 'src/image/infraestructure/repositories/postgres/image.repository'
 import { CategoryPostgresRepository } from '../../repositories/postgres/category.repository'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { CreateCategoryCommand } from 'src/category/application/commands/create/create.category.command'
@@ -21,18 +20,19 @@ import { Controller } from 'src/core/infraestructure/controllers/decorators/cont
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { ApiHeader } from '@nestjs/swagger'
+import { ImagePostgresByCategoryRepository } from '../../repositories/postgres/image.postgres.repository'
 
 @Controller({
     path: 'category',
     docTitle: 'Category',
 })
 export class CreateCategoryController
-implements
+    implements
         ControllerContract<[body: CreateCategoryDTO], CreateCategoryResponse>
 {
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
-        private imageRepository: ImagePostgresRepository,
+        private imageRepository: ImagePostgresByCategoryRepository,
         private categoryRepository: CategoryPostgresRepository,
     ) {}
     @ApiHeader({

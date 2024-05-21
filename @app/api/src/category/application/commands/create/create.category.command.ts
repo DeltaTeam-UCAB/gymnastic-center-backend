@@ -4,13 +4,13 @@ import { CreateCategoryResponse } from './types/reponse'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { CategoryRepository } from '../../repositories/category.repository'
-import { ImageRepository } from 'src/image/application/repositories/image.repository'
 import { imageNotFoundError } from '../../errors/image.not.found'
 import { categoryNameExistError } from '../../errors/category.name.exist'
 import { Category } from '../../models/category'
+import { ImageRepository } from '../../repositories/image.repository'
 
 export class CreateCategoryCommand
-    implements ApplicationService<CreateCategoryDTO, CreateCategoryResponse>
+implements ApplicationService<CreateCategoryDTO, CreateCategoryResponse>
 {
     constructor(
         private idGenerator: IDGenerator<string>,
@@ -20,7 +20,7 @@ export class CreateCategoryCommand
     async execute(
         data: CreateCategoryDTO,
     ): Promise<Result<CreateCategoryResponse>> {
-        const image = await this.imageRepository.getById(data.icon)
+        const image = await this.imageRepository.existById(data.icon)
         if (!image) return Result.error(imageNotFoundError())
         const possible = await this.categoryRepository.findByName(data.name)
         if (possible) return Result.error(categoryNameExistError())
