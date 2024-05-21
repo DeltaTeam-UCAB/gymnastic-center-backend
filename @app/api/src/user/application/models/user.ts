@@ -11,4 +11,5 @@ export type User = {
     type: UserType
     code?: string
     recoveryTime?: Date
+    image?: string
 }

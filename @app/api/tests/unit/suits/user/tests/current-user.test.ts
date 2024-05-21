@@ -39,5 +39,6 @@ export const body = async () => {
         email: 'test@mail.com',
         type: 'CLIENT',
         phone: '111111111',
+        image: undefined,
     })
 }
