@@ -5,4 +5,5 @@ import { Optional } from '@mono/types-utils'
 export interface CategoryRepository {
     save(category: Category): Promise<Result<Category>>
     findByName(name: string): Promise<Optional<Category>>
+    findAll(): Promise<Category[]>
 }
