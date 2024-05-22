@@ -12,11 +12,12 @@ import { CreateCommentCommand } from 'src/comment/application/commands/create/cr
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { CommentPostgresRepository } from '../../repositories/postgres/comment.repository'
-import { PostPostgresRepository } from '../../repositories/postgres/post.repository'
-import { LessonPostgresRepository } from '../../repositories/postgres/lesson.repository'
+import { PostPostgresByCommentRepository } from '../../repositories/postgres/post.repository'
+import { LessonPostgresByCommentRepository } from '../../repositories/postgres/lesson.repository'
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { User } from 'src/user/application/models/user'
 import { TargetType } from 'src/comment/application/models/comment'
+import { CheckTargetExistence } from 'src/comment/application/decorators/check-target-existence.decorator'
 
 @Controller({
     path: 'comment',
@@ -32,8 +33,8 @@ export class CreateController
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
         private commentRepo: CommentPostgresRepository,
-        private postRepo: PostPostgresRepository,
-        private lessonRepo: LessonPostgresRepository,
+        private postRepo: PostPostgresByCommentRepository,
+        private lessonRepo: LessonPostgresByCommentRepository,
     ) {}
 
     @Post('release')
@@ -49,11 +50,10 @@ export class CreateController
         const targetType: TargetType =
             body.targetType === 'BLOG' ? 'POST' : 'LESSON'
         const result = await new ErrorDecorator(
-            new CreateCommentCommand(
-                this.commentRepo,
-                this.postRepo,
+            new CheckTargetExistence(
+                new CreateCommentCommand(this.commentRepo, this.idGen),
                 this.lessonRepo,
-                this.idGen,
+                this.postRepo,
             ),
             (e) => new HttpException(e.message, 400),
         ).execute({

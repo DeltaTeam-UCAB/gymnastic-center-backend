@@ -3,7 +3,7 @@ import { LessonRepository } from 'src/comment/application/repositories/lesson.re
 import { Lesson } from 'src/comment/infraestructure/models/postgres/lesson.entity'
 import { Repository } from 'typeorm'
 
-export class LessonPostgresRepository implements LessonRepository {
+export class LessonPostgresByCommentRepository implements LessonRepository {
     constructor(
         @InjectRepository(Lesson) private lessonRepository: Repository<Lesson>,
     ) {}

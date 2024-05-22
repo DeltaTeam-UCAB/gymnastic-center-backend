@@ -3,7 +3,7 @@ import { PostRepository } from 'src/comment/application/repositories/post.reposi
 import { Posts } from 'src/comment/infraestructure/models/postgres/post.entity'
 import { Repository } from 'typeorm'
 
-export class PostPostgresRepository implements PostRepository {
+export class PostPostgresByCommentRepository implements PostRepository {
     constructor(
         @InjectRepository(Posts) private postRepository: Repository<Posts>,
     ) {}

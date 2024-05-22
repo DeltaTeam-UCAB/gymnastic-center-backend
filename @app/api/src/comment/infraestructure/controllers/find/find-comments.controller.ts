@@ -5,14 +5,13 @@ import { FindCommentsDTO } from './dto/find.comments.dto'
 import { Get, HttpException, Query, UseGuards } from '@nestjs/common'
 import { FindCommentsQuery } from 'src/comment/application/queries/find/find-comments.query'
 import { CommentPostgresRepository } from '../../repositories/postgres/comment.repository'
-import { PostPostgresRepository } from '../../repositories/postgres/post.repository'
-import { LessonPostgresRepository } from '../../repositories/postgres/lesson.repository'
+import { PostPostgresByCommentRepository } from '../../repositories/postgres/post.repository'
+import { LessonPostgresByCommentRepository } from '../../repositories/postgres/lesson.repository'
 import { User } from 'src/user/application/models/user'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
-import { TargetType } from 'src/comment/application/models/comment'
 import { ApiHeader } from '@nestjs/swagger'
 
 @Controller({
@@ -28,8 +27,8 @@ export class FindCommentsController
 {
     constructor(
         private commentRepo: CommentPostgresRepository,
-        private postRepo: PostPostgresRepository,
-        private lessonRepo: LessonPostgresRepository,
+        private postRepo: PostPostgresByCommentRepository,
+        private lessonRepo: LessonPostgresByCommentRepository,
     ) {}
 
     @Get('many')
@@ -57,11 +56,7 @@ export class FindCommentsController
         }
 
         const result = await new ErrorDecorator(
-            new FindCommentsQuery(
-                this.commentRepo,
-                this.postRepo,
-                this.lessonRepo,
-            ),
+            new FindCommentsQuery(this.commentRepo),
             (e) => new HttpException(e.message, 400),
         ).execute({
             page: query.page,

@@ -1,26 +1,11 @@
 import { Result } from 'src/core/application/result-handler/result.handler'
-import { Comment } from '../models/comment'
+import { Comment, TargetType } from '../models/comment'
 
 export interface CommentRepository {
-    commentPost(
-        id: string,
-        postId: string,
-        userId: string,
-        description: string,
-    ): Promise<Result<Comment>>
-    commentLesson(
-        id: string,
-        lessonId: string,
-        userId: string,
-        description: string,
-    ): Promise<Result<Comment>>
-    getPostComments(
-        postId: string,
-        page: number,
-        perPage: number,
-    ): Promise<Comment[]>
-    getLessonComments(
-        lessonId: string,
+    save(comment: Comment): Promise<Result<Comment>>
+    getComments(
+        targetId: string,
+        targetType: TargetType,
         page: number,
         perPage: number,
     ): Promise<Comment[]>
