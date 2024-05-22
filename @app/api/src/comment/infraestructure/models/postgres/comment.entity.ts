@@ -1,6 +1,6 @@
-import { Lesson } from 'src/course/infraestructure/models/postgres/lesson.entity'
-import { Posts } from 'src/post/infraestructure/models/postgres/post.entity'
-import { User } from 'src/user/infraestructure/models/postgres/user.entity'
+import { Lesson } from 'src/comment/infraestructure/models/postgres/lesson.entity'
+import { Posts } from 'src/comment/infraestructure/models/postgres/post.entity'
+import { User } from 'src/comment/infraestructure/models/postgres/user.entity'
 import {
     Column,
     CreateDateColumn,

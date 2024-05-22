@@ -1,4 +1,4 @@
-import { Video } from 'src/video/infraestructure/models/postgres/video.entity'
+import { Video } from 'src/comment/infraestructure/models/postgres/video.entity'
 import {
     Column,
     Entity,

@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToMany, PrimaryColumn } from 'typeorm'
 import { Comment } from './comment.entity'
-import { User } from 'src/user/infraestructure/models/postgres/user.entity'
+import { User } from 'src/comment/infraestructure/models/postgres/user.entity'
 
 @Entity()
 export class Like {
