@@ -1,0 +1,3 @@
+suiteDeclare('Trainer suit')
+
+export {}

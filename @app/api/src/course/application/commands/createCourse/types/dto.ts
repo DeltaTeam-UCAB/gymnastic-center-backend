@@ -1,11 +1,9 @@
-export type Course = {
-    id: string
+export type CreateCourseDTO = {
     title: string
     description: string
     instructor: string
     calories: number
     creationDate: Date
-    updateDate?: Date
     category: string
     videoId?: string
     imageId: string

@@ -1,24 +1,25 @@
-/*import { ApplicationService } from '../../../../dist/core/application/service/application.service'
-import { paginationResponse } from './types/pagination_response'
+import { ApplicationService } from 'src/core/application/service/application.service'
+import { PaginationDtoentry } from './types/paginationDTO_entry'
+import { paginationResponse } from './types/paginationDTO_response'
 import { CourseRepository } from '../repositories/course.repository'
-import { Image } from 'src/image/application/models/image'
-import { Video } from '../../../video/application/models/video'
-import { course } from '../models/course'
-import { PaginationDto } from './types/paginationDTO'
+import { Result } from 'src/core/application/result-handler/result.handler'
 
-export class Paginationservice
-implements ApplicationService<PaginationDto, paginationResponse>
+export class PaginationCourseService
+implements ApplicationService<PaginationDtoentry, paginationResponse>
 {
-    private Courses: course[]
-    constructor(
-        private Course: CourseRepository,
-        private Image: Image,
-        private courses: course[],
-        private Video?: Video,
-    ) {
-        this.courses = courses
-    }
+    private readonly courseRepo: CourseRepository
 
-    async execute(): void {}
+    constructor(courseRepo: CourseRepository) {
+        this.courseRepo = courseRepo
+    }
+    async execute(
+        data: PaginationDtoentry,
+    ): Promise<Result<paginationResponse>> {
+        const pagination = await this.courseRepo.Pagination(
+            data.limit,
+            data.offset,
+        )
+
+        return Result.success(pagination)
+    }
 }
-*/

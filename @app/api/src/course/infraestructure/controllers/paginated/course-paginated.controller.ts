@@ -1,47 +1,37 @@
-/*import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { Course } from '../../models/postgres/course.entity'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { COURSE_ROUTE_PREFIX, COURSE_DOC_PREFIX } from '../prefix'
+import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
+import { PaginationDtoentry } from 'src/course/application/query/types/paginationDTO_entry'
+import { paginationResponse } from 'src/course/application/query/types/paginationDTO_response'
 import { Get, Query, UseGuards } from '@nestjs/common'
-import { UserGuard } from 'src/client/infraestructure/guards/user.guard'
+import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { ApiHeader } from '@nestjs/swagger'
-import { Image } from 'src/image/infraestructure/models/postgres/image.entity'
-
+import { CoursePostgresRepository } from '../../repositories/postgres/course.repository'
+import { PaginationCourseService } from 'src/course/application/query/pagination.course.query'
 @Controller({
-    path: 'course',
-    docTitle: 'Course',
+    path: COURSE_ROUTE_PREFIX,
+    docTitle: COURSE_DOC_PREFIX,
 })
-export class GetCoursesPaginated
-implements ControllerContract<[limit: number, offset: number], Course[]>
+export class PaginationController
+implements
+        ControllerContract<[data: PaginationDtoentry], paginationResponse>
 {
-    constructor(
-        @InjectRepository(Course) private courseRepo: Repository<Course>,
-        @InjectRepository(Image)
-        private readonly imageRepo: Repository<Image>,
-    ) {}
+    constructor(private courseRepository: CoursePostgresRepository) {}
 
-    @Get('paginated')
-    @UseGuards(UserGuard)
+    @Get('pagination')
+    @Roles('ADMIN')
     @ApiHeader({
         name: 'auth',
     })
+    @UseGuards(UserGuard, RolesGuard)
     async execute(
-        @Query('limit') limit: number,
-        @Query('offset') offset: number,
-    ): Promise<Course[]> {
-        return this.courseRepo
-            .find({
-                take: limit,
-                skip: offset,
-            })
-            .map(async (e) => ({
-                ...e,
-                description: '',
-                image: await this.imageRepo.findOneByOrFail({
-                    id: e.imageId,
-                }),
-            }))
+        @Query() param: PaginationDtoentry,
+    ): Promise<paginationResponse> {
+        const result = await new PaginationCourseService(
+            this.courseRepository,
+        ).execute(param)
+
+        return result.unwrap()
     }
 }
-*/

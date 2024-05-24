@@ -1,4 +1,4 @@
-export type Course = {
+export type paginationResponse = {
     id: string
     title: string
     description: string
@@ -9,4 +9,4 @@ export type Course = {
     category: string
     videoId?: string
     imageId: string
-}
+}[]
