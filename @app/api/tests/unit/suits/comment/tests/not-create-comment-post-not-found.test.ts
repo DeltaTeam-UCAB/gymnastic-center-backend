@@ -10,7 +10,7 @@ import { IDGeneratorMock } from './utils/id.generator.mock'
 import { LessonRepositoryMock } from './utils/lesson.repository.mock'
 import { PostRepositoryMock } from './utils/post.repository.mock'
 
-export const name = 'Should not create a comment with an unvalid lesson ID'
+export const name = 'Should not create a comment with an unvalid post ID'
 
 export const body = async () => {
     const commentId = '234567'
