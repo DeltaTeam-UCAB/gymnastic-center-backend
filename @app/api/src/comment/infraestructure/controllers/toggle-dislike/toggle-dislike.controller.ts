@@ -17,6 +17,7 @@ import { CommentPostgresRepository } from '../../repositories/postgres/comment.r
 import { ApiHeader } from '@nestjs/swagger'
 import { ToggleDislikeCommand } from 'src/comment/application/commands/toggle-dislike/toggle-dislike.command'
 import { ToggleDislikeResponse } from 'src/comment/application/commands/toggle-dislike/types/response'
+import { CheckCommentExistence } from 'src/comment/application/decorators/check-comment-existence.decorator'
 
 @Controller({
     path: 'comment',
@@ -39,7 +40,10 @@ export class ToggleDislikeController
         @UserDecorator() user: User,
     ): Promise<ToggleDislikeResponse> {
         const result = await new ErrorDecorator(
-            new ToggleDislikeCommand(this.commentRepository),
+            new CheckCommentExistence(
+                new ToggleDislikeCommand(this.commentRepository),
+                this.commentRepository,
+            ),
             (e) => new HttpException(e.message, 400),
         ).execute({
             commentId: param,

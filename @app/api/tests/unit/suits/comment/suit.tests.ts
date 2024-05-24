@@ -1,0 +1,3 @@
+suiteDeclare('Comment suit')
+
+export {}

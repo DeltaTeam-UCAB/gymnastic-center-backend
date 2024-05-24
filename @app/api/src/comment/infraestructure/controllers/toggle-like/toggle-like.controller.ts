@@ -16,6 +16,7 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
 import { ToggleLikeCommand } from 'src/comment/application/commands/toggle-like/toggle-like.command'
 import { CommentPostgresRepository } from '../../repositories/postgres/comment.repository'
 import { ApiHeader } from '@nestjs/swagger'
+import { CheckCommentExistence } from 'src/comment/application/decorators/check-comment-existence.decorator'
 
 @Controller({
     path: 'comment',
@@ -38,7 +39,10 @@ export class ToggleLikeController
         @UserDecorator() user: User,
     ): Promise<ToggleLikeResponse> {
         const result = await new ErrorDecorator(
-            new ToggleLikeCommand(this.commentRepository),
+            new CheckCommentExistence(
+                new ToggleLikeCommand(this.commentRepository),
+                this.commentRepository,
+            ),
             (e) => new HttpException(e.message, 400),
         ).execute({
             commentId: param,

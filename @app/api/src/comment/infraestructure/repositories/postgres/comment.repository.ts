@@ -75,6 +75,12 @@ export class CommentPostgresRepository implements CommentRepository {
         })
         return comments
     }
+    async existsById(id: string): Promise<boolean> {
+        const exists = await this.commentRespository.existsBy({
+            id,
+        })
+        return exists
+    }
     async toggleLike(userId: string, commentId: string): Promise<boolean> {
         const userLike = await this.likeRespository.findOneBy({
             userId,

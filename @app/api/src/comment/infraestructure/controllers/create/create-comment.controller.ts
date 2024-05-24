@@ -18,6 +18,7 @@ import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.
 import { User } from 'src/user/application/models/user'
 import { TargetType } from 'src/comment/application/models/comment'
 import { CheckTargetExistence } from 'src/comment/application/decorators/check-target-existence.decorator'
+import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
 
 @Controller({
     path: 'comment',
@@ -51,7 +52,11 @@ export class CreateController
             body.targetType === 'BLOG' ? 'POST' : 'LESSON'
         const result = await new ErrorDecorator(
             new CheckTargetExistence(
-                new CreateCommentCommand(this.commentRepo, this.idGen),
+                new CreateCommentCommand(
+                    this.commentRepo,
+                    new ConcreteDateProvider(),
+                    this.idGen,
+                ),
                 this.lessonRepo,
                 this.postRepo,
             ),

@@ -25,11 +25,7 @@ export class FindCommentsController
             FindCommentsResponse[]
         >
 {
-    constructor(
-        private commentRepo: CommentPostgresRepository,
-        private postRepo: PostPostgresByCommentRepository,
-        private lessonRepo: LessonPostgresByCommentRepository,
-    ) {}
+    constructor(private commentRepo: CommentPostgresRepository) {}
 
     @Get('many')
     @UseGuards(UserGuard)

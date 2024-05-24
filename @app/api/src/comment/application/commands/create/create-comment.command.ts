@@ -5,12 +5,14 @@ import { Result } from 'src/core/application/result-handler/result.handler'
 import { CommentRepository } from '../../repositories/comment.repository'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { Comment } from '../../models/comment'
+import { DateProvider } from 'src/core/application/date/date.provider'
 
 export class CreateCommentCommand
     implements ApplicationService<CreateCommentDTO, CreateCommentResponse>
 {
     constructor(
         private commentRepository: CommentRepository,
+        private dateProvider: DateProvider,
         private idGen: IDGenerator<string>,
     ) {}
 
@@ -23,7 +25,7 @@ export class CreateCommentCommand
             description: data.description,
             dislikes: [],
             likes: [],
-            creationDate: new Date(),
+            creationDate: this.dateProvider.current,
             targetId: data.targetId,
             targetType: data.targetType,
             userId: data.userId,

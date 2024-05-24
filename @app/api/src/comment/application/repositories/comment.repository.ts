@@ -9,6 +9,7 @@ export interface CommentRepository {
         page: number,
         perPage: number,
     ): Promise<Comment[]>
+    existsById(id: string): Promise<boolean>
     toggleLike(userId: string, commentId: string): Promise<boolean>
     toggleDislike(userId: string, commentId: string): Promise<boolean>
 }
