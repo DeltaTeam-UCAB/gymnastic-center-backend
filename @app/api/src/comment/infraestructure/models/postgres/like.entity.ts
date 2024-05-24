@@ -1,6 +1,6 @@
-import { Client } from 'src/client/infraestructure/models/postgres/client.entity'
 import { Column, Entity, JoinColumn, ManyToMany, PrimaryColumn } from 'typeorm'
 import { Comment } from './comment.entity'
+import { User } from 'src/comment/infraestructure/models/postgres/user.entity'
 
 @Entity()
 export class Like {
@@ -14,10 +14,10 @@ export class Like {
     @PrimaryColumn({
         type: 'uuid',
     })
-    clientId: string
-    @ManyToMany(() => Client)
+    userId: string
+    @ManyToMany(() => User)
     @JoinColumn()
-    client: Client
+    user: User
     @Column({
         type: 'boolean',
     })
