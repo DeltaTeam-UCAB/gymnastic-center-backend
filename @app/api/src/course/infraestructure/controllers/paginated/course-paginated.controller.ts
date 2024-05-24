@@ -1,7 +1,7 @@
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { COURSE_ROUTE_PREFIX, COURSE_DOC_PREFIX } from '../prefix'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
-import { PaginationDtoentry } from 'src/course/application/query/types/paginationDTO_entry'
+//import { PaginationDtoentry } from 'src/course/application/query/types/paginationDTO_entry'
 import { paginationResponse } from 'src/course/application/query/types/paginationDTO_response'
 import { Get, Query, UseGuards } from '@nestjs/common'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
@@ -15,7 +15,7 @@ import { PaginationCourseService } from 'src/course/application/query/pagination
 })
 export class PaginationController
 implements
-        ControllerContract<[data: PaginationDtoentry], paginationResponse>
+        ControllerContract<[limit: number, offset: number], paginationResponse>
 {
     constructor(private courseRepository: CoursePostgresRepository) {}
 
@@ -26,11 +26,12 @@ implements
     })
     @UseGuards(UserGuard, RolesGuard)
     async execute(
-        @Query() param: PaginationDtoentry,
+        @Query('limit') limit: number,
+        @Query('offset') offset: number,
     ): Promise<paginationResponse> {
         const result = await new PaginationCourseService(
             this.courseRepository,
-        ).execute(param)
+        ).execute({ limit, offset })
 
         return result.unwrap()
     }
