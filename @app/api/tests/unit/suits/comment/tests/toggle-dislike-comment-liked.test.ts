@@ -36,7 +36,7 @@ export const body = async () => {
         {
             creationDate: date,
             description: 'test description',
-            dislikes: [],
+            dislikes: [userId],
             id: commentId,
             likes: [],
             targetId: targetId,

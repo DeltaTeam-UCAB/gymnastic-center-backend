@@ -3,7 +3,7 @@ import { createComment } from './utils/comment.factory'
 import { CommentRepositoryMock } from './utils/comment.repository.mock'
 import { DateProviderMock } from './utils/date.provider.mock'
 
-export const name = 'Should find comments'
+export const name = 'Should find comments with user dislike'
 
 export const body = async () => {
     const userId = '12132332'
