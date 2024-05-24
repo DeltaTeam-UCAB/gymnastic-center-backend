@@ -9,7 +9,7 @@ import { isNotNull } from 'src/utils/null-manager/null-checker'
 import { userNotFoundError } from '../../errors/user.not.found'
 
 export class CurrentUserQuery
-implements ApplicationService<CurrentUserDTO, CurrentUserResponse>
+    implements ApplicationService<CurrentUserDTO, CurrentUserResponse>
 {
     constructor(
         private userRepository: UserRepository,
@@ -27,6 +27,7 @@ implements ApplicationService<CurrentUserDTO, CurrentUserResponse>
             name: user.name,
             phone: user.phone,
             type: user.type,
+            image: user.image,
         })
     }
 }

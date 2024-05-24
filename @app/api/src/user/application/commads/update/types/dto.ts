@@ -7,4 +7,5 @@ export type UpdateUserDTO = {
     password?: string
     phone?: string
     type?: UserType
+    image?: string
 }

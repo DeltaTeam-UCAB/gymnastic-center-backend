@@ -14,4 +14,8 @@ export class CategoryRepositoryMock implements CategoryRepository {
     async findByName(name: string): Promise<Optional<Category>> {
         return this.categories.find((e) => e.name === name)
     }
+
+    async getMany(): Promise<Category[]> {
+        return this.categories
+    }
 }
