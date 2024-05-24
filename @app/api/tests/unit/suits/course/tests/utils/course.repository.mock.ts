@@ -19,4 +19,8 @@ export class CourseRepositoryMock implements CourseRepository {
     async existByTitle(title: string): Promise<boolean> {
         return this.courses.some((e) => e.title === title)
     }
+
+    async Pagination(): Promise<Course[]> {
+        return this.courses
+    }
 }
