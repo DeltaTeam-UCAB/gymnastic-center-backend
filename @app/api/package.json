@@ -16,10 +16,12 @@
     "test:unit": "tscc --project ./tsconfig.test.json && node --test ./dist_test/tests/unit/core/impl/node-testing/runner/setup.js",
     "test:unit2": "tscc --project ./tsconfig.test.json && node --experimental-vm-modules node_modules/jest/bin/jest.js --config ./dist_test/tests/unit/core/impl/jest/runner/jest-unit.js",
     "test:unit3": "tscc --project ./tsconfig.test.json && mocha --recursive ./dist_test/tests/unit/suits/**/suit.tests.js",
+    "test:unit4": "tscc --project ./tsconfig.test.json && pnpx jasmine --config=./jasmine.json",
     "dependencies-graph": "npx depcruise src --include-only \"^src\" --config --output-type dot | dot -T svg > dependency-graph.svg"
   },
   "imports": {
     "#corejest": "./dist_test/tests/unit/core/impl/jest/index.js",
+    "#corejasmine": "./dist_test/tests/unit/core/impl/jasmine/index.js",
     "#coremocha": "./dist_test/tests/unit/core/impl/mocha/index.js",
     "#corenode": "./dist_test/tests/unit/core/impl/node-testing/index.js"
   },
@@ -64,12 +66,14 @@
     "@nestjs/testing": "^9.2.1",
     "@types/express": "^4.17.13",
     "@types/glob": "^8.0.1",
+    "@types/jasmine": "^5.1.4",
     "@types/jest": "29.2.4",
     "@types/multer": "^1.4.11",
     "@types/node": "^20.8.7",
     "@types/nodemailer": "^6.4.15",
     "@types/supertest": "^2.0.11",
     "@types/uuid": "^9.0.0",
+    "jasmine": "^5.1.0",
     "jest": "29.7.0",
     "mocha": "^10.4.0",
     "source-map-support": "^0.5.20",

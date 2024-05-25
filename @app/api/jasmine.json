@@ -1,0 +1,21 @@
+{
+  "spec_dir": "./dist_test/tests/unit",
+
+  "spec_files": [
+    "suits/**/suit.tests.js"
+  ],
+
+  "helpers": [
+    "core/impl/jasmine/runner/setup.js"
+  ],
+  
+  "env": {
+    "failSpecWithNoExpectations": false,
+    
+    "stopSpecOnExpectationFailure": false,
+
+    "stopOnSpecFailure": false,
+
+    "random": false
+  }
+}
