@@ -1,1 +1,2 @@
-suiteDeclare('Notification suit')
+await suiteDeclare('Notification suit')
+export {}

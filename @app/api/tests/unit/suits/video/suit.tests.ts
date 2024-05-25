@@ -1,1 +1,2 @@
-suiteDeclare('Video suit')
+await suiteDeclare('Video suit')
+export {}

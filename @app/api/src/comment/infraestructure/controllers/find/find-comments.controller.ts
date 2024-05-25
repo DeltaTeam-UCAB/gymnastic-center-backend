@@ -5,14 +5,13 @@ import { FindCommentsDTO } from './dto/find.comments.dto'
 import { Get, HttpException, Query, UseGuards } from '@nestjs/common'
 import { FindCommentsQuery } from 'src/comment/application/queries/find/find-comments.query'
 import { CommentPostgresRepository } from '../../repositories/postgres/comment.repository'
-import { PostPostgresByCommentRepository } from '../../repositories/postgres/post.repository'
-import { LessonPostgresByCommentRepository } from '../../repositories/postgres/lesson.repository'
 import { User } from 'src/user/application/models/user'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
 import { ApiHeader } from '@nestjs/swagger'
+import { Optional } from '@mono/types-utils'
 
 @Controller({
     path: 'comment',
@@ -40,8 +39,8 @@ export class FindCommentsController
             new HttpException('Blog and Lesson ID are null', 400)
         }
 
-        let targetType
-        let targetId
+        let targetType: 'POST' | 'LESSON'
+        let targetId: Optional<string>
 
         if (isNotNull(query.blog)) {
             targetType = 'POST'
@@ -58,7 +57,7 @@ export class FindCommentsController
             page: query.page,
             perPage: query.perPage,
             targetType: targetType,
-            targetId: targetId,
+            targetId: targetId!,
             userId: user.id,
         })
         return result.unwrap()
