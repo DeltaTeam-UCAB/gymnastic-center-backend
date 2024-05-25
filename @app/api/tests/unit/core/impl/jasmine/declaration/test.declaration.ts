@@ -1,23 +1,16 @@
 import { SuitDeclaration, TestDeclaration } from '@mono/test-utils'
-import {
-    afterAll,
-    afterEach,
-    beforeAll,
-    beforeEach,
-    describe,
-    it,
-} from '@jest/globals'
+import { globSync } from 'glob'
+import { join } from 'node:path'
 import { getCallStack } from 'src/utils/call-stack/get.call.stack'
 import { objectValues } from '@mono/object-utils'
-import { join } from 'node:path'
-import { globSync } from 'glob'
+import 'jasmine'
 
 const importHook = async (e: string) => {
     const module = await import('file:///' + e)
     return objectValues(module)[0]
 }
 
-export const jestSuitDeclartion: SuitDeclaration = async (
+export const jasmineTestSuitDeclartion: SuitDeclaration = async (
     name: string,
     data = {},
 ) => {
@@ -79,7 +72,7 @@ export const jestSuitDeclartion: SuitDeclaration = async (
                 it(e.name + ' skipped', () => {})
                 return
             }
-            it(e.name, e.body)
+            it(e.name, e.body as any)
         }
         tests.some((e) => e.options?.only)
             ? tests.filter((e) => e.options.only).map(testCallback)
