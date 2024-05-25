@@ -1,5 +1,4 @@
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
-import { ToggleLikeResponse } from 'src/comment/application/commands/toggle-like/types/response'
 import {
     HttpException,
     Param,
@@ -24,7 +23,7 @@ import { CheckCommentExistence } from 'src/comment/application/decorators/check-
     docTitle: 'Comment',
 })
 export class ToggleDislikeController
-    implements
+implements
         ControllerContract<[param: string, user: User], ToggleDislikeResponse>
 {
     constructor(private commentRepository: CommentPostgresRepository) {}

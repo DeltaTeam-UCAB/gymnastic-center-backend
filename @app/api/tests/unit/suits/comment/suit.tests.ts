@@ -1,3 +1,3 @@
-suiteDeclare('Comment suit')
+await suiteDeclare('Comment suit')
 
 export {}
