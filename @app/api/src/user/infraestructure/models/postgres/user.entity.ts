@@ -7,39 +7,39 @@ export class User {
     @PrimaryColumn({
         type: 'uuid',
     })
-        id: string
+    id: string
     @Column({
         type: 'varchar',
         unique: true,
     })
-        email: string
+    email: string
     @Column({
         type: 'varchar',
     })
-        password: string
+    password: string
     @Column({
         type: 'enum',
         enum: userTypes,
         default: 'CLIENT',
     })
-        type: UserType
+    type: UserType
     @Column({
         type: 'varchar',
     })
-        name: string
+    name: string
     @Column({
         type: 'varchar',
         default: '11111111',
     })
-        phone: string
-    @Column({
-        type: 'boolean',
-        default: false,
-    })
-        verified: boolean
+    phone: string
     @Column({
         type: 'varchar',
         nullable: true,
     })
-        code: string
+    code: string
+    @Column({
+        type: 'timestamp',
+        nullable: true,
+    })
+        recoveryTime?: Date
 }

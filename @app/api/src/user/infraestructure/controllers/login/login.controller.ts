@@ -12,11 +12,11 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
 import { LoginCommand } from 'src/user/application/commads/login/login.command'
 
 @Controller({
-    path: 'user',
-    docTitle: 'User',
+    path: 'auth',
+    docTitle: 'Auth',
 })
 export class LoginController
-implements ControllerContract<[body: LoginDTO], LoginResponse>
+    implements ControllerContract<[body: LoginDTO], LoginResponse>
 {
     constructor(
         @Inject(SHA256_CRYPTO) private crypto: Crypto,

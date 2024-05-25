@@ -26,6 +26,7 @@
     "@jest/globals": "^29.7.0",
     "@s-ui/mono": "^2.34.0",
     "@types/node": "^20.8.8",
+    "@types/nodemailer": "^6.4.15",
     "@typescript-eslint/eslint-plugin": "^6.8.0",
     "@typescript-eslint/parser": "^6.8.0",
     "concurrently": "^8.2.2",
