@@ -5,4 +5,5 @@ export type CreatePostDTO = {
     tags: string[]
     category: string
     trainer: string
+    date: Date
 }

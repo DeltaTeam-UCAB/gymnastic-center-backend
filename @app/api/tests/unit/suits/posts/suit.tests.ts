@@ -1,0 +1,3 @@
+suiteDeclare('Post suite')
+
+export {}

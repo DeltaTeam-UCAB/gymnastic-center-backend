@@ -1,6 +1,6 @@
 import { ApplicationService } from 'src/core/application/service/application.service'
-import { CreatePostDTO } from './types/create.post.dto'
-import { CreatePostResponse } from './types/create.post.response'
+import { CreatePostDTO } from './types/dto'
+import { CreatePostResponse } from './types/response'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { PostRepository } from '../../repositories/post.repository'
