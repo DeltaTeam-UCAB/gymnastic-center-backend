@@ -1,3 +1,3 @@
-suiteDeclare('user suite')
+await suiteDeclare('user suite')
 
 export {}

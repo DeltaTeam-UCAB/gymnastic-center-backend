@@ -6,4 +6,5 @@ export type CurrentUserResponse = {
     email: string
     phone: string
     type: UserType
+    image?: string
 }
