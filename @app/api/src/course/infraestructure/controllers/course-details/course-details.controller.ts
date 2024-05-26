@@ -8,7 +8,6 @@ import {
 import { ApiHeader } from '@nestjs/swagger'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
-//import { TrainerPostgresRepository } from 'src/trainer/infraestructure/repositories/postgres/trainer.repository'
 import { CoursePostgresRepository } from '../../repositories/postgres/course.repository'
 import { UserGuard } from 'src/client/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
