@@ -23,9 +23,7 @@ export class deleteLessonController
             }
         >
 {
-    constructor(
-        private lessonRepo: LessonPostgresRepository,
-    ) {}
+    constructor(private lessonRepo: LessonPostgresRepository) {}
 
     @Delete('lessons/:id')
     @ApiHeader({
