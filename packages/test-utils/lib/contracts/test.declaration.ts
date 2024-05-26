@@ -13,7 +13,7 @@ export type SuitDeclaration = (
         afterAll?: (() => void | Promise<void>)[]
         afterEach?: (() => void | Promise<void>)[]
     },
-) => void
+) => void | Promise<void>
 
 export type TestOptions = {
     skip?: boolean

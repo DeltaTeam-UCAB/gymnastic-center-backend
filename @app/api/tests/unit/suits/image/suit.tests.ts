@@ -1,1 +1,2 @@
-suiteDeclare('Image suit')
+await suiteDeclare('Image suit')
+export {}

@@ -8,7 +8,7 @@ import { COURSE_TITLE_EXIST } from '../../../../../src/course/application/errors
 import { createCourse } from './utils/course.factory'
 import { DateProviderMock } from './utils/date.provider.mock'
 
-export const name = 'Should not create user with an existing title'
+export const name = 'Should not create course with an existing title'
 const date = new DateProviderMock(new Date())
 export const body = async () => {
     const courseBaseData = {

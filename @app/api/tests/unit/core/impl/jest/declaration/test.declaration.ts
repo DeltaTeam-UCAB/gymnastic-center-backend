@@ -1,11 +1,11 @@
-import { SuitDeclaration } from '@mono/test-utils'
+import { SuitDeclaration, TestDeclaration } from '@mono/test-utils'
 import {
     afterAll,
     afterEach,
     beforeAll,
     beforeEach,
     describe,
-    test,
+    it,
 } from '@jest/globals'
 import { getCallStack } from 'src/utils/call-stack/get.call.stack'
 import { objectValues } from '@mono/object-utils'
@@ -17,7 +17,7 @@ const importHook = async (e: string) => {
     return objectValues(module)[0]
 }
 
-export const jestSuitDeclartion: SuitDeclaration = (
+export const jestSuitDeclartion: SuitDeclaration = async (
     name: string,
     data = {},
 ) => {
@@ -42,35 +42,47 @@ export const jestSuitDeclartion: SuitDeclaration = (
     const pathsAfterAll: string[] = globSync(
         join(filePath, './*.afterAll.js').replace(/\\/g, '/'),
     )
-    describe(name, async () => {
-        ;[
-            ...(data.afterAll || []),
-            ...(await pathsAfterAll.asyncMap(importHook)),
-        ].map((after) => afterAll(after))
-        ;[
-            ...(data.beforeAll || []),
-            ...(await pathsBeforeAll.asyncMap(importHook)),
-        ].map((before) => beforeAll(before))
-        ;[
-            ...(data.afterEach || []),
-            ...(await pathsAfterEach.asyncMap(importHook)),
-        ].map((after) => afterEach(after))
-        ;[
-            ...(data.beforeEach || []),
-            ...(await pathsBeforeEach.asyncMap(importHook)),
-        ].map((before) => beforeEach(before))
-        await [
-            ...(data.tests || []),
-            ...(await paths.asyncMap(async (e) => {
-                const module = await import('file:///' + e)
-                if (!module.name || !module.body)
-                    throw new Error('Invalid test case from path: ' + e)
-                return module
-            })),
-        ].asyncMap(async (e) => {
-            if (e.options?.skip) return test.skip(e.name, e.body)
-            if (e.options?.only) return test.only(e.name, e.body)
-            return test(e.name, e.body)
-        })
+    const tests = [
+        ...(data.tests || []),
+        ...(await paths.asyncMap(async (e) => {
+            const module = await import('file:///' + e)
+            if (!module.name || !module.body)
+                throw new Error('Invalid test case from path: ' + e)
+            return module
+        })),
+    ]
+    const afterAlls = [
+        ...(data.afterAll || []),
+        ...(await pathsAfterAll.asyncMap(importHook)),
+    ]
+    const beforeAlls = [
+        ...(data.beforeAll || []),
+        ...(await pathsBeforeAll.asyncMap(importHook)),
+    ]
+    const afterEachs = [
+        ...(data.afterEach || []),
+        ...(await pathsAfterEach.asyncMap(importHook)),
+    ]
+    const beforeEachs = [
+        ...(data.beforeEach || []),
+        ...(await pathsBeforeEach.asyncMap(importHook)),
+    ]
+    ;(data.options?.only || data.options?.skip
+        ? describe[Object.keys(data.options)[0]]
+        : describe)(name, () => {
+        afterAlls.map((after) => afterAll(after))
+        beforeAlls.map((before) => beforeAll(before))
+        afterEachs.map((after) => afterEach(after))
+        beforeEachs.map((before) => beforeEach(before))
+        const testCallback = (e: TestDeclaration) => {
+            if (e.options?.skip) {
+                it(e.name + ' skipped', () => {})
+                return
+            }
+            it(e.name, e.body)
+        }
+        tests.some((e) => e.options?.only)
+            ? tests.filter((e) => e.options.only).map(testCallback)
+            : tests.map(testCallback)
     })
 }

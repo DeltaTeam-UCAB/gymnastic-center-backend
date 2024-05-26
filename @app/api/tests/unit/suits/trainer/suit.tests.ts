@@ -1,3 +1,3 @@
-suiteDeclare('Trainer suit')
+await suiteDeclare('Trainer suit')
 
 export {}

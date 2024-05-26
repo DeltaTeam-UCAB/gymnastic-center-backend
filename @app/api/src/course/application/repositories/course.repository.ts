@@ -6,4 +6,5 @@ export interface CourseRepository {
     save(course: Course): Promise<Result<Course>>
     getById(id: string): Promise<Optional<Course>>
     existByTitle(title: string): Promise<boolean>
+    Pagination(limit?: number, offset?: number): Promise<Course[]>
 }

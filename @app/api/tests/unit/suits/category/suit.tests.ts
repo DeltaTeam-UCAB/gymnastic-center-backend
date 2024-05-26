@@ -1,1 +1,2 @@
-suiteDeclare('Category suit')
+await suiteDeclare('Category suit')
+export {}
