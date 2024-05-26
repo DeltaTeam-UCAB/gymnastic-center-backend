@@ -8,5 +8,5 @@ export interface LessonRepository {
     erase(lesson: Lesson): Promise<Result<Lesson>>
     getById(id: string): Promise<Optional<Lesson>>
     existByName(name: string): Promise<boolean>
-    findbyCourse(course: Course): Promise<Lesson[]>
+    findByCourse(course: Course): Promise<Lesson[]>
 }

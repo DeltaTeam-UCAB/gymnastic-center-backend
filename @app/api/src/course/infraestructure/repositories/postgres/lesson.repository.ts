@@ -39,11 +39,10 @@ export class LessonPostgresRepository implements LessonRepository {
         })
     }
 
-    async findbyCourse(course: Course): Promise<Lesson[]> {
+    async findByCourse(course: Course): Promise<Lesson[]> {
         const lessons = await this.lessonProvider.findBy({
             course: course,
         })
         return lessons
     }
-
 }

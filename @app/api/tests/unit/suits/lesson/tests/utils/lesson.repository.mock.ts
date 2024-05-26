@@ -2,6 +2,7 @@ import { Lesson } from '../../../../../../src/course/application/models/lesson'
 import { LessonRepository } from '../../../../../../src/course/application/repositories/lesson.repository'
 import { Result } from '../../../../../../src/core/application/result-handler/result.handler'
 import { Optional } from '@mono/types-utils'
+import { Course } from '../../../../../../src/course/application/models/course'
 
 export class LessonRepositoryMock implements LessonRepository {
     constructor(private lessons: Lesson[] = []) {}
@@ -24,6 +25,10 @@ export class LessonRepositoryMock implements LessonRepository {
 
     async existByName(name: string): Promise<boolean> {
         return this.lessons.some((e) => e.name === name)
+    }
+
+    async findByCourse(course: Course): Promise<Lesson[]> {
+        return this.lessons.filter((e) => e.courseId === course.id)
     }
 
 }

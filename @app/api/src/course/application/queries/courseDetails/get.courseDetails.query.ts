@@ -24,7 +24,7 @@ export class GetCourseDetailsQuery
         if (!isNotNull(course)) return Result.error(courseNotExistError())
         const image = await this.imageRepo.getById(course.imageId)
         if (!isNotNull(image)) return Result.error(imageNotFoundError())
-        const lessons = await this.lessonRepo.findbyCourse(course)
+        const lessons = await this.lessonRepo.findByCourse(course)
         //I did not return an error because it may exists courses that have no lessons yet
 
         return Result.success({
