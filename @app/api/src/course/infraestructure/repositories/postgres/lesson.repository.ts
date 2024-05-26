@@ -32,5 +32,4 @@ export class LessonPostgresRepository implements LessonRepository {
             name,
         })
     }
-
 }

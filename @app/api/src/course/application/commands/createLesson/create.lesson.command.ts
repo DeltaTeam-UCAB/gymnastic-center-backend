@@ -17,9 +17,7 @@ implements ApplicationService<CreateLessonDTO, CreateLessonResponse>
     async execute(
         data: CreateLessonDTO,
     ): Promise<Result<CreateLessonResponse>> {
-        const isNameExist = await this.lessonRepository.existByName(
-            data.name,
-        )
+        const isNameExist = await this.lessonRepository.existByName(data.name)
         if (isNameExist) return Result.error(lessonNameExistError())
         const lessonId = this.idGenerator.generate()
         const lesson = {
