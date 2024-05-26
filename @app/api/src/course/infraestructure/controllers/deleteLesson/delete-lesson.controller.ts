@@ -1,17 +1,18 @@
 import { Delete, HttpException, Param, UseGuards } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { Lesson } from '../../models/postgres/lesson.entity'
-import { Repository } from 'typeorm'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { ApiHeader } from '@nestjs/swagger'
-import { COURSE_DOC_PREFIX, COURSE_ROUTE_PREFIX } from '../prefix'
+import { LESSON_DOC_PREFIX, LESSON_ROUTE_PREFIX } from '../prefix'
+import { LessonPostgresRepository } from '../../repositories/postgres/lesson.repository'
+import { DeleteLessonResponse } from 'src/course/application/commands/deleteLesson/types/response'
+import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
+import { DeleteLessonCommand } from 'src/course/application/commands/deleteLesson/delete.lesson.command'
 
 @Controller({
-    path: COURSE_ROUTE_PREFIX,
-    docTitle: COURSE_DOC_PREFIX,
+    path: LESSON_ROUTE_PREFIX,
+    docTitle: LESSON_DOC_PREFIX,
 })
 export class deleteLessonController
     implements
@@ -22,9 +23,7 @@ export class deleteLessonController
             }
         >
 {
-    constructor(
-        @InjectRepository(Lesson) private lessonRepo: Repository<Lesson>,
-    ) {}
+    constructor(private lessonRepo: LessonPostgresRepository) {}
 
     @Delete('lessons/:id')
     @ApiHeader({
@@ -32,13 +31,11 @@ export class deleteLessonController
     })
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
-    async execute(@Param('id') id: string): Promise<{ id: string }> {
-        const lesson = await this.lessonRepo.findOneBy({ id })
-        if (!lesson) {
-            throw new HttpException('Lesson not found', 404)
-        }
-        const deleted = lesson.id
-        await this.lessonRepo.delete(lesson.id)
-        return { id: deleted }
+    async execute(@Param('id') id: string): Promise<DeleteLessonResponse> {
+        const result = await new ErrorDecorator(
+            new DeleteLessonCommand(this.lessonRepo),
+            (e) => new HttpException(e.message, 400),
+        ).execute(id)
+        return result.unwrap()
     }
 }

@@ -50,7 +50,7 @@ export class Lesson {
     @Column({
         type: 'numeric',
     })
-    waitTime?: number | null
+    waitTime?: number
     @Column({
         type: 'numeric',
     })
