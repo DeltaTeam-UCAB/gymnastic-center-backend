@@ -12,6 +12,12 @@ export class LessonRepositoryMock implements LessonRepository {
         return Result.success(lesson)
     }
 
+    async erase(lesson: Lesson): Promise<Result<Lesson>> {
+        this.lessons = this.lessons.filter((e) => e.id !== lesson.id)
+        this.lessons.pop()
+        return Result.success(lesson)
+    }
+
     async getById(id: string): Promise<Optional<Lesson>> {
         return this.lessons.find((e) => e.id === id)
     }

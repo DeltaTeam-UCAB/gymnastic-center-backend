@@ -20,6 +20,11 @@ export class LessonPostgresRepository implements LessonRepository {
         return Result.success(lesson)
     }
 
+    async erase(lesson: Lesson): Promise<Result<Lesson>> {
+        await this.lessonProvider.delete(lesson.id)
+        return Result.success(lesson)
+    }
+
     async getById(id: string): Promise<Optional<Lesson>> {
         const lesson = await this.lessonProvider.findOneBy({
             id,
