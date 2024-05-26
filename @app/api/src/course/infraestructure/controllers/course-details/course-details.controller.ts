@@ -16,6 +16,7 @@ import { GetCourseDetailsQuery } from 'src/course/application/queries/courseDeta
 import { courseDetailsResponse } from 'src/course/application/queries/courseDetails/types/response'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { COURSE_DOC_PREFIX, COURSE_ROUTE_PREFIX } from '../prefix'
+import { LessonPostgresRepository } from '../../repositories/postgres/lesson.repository'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -27,6 +28,7 @@ export class CourseDetailsController
     constructor(
         private courseRepo: CoursePostgresRepository,
         private imageRepo: ImagePostgresRepository,
+        private lessonRepo: LessonPostgresRepository,
     ) {}
     @Get('details/:id')
     @Roles('CLIENT')
@@ -38,7 +40,11 @@ export class CourseDetailsController
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<courseDetailsResponse> {
         const result = await new ErrorDecorator(
-            new GetCourseDetailsQuery(this.courseRepo, this.imageRepo),
+            new GetCourseDetailsQuery(
+                this.courseRepo,
+                this.imageRepo,
+                this.lessonRepo,
+            ),
             (e) => new HttpException(e.message, 400),
         ).execute({
             courseId: id,
