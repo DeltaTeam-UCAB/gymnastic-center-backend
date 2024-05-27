@@ -6,6 +6,7 @@ import { Lesson } from 'src/course/application/models/lesson'
 import { LessonRepository } from 'src/course/application/repositories/lesson.repository'
 import { Lesson as UserORM } from '../../models/postgres/lesson.entity'
 import { Repository } from 'typeorm'
+import { Course } from 'src/course/application/models/course'
 
 @Injectable()
 export class LessonPostgresRepository implements LessonRepository {
@@ -36,5 +37,12 @@ export class LessonPostgresRepository implements LessonRepository {
         return this.lessonProvider.existsBy({
             name,
         })
+    }
+
+    async findByCourse(course: Course): Promise<Lesson[]> {
+        const lessons = await this.lessonProvider.findBy({
+            course: course,
+        })
+        return lessons
     }
 }
