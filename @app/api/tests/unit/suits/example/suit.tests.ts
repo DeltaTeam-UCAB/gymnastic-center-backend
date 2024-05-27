@@ -1,3 +1,3 @@
-suiteDeclare('example')
+await suiteDeclare('example')
 
 export {}
