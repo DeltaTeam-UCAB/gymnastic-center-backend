@@ -1,10 +1,16 @@
 export type CreateCourseDTO = {
     title: string
     description: string
-    instructor: string
-    calories: number
-    creationDate: Date
+    trainer: string
     category: string
-    videoId?: string
-    imageId: string
+    image: string
+    level: string
+    tags: string[]
+    lessons: {
+        title: string
+        content: string
+        video?: string
+        image?: string
+        order: number
+    }[]
 }

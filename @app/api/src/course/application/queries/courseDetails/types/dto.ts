@@ -1,3 +1,3 @@
-export type courseDetailsDto = {
-    courseId: string
+export type GetCourseDetailsDTO = {
+    id: string
 }

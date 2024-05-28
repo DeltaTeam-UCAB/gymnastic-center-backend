@@ -1,12 +1,14 @@
+import { Lesson } from './lesson'
+
 export type Course = {
     id: string
     title: string
     description: string
-    instructor: string
-    calories: number
-    creationDate: Date
-    updateDate?: Date
+    trainer: string
+    date: Date
     category: string
-    videoId?: string
-    imageId: string
+    image: string
+    level: string
+    tags: string[]
+    lessons: Lesson[]
 }

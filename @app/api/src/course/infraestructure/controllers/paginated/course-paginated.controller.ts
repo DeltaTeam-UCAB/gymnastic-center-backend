@@ -1,37 +1,48 @@
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { COURSE_ROUTE_PREFIX, COURSE_DOC_PREFIX } from '../prefix'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
-//import { PaginationDtoentry } from 'src/course/application/query/types/paginationDTO_entry'
-import { paginationResponse } from 'src/course/application/query/types/paginationDTO_response'
 import { Get, Query, UseGuards } from '@nestjs/common'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { ApiHeader } from '@nestjs/swagger'
 import { CoursePostgresRepository } from '../../repositories/postgres/course.repository'
-import { PaginationCourseService } from 'src/course/application/query/pagination.course.query'
+import { GetCoursesManyQuery } from 'src/course/application/queries/many/course.many.query'
+import { ImagePostgresByCourseRepository } from '../../repositories/postgres/image.repository'
+import { GetCoursesManyResponse } from 'src/course/application/queries/many/types/response'
+import { TrainerPostgresByCourseRepository } from '../../repositories/postgres/trainer.repository'
+import { CategoryPostgresByCourseRepository } from '../../repositories/postgres/category.repository'
 @Controller({
     path: COURSE_ROUTE_PREFIX,
     docTitle: COURSE_DOC_PREFIX,
 })
-export class PaginationController
-implements
-        ControllerContract<[limit: number, offset: number], paginationResponse>
+export class CoursesManyController
+    implements
+        ControllerContract<
+            [limit: number, offset: number],
+            GetCoursesManyResponse
+        >
 {
-    constructor(private courseRepository: CoursePostgresRepository) {}
+    constructor(
+        private courseRepository: CoursePostgresRepository,
+        private imageRepository: ImagePostgresByCourseRepository,
+        private trainerRepository: TrainerPostgresByCourseRepository,
+        private categoryRepository: CategoryPostgresByCourseRepository,
+    ) {}
 
-    @Get('pagination')
-    @Roles('ADMIN')
+    @Get('many')
     @ApiHeader({
         name: 'auth',
     })
-    @UseGuards(UserGuard, RolesGuard)
+    @UseGuards(UserGuard)
     async execute(
-        @Query('limit') limit: number,
-        @Query('offset') offset: number,
-    ): Promise<paginationResponse> {
-        const result = await new PaginationCourseService(
+        @Query('page') page: number,
+        @Query('perPage') perPage: number,
+    ): Promise<GetCoursesManyResponse> {
+        const result = await new GetCoursesManyQuery(
             this.courseRepository,
-        ).execute({ limit, offset })
+            this.categoryRepository,
+            this.trainerRepository,
+            this.imageRepository,
+        ).execute({ page, perPage })
 
         return result.unwrap()
     }

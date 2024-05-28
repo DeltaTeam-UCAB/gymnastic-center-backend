@@ -1,3 +1,3 @@
-await suiteDeclare('course suite')
+await suiteDeclare('Course suite')
 
 export {}

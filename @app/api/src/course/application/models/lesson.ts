@@ -1,10 +1,8 @@
 export type Lesson = {
     id: string
-    name: string
-    description: string
-    courseId: string
-    videoId: string
+    title: string
+    content: string
+    video?: string
+    image?: string
     order: number
-    waitTime?: number
-    burnedCalories: number
 }

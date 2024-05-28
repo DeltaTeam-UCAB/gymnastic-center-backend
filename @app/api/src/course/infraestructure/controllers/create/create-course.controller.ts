@@ -13,6 +13,17 @@ import { CoursePostgresRepository } from '../../repositories/postgres/course.rep
 import { CreateCourseResponse } from 'src/course/application/commands/createCourse/types/response'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { CreateCourseCommand } from 'src/course/application/commands/createCourse/create.course.command'
+import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
+import { CourseTitleNotExistDecorator } from 'src/course/application/commands/createCourse/decorators/title.exist.decorator'
+import { CategoryPostgresByCourseRepository } from '../../repositories/postgres/category.repository'
+import { TrainerPostgresByCourseRepository } from '../../repositories/postgres/trainer.repository'
+import { ImagePostgresByCourseRepository } from '../../repositories/postgres/image.repository'
+import { VideoPostgresByCourseRepository } from '../../repositories/postgres/video.repository'
+import { CategoryExistDecorator } from 'src/course/application/commands/createCourse/decorators/category.exist.decorator'
+import { TrainerExistDecorator } from 'src/course/application/commands/createCourse/decorators/trainer.exist.decorator'
+import { ImagesExistDecorator } from 'src/course/application/commands/createCourse/decorators/images.exist.decorator'
+import { VideosExistDecorator } from 'src/course/application/commands/createCourse/decorators/videos.exist.decorator'
+import { COURSE_TITLE_EXIST } from 'src/course/application/errors/course.title.exist'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -30,6 +41,10 @@ export class CreateCourseController
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
         private courseRepo: CoursePostgresRepository,
+        private categoryRepository: CategoryPostgresByCourseRepository,
+        private trainerRepository: TrainerPostgresByCourseRepository,
+        private imageRepository: ImagePostgresByCourseRepository,
+        private videoRepository: VideoPostgresByCourseRepository,
     ) {}
 
     @Post('create')
@@ -41,9 +56,38 @@ export class CreateCourseController
     async execute(
         @Body() body: CreateCourseDTO,
     ): Promise<CreateCourseResponse> {
+        const commandBase = new CreateCourseCommand(
+            this.idGen,
+            this.courseRepo,
+            new ConcreteDateProvider(),
+        )
+        const commandTitleValidation = new CourseTitleNotExistDecorator(
+            commandBase,
+            this.courseRepo,
+        )
+        const commandWithCategoryValidator = new CategoryExistDecorator(
+            commandTitleValidation,
+            this.categoryRepository,
+        )
+        const commandWithTrainerValidation = new TrainerExistDecorator(
+            commandWithCategoryValidator,
+            this.trainerRepository,
+        )
+        const commandWithImageValidator = new ImagesExistDecorator(
+            commandWithTrainerValidation,
+            this.imageRepository,
+        )
+        const commandWithVideoValidator = new VideosExistDecorator(
+            commandWithImageValidator,
+            this.videoRepository,
+        )
         const result = await new ErrorDecorator(
-            new CreateCourseCommand(this.idGen, this.courseRepo),
-            (e) => new HttpException(e.message, 400),
+            commandWithVideoValidator,
+            (e) => {
+                if (e.name === COURSE_TITLE_EXIST)
+                    return new HttpException(e.message, 400)
+                return new HttpException(e.message, 404)
+            },
         ).execute(body)
         return result.unwrap()
     }

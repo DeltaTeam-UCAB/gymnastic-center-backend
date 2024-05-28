@@ -20,7 +20,7 @@ export class CourseRepositoryMock implements CourseRepository {
         return this.courses.some((e) => e.title === title)
     }
 
-    async Pagination(): Promise<Course[]> {
+    async many(): Promise<Course[]> {
         return this.courses
     }
 }
