@@ -1,4 +1,4 @@
-import { Lesson } from 'src/course/application/models/lesson'
+import { Lesson } from "src/course/application/models/lesson"
 export type courseDetailsResponse = {
     title: string
     description: string
