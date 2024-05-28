@@ -7,7 +7,7 @@ export class PostImages {
     @Column({
         type: 'uuid',
     })
-        postId: string
+        blogId: string
 
     @Column({
         type: 'uuid',

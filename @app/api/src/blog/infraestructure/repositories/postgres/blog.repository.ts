@@ -19,11 +19,12 @@ export class BlogPostgresRepository implements BlogRepository {
     ) {}
     async save(blogs: Blog): Promise<Result<Blog>> {
         await this.blogProvider.upsert(this.blogProvider.create(blogs), ['id'])
-        const id = crypto.randomUUID()
+        // await this.blogImagesProvider.delete({ blogId: blogs.id })
         const blogImagesEntities = blogs.images.map((imageId) => {
+            const id = crypto.randomUUID()
             const blogImagesEntity = new PostImages()
             blogImagesEntity.id = id
-            blogImagesEntity.postId = blogs.id
+            blogImagesEntity.blogId = blogs.id
             blogImagesEntity.imageId = imageId
             return blogImagesEntity
         })
@@ -51,5 +52,25 @@ export class BlogPostgresRepository implements BlogRepository {
                 }),
             )
         return blog
+    }
+
+    async getAll(limit?: number, offset?: number): Promise<Blog[]> {
+        const blogs = await this.blogProvider.find({
+            take: limit,
+            skip: offset,
+        })
+        const blogsWithImages = await Promise.all(
+            blogs.map(async (blog) => {
+                const images = await this.blogImagesProvider.findBy({
+                    blogId: blog.id,
+                })
+                const imageIds = images.map((img) => img.imageId)
+                return {
+                    ...blog,
+                    images: imageIds,
+                }
+            }),
+        )
+        return blogsWithImages
     }
 }

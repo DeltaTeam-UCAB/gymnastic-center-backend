@@ -46,7 +46,7 @@ implements ControllerContract<[id: string], Posts & { images: Image[] }>
             ...post,
             images: await this.postImageRepo
                 .findBy({
-                    postId: post.id,
+                    blogId: post.id,
                 })
                 .map((e) =>
                     this.imageRepo.findOneByOrFail({

@@ -15,7 +15,6 @@ implements ApplicationService<CreateBlogDTO, CreateBlogResponse>
         private blogRepository: BlogRepository,
     ) {}
     async execute(data: CreateBlogDTO): Promise<Result<CreateBlogResponse>> {
-        //console.log(this.blogRepository.existByTitle('hola'))
         const isTitleExist = await this.blogRepository.existByTitle(data.title)
         if (isTitleExist) return Result.error(blogTitleExistError())
         const blogId = this.idGenerator.generate()

@@ -6,4 +6,5 @@ export interface BlogRepository {
     save(blog: Blog): Promise<Result<Blog>>
     existByTitle(title: string): Promise<boolean>
     getById(id: string): Promise<Optional<Blog>>
+    getAll(limit?: number, offset?: number): Promise<Blog[]>
 }

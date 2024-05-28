@@ -17,4 +17,8 @@ export class BlogRepositoryMock implements BlogRepository {
     async getById(id: string): Promise<Optional<Blog>> {
         return this.blogs.find((e) => e.id === id)
     }
+
+    async getAll(): Promise<Blog[]> {
+        return structuredClone(this.blogs)
+    }
 }
