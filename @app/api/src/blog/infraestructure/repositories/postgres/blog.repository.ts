@@ -19,7 +19,7 @@ export class BlogPostgresRepository implements BlogRepository {
     ) {}
     async save(blogs: Blog): Promise<Result<Blog>> {
         await this.blogProvider.upsert(this.blogProvider.create(blogs), ['id'])
-        // await this.blogImagesProvider.delete({ blogId: blogs.id })
+        await this.blogImagesProvider.delete({ blogId: blogs.id })
         const blogImagesEntities = blogs.images.map((imageId) => {
             const id = crypto.randomUUID()
             const blogImagesEntity = new PostImages()
@@ -42,16 +42,15 @@ export class BlogPostgresRepository implements BlogRepository {
     }
 
     async getById(id: string): Promise<Optional<Blog>> {
-        const blog = await this.blogProvider
-            .findOneBy({
-                id,
-            })
-            .map((img) =>
-                this.blogImagesProvider.findOneByOrFail({
-                    id: (img as PostImages).id,
-                }),
-            )
-        return blog
+        const blog = await this.blogProvider.findOneBy({ id })
+        const images = await this.blogImagesProvider.findBy({
+            blogId: blog!.id,
+        })
+        const imagesIds = await images.map((img) => img.imageId)
+        return {
+            ...blog!,
+            images: imagesIds,
+        }
     }
 
     async getAll(limit?: number, offset?: number): Promise<Blog[]> {

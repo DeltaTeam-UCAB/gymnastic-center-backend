@@ -1,32 +1,21 @@
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
-import { Posts } from '../../models/postgres/post.entity'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { PostImages } from '../../models/postgres/post-images.entity'
-import { Get, NotFoundException, Param, UseGuards } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { Get, Param, ParseUUIDPipe, UseGuards } from '@nestjs/common'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { ApiHeader } from '@nestjs/swagger'
-import { Image } from 'src/image/infraestructure/models/postgres/image.entity'
 import { BLOG_DOC_PREFIX, BLOG_ROUTE_PREFIX } from '../prefix'
+import { BlogPostgresRepository } from '../../repositories/postgres/blog.repository'
+import { GetBlogByIdResponse } from 'src/blog/application/queries/getById/types/response'
+import { GetBlogByIdQuery } from 'src/blog/application/queries/getById/getById.blog'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
     docTitle: BLOG_DOC_PREFIX,
 })
 export class GetPostByIdController
-implements ControllerContract<[id: string], Posts & { images: Image[] }>
+implements ControllerContract<[id: string], GetBlogByIdResponse>
 {
-    constructor(
-        @InjectRepository(Posts)
-        private readonly postRepo: Repository<Posts>,
-
-        @InjectRepository(PostImages)
-        private readonly postImageRepo: Repository<PostImages>,
-
-        @InjectRepository(Image)
-        private readonly imageRepo: Repository<Image>,
-    ) {}
+    constructor(private blogRepository: BlogPostgresRepository) {}
 
     @Get('getById/:id')
     @UseGuards(UserGuard)
@@ -34,25 +23,11 @@ implements ControllerContract<[id: string], Posts & { images: Image[] }>
         name: 'auth',
     })
     async execute(
-        @Param('id') id: string,
-    ): Promise<Posts & { images: Image[] }> {
-        const post = await this.postRepo.findOneBy({ id })
-
-        if (!post) {
-            throw new NotFoundException(`Post with ID ${id} not found`)
-        }
-
-        return {
-            ...post,
-            images: await this.postImageRepo
-                .findBy({
-                    blogId: post.id,
-                })
-                .map((e) =>
-                    this.imageRepo.findOneByOrFail({
-                        id: e.imageId,
-                    }),
-                ),
-        }
+        @Param('id', ParseUUIDPipe) id: string,
+    ): Promise<GetBlogByIdResponse> {
+        const result = await new GetBlogByIdQuery(this.blogRepository).execute({
+            id,
+        })
+        return result.unwrap()
     }
 }
