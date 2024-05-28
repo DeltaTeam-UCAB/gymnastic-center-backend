@@ -1,40 +1,57 @@
-import { courseDetailsResponse } from './types/response'
-import { courseDetailsDto } from './types/dto'
+import { GetCourseDetailsResponse } from './types/response'
+import { GetCourseDetailsDTO } from './types/dto'
 import { ApplicationService } from 'src/core/application/service/application.service'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { CourseRepository } from '../../repositories/course.repository'
-import { ImageRepository } from '../../../../image/application/repositories/image.repository'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
 import { imageNotFoundError } from 'src/category/application/errors/image.not.found'
-import { LessonRepository } from '../../repositories/lesson.repository'
 import { courseNotExistError } from '../../errors/course.not.exist'
+import { VideoRepository } from '../../repositories/video.repository'
+import { TrainerRepository } from '../../repositories/trainer.repository'
+import { CategoryRepository } from '../../repositories/category.repository'
+import { ImageRepository } from '../../repositories/image.repository'
 
 export class GetCourseDetailsQuery
-    implements ApplicationService<courseDetailsDto, courseDetailsResponse>
+    implements
+        ApplicationService<GetCourseDetailsDTO, GetCourseDetailsResponse>
 {
     constructor(
-        private courseRepo: CourseRepository,
-        private imageRepo: ImageRepository,
-        private lessonRepo: LessonRepository,
+        private courseRepository: CourseRepository,
+        private imageRepository: ImageRepository,
+        private videoRepository: VideoRepository,
+        private trainerRepository: TrainerRepository,
+        private categoryRepository: CategoryRepository,
     ) {}
     async execute(
-        data: courseDetailsDto,
-    ): Promise<Result<courseDetailsResponse>> {
-        const course = await this.courseRepo.getById(data.courseId)
+        data: GetCourseDetailsDTO,
+    ): Promise<Result<GetCourseDetailsResponse>> {
+        const course = await this.courseRepository.getById(data.id)
         if (!isNotNull(course)) return Result.error(courseNotExistError())
-        const image = await this.imageRepo.getById(course.imageId)
+        const image = await this.imageRepository.getById(course.image)
         if (!isNotNull(image)) return Result.error(imageNotFoundError())
-        const lessons = await this.lessonRepo.findByCourse(course)
-        //I did not return an error because it may exists courses that have no lessons yet
+        const category = await this.categoryRepository.getById(course.category)
+        const trainer = await this.trainerRepository.getById(course.trainer)
+
+        const getOptionalImage = async (image?: string) =>
+            image ? (await this.imageRepository.getById(image))?.src : undefined
+
+        const getOptionalVideo = async (video?: string) =>
+            video ? (await this.videoRepository.getById(video))?.src : undefined
 
         return Result.success({
+            tags: course.tags,
+            level: course.level,
+            id: course.id,
             title: course.title,
             description: course.description,
-            calories: course.calories,
-            instructor: course.instructor,
-            category: course.category,
+            trainer: trainer!,
+            category: category!.name,
             image: image.src,
-            lessons: lessons,
+            lessons: await course.lessons.asyncMap(async (lesson) => ({
+                ...lesson,
+                image: await getOptionalImage(lesson.image),
+                video: await getOptionalVideo(lesson.video),
+            })),
         })
     }
 }

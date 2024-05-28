@@ -1,5 +1,3 @@
-import { Image } from 'src/comment/infraestructure/models/postgres/image.entity'
-import { Video } from 'src/comment/infraestructure/models/postgres/video.entity'
 import {
     Column,
     CreateDateColumn,
@@ -7,15 +5,17 @@ import {
     JoinColumn,
     ManyToOne,
     PrimaryColumn,
-    UpdateDateColumn,
 } from 'typeorm'
+import { Image } from './image.entity'
+import { Category } from './category.entity'
+import { Trainer } from './trainer.entity'
 
 @Entity()
 export class Course {
     @PrimaryColumn({
         type: 'uuid',
     })
-    id: string
+        id: string
     @Column({
         type: 'varchar',
         unique: true,
@@ -28,39 +28,36 @@ export class Course {
     @Column({
         type: 'varchar',
     })
-    instructor: string
-    @Column({
-        type: 'numeric',
-    })
-    calories: number
+    level: string
     @CreateDateColumn({
         type: 'date',
     })
-    creationDate: Date
-    @UpdateDateColumn({
-        type: 'date',
-    })
-    updateDate: Date
+    date: Date
     @Column({
         type: 'varchar',
     })
     category: string
-    @ManyToOne(() => Video, (video) => video.id)
-    @JoinColumn()
-    video?: Video
-    @Column({
-        type: 'uuid',
-        nullable: true,
+    @ManyToOne(() => Category, (category) => category.id)
+    @JoinColumn({
+        name: 'category',
     })
-    videoId?: string
+    categoryEntity: Category
     @ManyToOne(() => Image, (image) => image.id)
     @JoinColumn({
-        name: 'imageId',
+        name: 'image',
     })
-    image: Image
+    imageEntity: Image
+    @ManyToOne(() => Trainer, (trainer) => trainer.id)
+    @JoinColumn({
+        name: 'trainer',
+    })
+    trainerEnt: Trainer
     @Column({
         type: 'uuid',
     })
-    imageId: string
-    // tags:  Lista de tags para el curso, falta crear clase tags.
+        trainer: string
+    @Column({
+        type: 'uuid',
+    })
+    image: string
 }

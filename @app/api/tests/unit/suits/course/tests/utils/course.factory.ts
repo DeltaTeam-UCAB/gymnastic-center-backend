@@ -1,26 +1,26 @@
 import { Course } from '../../../../../../src/course/application/models/course'
-import { DateProviderMock } from './date.provider.mock'
+import { Lesson } from '../../../../../../src/course/application/models/lesson'
 
-const date = new DateProviderMock(new Date())
-export const createCourse = (data?: {
+export const createCourse = (data: {
     id?: string
     title?: string
     description?: string
-    instructor?: string
-    calories?: number
+    trainer: string
     creationDate?: Date
-    category?: string
+    category: string
     videoId?: string
     imageId?: string
+    lessons?: Lesson[]
+    tags?: string[]
 }): Course => ({
     id: data?.id ?? '1234567890',
     title: data?.title ?? 'test course',
     description: data?.description ?? 'test made for course description',
-    instructor: data?.instructor ?? 'Instructor name',
-    calories: data?.calories ?? 1234,
-    creationDate: data?.creationDate ?? date.current,
-    category: data?.category ?? 'category test',
-    videoId: data?.videoId ?? '9876543210',
-    imageId: data?.imageId ?? '6543210987',
+    trainer: data.trainer,
+    date: data?.creationDate ?? new Date(),
+    category: data.category,
+    image: data?.imageId ?? '6543210987',
+    lessons: data.lessons ?? [],
+    level: '',
+    tags: data.tags ?? [],
 })
-

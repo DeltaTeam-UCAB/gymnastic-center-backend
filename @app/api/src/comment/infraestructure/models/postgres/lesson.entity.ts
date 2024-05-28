@@ -1,4 +1,3 @@
-import { Video } from 'src/comment/infraestructure/models/postgres/video.entity'
 import {
     Column,
     Entity,
@@ -8,6 +7,8 @@ import {
     PrimaryColumn,
 } from 'typeorm'
 import { Course } from './course.entity'
+import { Video } from './video.entity'
+import { Image } from './image.entity'
 
 @Entity()
 export class Lesson {
@@ -18,11 +19,11 @@ export class Lesson {
     @Column({
         type: 'varchar',
     })
-    name: string
+    title: string
     @Column({
         type: 'varchar',
     })
-    description: string
+    content: string
     @ManyToOne(() => Course, (course) => course.id)
     @JoinColumn({
         name: 'courseId',
@@ -36,23 +37,26 @@ export class Lesson {
 
     @OneToMany(() => Video, (video) => video.id)
     @JoinColumn({
-        name: 'videoId',
+        name: 'video',
     })
-    video: Video
+    videoEntity?: Video
     @Column({
         type: 'uuid',
+        nullable: true,
     })
-    videoId: string
+    video?: string
     @Column({
         type: 'numeric',
     })
     order: number
-    @Column({
-        type: 'numeric',
+    @ManyToOne(() => Image, (image) => image.id)
+    @JoinColumn({
+        name: 'image',
     })
-    waitTime?: number | null
+    imageEntity?: Image
     @Column({
-        type: 'numeric',
+        type: 'uuid',
+        nullable: true,
     })
-    burnedCalories: number
+    image?: string
 }

@@ -1,11 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import {
-    IsDateString,
-    IsNumber,
-    IsOptional,
-    IsString,
-    IsUUID,
-} from 'class-validator'
+import { IsArray, IsString, IsUUID } from 'class-validator'
+import { CreateLessonDTO } from './create-lesson'
 
 export class CreateCourseDTO {
     @ApiProperty()
@@ -15,22 +10,22 @@ export class CreateCourseDTO {
     @IsString()
     description: string
     @ApiProperty()
-    @IsNumber()
-    calories: number
-    @ApiProperty()
     @IsString()
-    instructor: string
+    trainer: string
     @ApiProperty()
     @IsString()
     category: string
     @ApiProperty()
-    @IsDateString()
-    creationDate: Date
-    @ApiProperty()
-    @IsOptional()
     @IsUUID()
-    videoId?: string
+    image: string
     @ApiProperty()
-    @IsUUID()
-    imageId: string
+    @IsArray()
+    tags: string[]
+    @ApiProperty()
+    @IsString()
+    level: string
+    @ApiProperty({
+        type: [CreateLessonDTO],
+    })
+    lessons: CreateLessonDTO[]
 }
