@@ -1,0 +1,3 @@
+suiteDeclare('Blog suite')
+
+export {}
