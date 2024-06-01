@@ -9,7 +9,6 @@ import { ApiHeader } from '@nestjs/swagger'
 import { COURSE_ROUTE_PREFIX } from '../prefix'
 import { COURSE_DOC_PREFIX } from '../prefix'
 import { CreateCourseDTO } from './dto/create-course.dto'
-import { CoursePostgresRepository } from '../../repositories/postgres/course.repository'
 import { CreateCourseResponse } from 'src/course/application/commands/createCourse/types/response'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { CreateCourseCommand } from 'src/course/application/commands/createCourse/create.course.command'
@@ -24,6 +23,9 @@ import { TrainerExistDecorator } from 'src/course/application/commands/createCou
 import { ImagesExistDecorator } from 'src/course/application/commands/createCourse/decorators/images.exist.decorator'
 import { VideosExistDecorator } from 'src/course/application/commands/createCourse/decorators/videos.exist.decorator'
 import { COURSE_TITLE_EXIST } from 'src/course/application/errors/course.title.exist'
+import { PostgresTransactionProvider } from 'src/core/infraestructure/repositories/transaction/postgres.transaction'
+import { CoursePostgresTransactionalRepository } from '../../repositories/postgres/course.repository.transactional'
+import { TransactionHandlerDecorator } from 'src/core/application/decorators/transaction.handler.decorator'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -40,11 +42,11 @@ export class CreateCourseController
 {
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
-        private courseRepo: CoursePostgresRepository,
         private categoryRepository: CategoryPostgresByCourseRepository,
         private trainerRepository: TrainerPostgresByCourseRepository,
         private imageRepository: ImagePostgresByCourseRepository,
         private videoRepository: VideoPostgresByCourseRepository,
+        private transactionProvider: PostgresTransactionProvider,
     ) {}
 
     @Post('create')
@@ -56,14 +58,18 @@ export class CreateCourseController
     async execute(
         @Body() body: CreateCourseDTO,
     ): Promise<CreateCourseResponse> {
+        const manager = await this.transactionProvider.create()
+        const courseRepository = new CoursePostgresTransactionalRepository(
+            manager.queryRunner,
+        )
         const commandBase = new CreateCourseCommand(
             this.idGen,
-            this.courseRepo,
+            courseRepository,
             new ConcreteDateProvider(),
         )
         const commandTitleValidation = new CourseTitleNotExistDecorator(
             commandBase,
-            this.courseRepo,
+            courseRepository,
         )
         const commandWithCategoryValidator = new CategoryExistDecorator(
             commandTitleValidation,
@@ -82,7 +88,10 @@ export class CreateCourseController
             this.videoRepository,
         )
         const result = await new ErrorDecorator(
-            commandWithVideoValidator,
+            new TransactionHandlerDecorator(
+                commandWithVideoValidator,
+                manager.transactionHandler,
+            ),
             (e) => {
                 if (e.name === COURSE_TITLE_EXIST)
                     return new HttpException(e.message, 400)
