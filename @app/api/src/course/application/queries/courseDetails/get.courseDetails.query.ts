@@ -46,6 +46,7 @@ export class GetCourseDetailsQuery
             description: course.description,
             trainer: trainer!,
             category: category!.name,
+            date: course.date,
             image: image.src,
             lessons: await course.lessons.asyncMap(async (lesson) => ({
                 ...lesson,
