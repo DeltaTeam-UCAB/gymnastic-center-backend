@@ -10,6 +10,7 @@ export type GetCourseDetailsResponse = {
     category: string
     image: string
     level: string
+    date: Date
     lessons: Lesson[]
     tags: string[]
 }
