@@ -39,11 +39,11 @@ export class FindCommentsController
             new HttpException('Blog and Lesson ID are null', 400)
         }
 
-        let targetType: 'POST' | 'LESSON'
+        let targetType: 'BLOG' | 'LESSON'
         let targetId: Optional<string>
 
         if (isNotNull(query.blog)) {
-            targetType = 'POST'
+            targetType = 'BLOG'
             targetId = query.blog
         } else {
             targetType = 'LESSON'

@@ -15,7 +15,7 @@ export const createComment = (data?: {
 }): Comment => ({
     id: data?.id ?? '123456789',
     targetId: data?.targetId ?? '1234',
-    targetType: data?.targetType ?? 'POST',
+    targetType: data?.targetType ?? 'BLOG',
     creationDate: data?.creationDate ?? new Date(),
     description: data?.description ?? 'test description',
     dislikes: data?.dislikes ?? [],

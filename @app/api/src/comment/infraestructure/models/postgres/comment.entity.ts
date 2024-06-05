@@ -1,5 +1,5 @@
 import { Lesson } from 'src/comment/infraestructure/models/postgres/lesson.entity'
-import { Posts } from 'src/comment/infraestructure/models/postgres/post.entity'
+import { Blog } from 'src/comment/infraestructure/models/postgres/blog.entity'
 import { User } from 'src/comment/infraestructure/models/postgres/user.entity'
 import {
     Column,
@@ -35,10 +35,10 @@ export class Comment {
         type: 'uuid',
         nullable: true,
     })
-    postId: string
-    @ManyToMany(() => Posts)
+    blogId: string
+    @ManyToMany(() => Blog)
     @JoinColumn()
-    post: Posts
+    blog: Blog
     @Column({
         type: 'varchar',
     })

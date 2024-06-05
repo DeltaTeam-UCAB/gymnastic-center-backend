@@ -2,7 +2,7 @@ import { ApplicationService } from 'src/core/application/service/application.ser
 import { TargetType } from '../models/comment'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { LessonRepository } from '../repositories/lesson.repository'
-import { PostRepository } from '../repositories/post.repository'
+import { BlogRepository } from '../repositories/blog.repository'
 import { postNotFoundError } from '../errors/post.not.found'
 import { lessonNotFoundError } from '../errors/lesson.not.found'
 
@@ -17,12 +17,12 @@ export class CheckTargetExistence<T extends TargetInfo, R>
     constructor(
         private decoratee: ApplicationService<T, R>,
         private lessonRepository: LessonRepository,
-        private postRepository: PostRepository,
+        private postRepository: BlogRepository,
     ) {}
 
     async execute(data: T): Promise<Result<R>> {
         let targetFound
-        if (data.targetType === 'POST') {
+        if (data.targetType === 'BLOG') {
             targetFound = await this.postRepository.existsById(data.targetId)
             if (!targetFound) return Result.error(postNotFoundError())
         } else if (data.targetType === 'LESSON') {

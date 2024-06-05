@@ -1,7 +1,7 @@
 export type GetAllBlogResponse = {
     id: string
     title: string
-    body: string
+    description: string
     category: string
     tags: string[]
     images: string[]

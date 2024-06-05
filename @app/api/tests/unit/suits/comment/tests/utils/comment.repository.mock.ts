@@ -1,4 +1,7 @@
-import { Comment } from '../../../../../../src/comment/application/models/comment'
+import {
+    Comment,
+    TargetType,
+} from '../../../../../../src/comment/application/models/comment'
 import { CommentRepository } from '../../../../../../src/comment/application/repositories/comment.repository'
 import { Result } from '../../../../../../src/core/application/result-handler/result.handler'
 import { isNotNull } from '../../../../../../src/utils/null-manager/null-checker'
@@ -17,7 +20,7 @@ export class CommentRepositoryMock implements CommentRepository {
     }
     async getComments(
         targetId: string,
-        targetType: 'POST' | 'LESSON',
+        targetType: TargetType,
         page: number,
         perPage: number,
     ): Promise<Comment[]> {

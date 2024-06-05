@@ -15,9 +15,9 @@ export const createBlog = (data?: {
     id: data?.id ?? '1234567890',
     title: data?.title ?? 'test blog',
     body: data?.body ?? 'test made for blog body',
-    images: data?.images ?? ['url-imagen1', 'url-imagen2'],
+    images: data?.images ?? ['id-imagen1', 'id-imagen2'],
     tags: data?.tags ?? ['tag1', 'tag2'],
-    category: data?.category ?? 'category',
-    trainer: data?.trainer ?? 'Trainer name',
+    category: data?.category ?? '123456789',
+    trainer: data?.trainer ?? '123456789',
     date: data?.date ?? date.current,
 })

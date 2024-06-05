@@ -8,7 +8,7 @@ import { CommentRepositoryMock } from './utils/comment.repository.mock'
 import { DateProviderMock } from './utils/date.provider.mock'
 import { IDGeneratorMock } from './utils/id.generator.mock'
 import { LessonRepositoryMock } from './utils/lesson.repository.mock'
-import { PostRepositoryMock } from './utils/post.repository.mock'
+import { BlogRepositoryMock } from './utils/blog.repository.mock'
 
 export const name = 'Should not create a comment with an unvalid lesson ID'
 
@@ -26,7 +26,7 @@ export const body = async () => {
     const dateProvider = new DateProviderMock()
     const commentRepo = new CommentRepositoryMock()
     const lessonRepo = new LessonRepositoryMock()
-    const postRepo = new PostRepositoryMock()
+    const postRepo = new BlogRepositoryMock()
     const result: Result<CreateCommentResponse> =
         await new CheckTargetExistence(
             new CreateCommentCommand(

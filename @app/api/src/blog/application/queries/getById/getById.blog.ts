@@ -5,14 +5,39 @@ import { Result } from 'src/core/application/result-handler/result.handler'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
 import { BlogRepository } from '../../repositories/blog.repository'
 import { blogNotFoundError } from '../../errors/blog.not.found'
+import { CategoryRepository } from '../../repositories/category.repository'
+import { TrainerRepository } from '../../repositories/trainer.repository'
+import { ImageRepository } from '../../repositories/image.repository'
 
 export class GetBlogByIdQuery
     implements ApplicationService<GetBlogByIdDTO, GetBlogByIdResponse>
 {
-    constructor(private blogRepository: BlogRepository) {}
+    constructor(
+        private blogRepository: BlogRepository,
+        private categoryRepository: CategoryRepository,
+        private trainerRepository: TrainerRepository,
+        private imageRepository: ImageRepository,
+    ) {}
+
     async execute(data: GetBlogByIdDTO): Promise<Result<GetBlogByIdResponse>> {
         const blog = await this.blogRepository.getById(data.id)
         if (!isNotNull(blog)) return Result.error(blogNotFoundError())
-        return Result.success(blog)
+        return Result.success({
+            id: blog.id,
+            date: blog.date,
+            tags: blog.tags,
+            title: blog.title,
+            description: blog.body,
+            images: await blog.images.asyncMap(
+                async (img) => (await this.imageRepository.getById(img))!.src,
+            ),
+            trainer: {
+                id: blog.trainer,
+                name: (await this.trainerRepository.getById(blog.trainer))!
+                    .name,
+            },
+            category: (await this.categoryRepository.getById(blog.category))!
+                .name,
+        })
     }
 }
