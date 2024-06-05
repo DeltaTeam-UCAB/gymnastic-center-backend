@@ -10,6 +10,8 @@ import { GetAllBlogQuery } from 'src/blog/application/queries/getAll/getAll.blog
 import { CategoryByBlogPostgresRepository } from '../../repositories/postgres/category.repository'
 import { TrainerByBlogPostgresRepository } from '../../repositories/postgres/trainer.repository'
 import { ImageByBlogPostgresRepository } from '../../repositories/postgres/image.repository'
+import { FilterType } from 'src/blog/application/queries/getAll/types/dto'
+import { GetAllBlogsDTO } from './dto/getAll.blogs.dto'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -17,10 +19,7 @@ import { ImageByBlogPostgresRepository } from '../../repositories/postgres/image
 })
 export class GetAllBlogController
     implements
-        ControllerContract<
-            [limit: number, offset: number],
-            GetAllBlogResponse[]
-        >
+        ControllerContract<[query: GetAllBlogsDTO], GetAllBlogResponse[]>
 {
     constructor(
         private blogRepository: BlogPostgresRepository,
@@ -29,14 +28,13 @@ export class GetAllBlogController
         private imageRepository: ImageByBlogPostgresRepository,
     ) {}
 
-    @Get('getAll')
+    @Get('many')
     @UseGuards(UserGuard)
     @ApiHeader({
         name: 'auth',
     })
     async execute(
-        @Query('limit') limit: number,
-        @Query('offset') offset: number,
+        @Query() query: GetAllBlogsDTO,
     ): Promise<GetAllBlogResponse[]> {
         const result = await new GetAllBlogQuery(
             this.blogRepository,
@@ -44,8 +42,11 @@ export class GetAllBlogController
             this.trainerRepository,
             this.imageRepository,
         ).execute({
-            limit,
-            offset,
+            page: query.page,
+            perPage: query.perPage,
+            filter: query.filter,
+            category: query.category,
+            trainer: query.trainer,
         })
         return result.unwrap()
     }

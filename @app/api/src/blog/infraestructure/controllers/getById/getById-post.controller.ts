@@ -25,7 +25,7 @@ export class GetPostByIdController
         private imageRepository: ImageByBlogPostgresRepository,
     ) {}
 
-    @Get('getById/:id')
+    @Get('one/:id')
     @UseGuards(UserGuard)
     @ApiHeader({
         name: 'auth',

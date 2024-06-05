@@ -24,10 +24,15 @@ export class GetBlogByIdQuery
         if (!isNotNull(blog)) return Result.error(blogNotFoundError())
         return Result.success({
             ...blog,
+            description: blog.body,
             images: await blog.images.asyncMap(
                 async (img) => (await this.imageRepository.getById(img))!.src,
             ),
-            trainer: (await this.trainerRepository.getById(blog.trainer))!.name,
+            trainer: {
+                id: blog.trainer,
+                name: (await this.trainerRepository.getById(blog.trainer))!
+                    .name,
+            },
             category: (await this.categoryRepository.getById(blog.category))!
                 .name,
         })

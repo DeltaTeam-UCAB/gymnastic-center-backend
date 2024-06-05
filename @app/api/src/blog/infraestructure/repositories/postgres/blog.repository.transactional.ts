@@ -8,6 +8,7 @@ import { randomUUID } from 'crypto'
 import { BlogTag } from '../../models/postgres/blog-tag.entity'
 import { Blog } from 'src/blog/application/models/blog'
 import { BlogImage } from '../../models/postgres/blog-images.entity'
+import { GetAllBlogsDTO } from 'src/blog/application/queries/getAll/types/dto'
 
 export class BlogPostgresTransactionalRepository implements BlogRepository {
     constructor(private queryRunner: QueryRunner) {}
@@ -103,10 +104,10 @@ export class BlogPostgresTransactionalRepository implements BlogRepository {
         })
     }
 
-    async getAll(perPage: number = 5, page: number = 0): Promise<Blog[]> {
+    async getAll(filters: GetAllBlogsDTO): Promise<Blog[]> {
         const blogs = await this.queryRunner.manager.find(BlogORM, {
-            skip: perPage * (page - 1),
-            take: perPage,
+            skip: filters.perPage * (filters.page - 1),
+            take: filters.perPage,
         })
         return blogs.map((e) => ({
             ...e,

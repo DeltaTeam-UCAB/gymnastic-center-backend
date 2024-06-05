@@ -9,6 +9,7 @@ import { Blog } from 'src/blog/application/models/blog'
 import { Injectable } from '@nestjs/common'
 import { BlogTag } from '../../models/postgres/blog-tag.entity'
 import { Tag } from '../../models/postgres/tag.entity'
+import { GetAllBlogsDTO } from 'src/blog/application/queries/getAll/types/dto'
 
 @Injectable()
 export class BlogPostgresRepository implements BlogRepository {
@@ -69,10 +70,14 @@ export class BlogPostgresRepository implements BlogRepository {
         }
     }
 
-    async getAll(limit?: number, offset?: number): Promise<Blog[]> {
+    async getAll(filters: GetAllBlogsDTO): Promise<Blog[]> {
         const blogs = await this.blogProvider.find({
-            take: limit,
-            skip: offset,
+            take: filters.perPage,
+            skip: filters.perPage * filters.page,
+            where: {
+                trainer: filters.trainer,
+                category: filters.category,
+            },
         })
         const blogsWithImages = await Promise.all(
             blogs.map(async (blog) => {
