@@ -12,14 +12,14 @@ export const body = async () => {
         creationDate: dateProvider.current,
         id: '12345544',
         targetId: '12345',
-        targetType: 'POST',
+        targetType: 'BLOG',
         likes: [userId],
     })
     const commentRepository = new CommentRepositoryMock([comment])
 
     const result = await new FindCommentsQuery(commentRepository).execute({
         targetId: '12345',
-        targetType: 'POST',
+        targetType: 'BLOG',
         userId: userId,
         perPage: 5,
         page: 0,
