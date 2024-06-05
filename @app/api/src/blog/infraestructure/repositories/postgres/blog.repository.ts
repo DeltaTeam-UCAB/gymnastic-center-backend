@@ -1,28 +1,36 @@
 import { InjectRepository } from '@nestjs/typeorm'
-import { Posts as PostORM } from '../../models/postgres/post.entity'
+import { Blog as BlogORM } from '../../models/postgres/blog.entity'
 import { Repository } from 'typeorm'
 import { Result } from 'src/core/application/result-handler/result.handler'
-import { PostImages } from '../../models/postgres/post-images.entity'
+import { BlogImage } from '../../models/postgres/blog-images.entity'
 import { BlogRepository } from 'src/blog/application/repositories/blog.repository'
 import { Optional } from '@mono/types-utils'
 import { Blog } from 'src/blog/application/models/blog'
 import { Injectable } from '@nestjs/common'
+import { BlogTag } from '../../models/postgres/blog-tag.entity'
+import { Tag } from '../../models/postgres/tag.entity'
 
 @Injectable()
 export class BlogPostgresRepository implements BlogRepository {
     constructor(
-        @InjectRepository(PostORM)
-        private blogProvider: Repository<PostORM>,
+        @InjectRepository(BlogORM)
+        private blogProvider: Repository<BlogORM>,
 
-        @InjectRepository(PostImages)
-        private blogImagesProvider: Repository<PostImages>,
+        @InjectRepository(BlogImage)
+        private blogImagesProvider: Repository<BlogImage>,
+
+        @InjectRepository(BlogTag)
+        private blogTagsProvider: Repository<BlogTag>,
+
+        @InjectRepository(Tag)
+        private tagsProvider: Repository<Tag>,
     ) {}
     async save(blogs: Blog): Promise<Result<Blog>> {
         await this.blogProvider.upsert(this.blogProvider.create(blogs), ['id'])
         await this.blogImagesProvider.delete({ blogId: blogs.id })
         const blogImagesEntities = blogs.images.map((imageId) => {
             const id = crypto.randomUUID()
-            const blogImagesEntity = new PostImages()
+            const blogImagesEntity = new BlogImage()
             blogImagesEntity.id = id
             blogImagesEntity.blogId = blogs.id
             blogImagesEntity.imageId = imageId
@@ -46,9 +54,17 @@ export class BlogPostgresRepository implements BlogRepository {
         const images = await this.blogImagesProvider.findBy({
             blogId: blog!.id,
         })
-        const imagesIds = await images.map((img) => img.imageId)
+        const imagesIds = images.map((img) => img.imageId)
+        const tags = await this.blogTagsProvider.findBy({
+            blogId: blog!.id,
+        })
+        const imagesTags = await tags.asyncMap(
+            async (tag) =>
+                (await this.tagsProvider.findOneBy({ id: tag.tagId }))!.name,
+        )
         return {
             ...blog!,
+            tags: imagesTags,
             images: imagesIds,
         }
     }
@@ -64,8 +80,17 @@ export class BlogPostgresRepository implements BlogRepository {
                     blogId: blog.id,
                 })
                 const imageIds = images.map((img) => img.imageId)
+                const tags = await this.blogTagsProvider.findBy({
+                    blogId: blog!.id,
+                })
+                const imagesTags = await tags.asyncMap(
+                    async (tag) =>
+                        (await this.tagsProvider.findOneBy({ id: tag.tagId }))!
+                            .name,
+                )
                 return {
                     ...blog,
+                    tags: imagesTags,
                     images: imageIds,
                 }
             }),

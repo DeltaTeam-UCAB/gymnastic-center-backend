@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsIn, IsString, IsUUID, MaxLength, MinLength } from 'class-validator'
+import { TargetType } from 'src/comment/application/models/comment'
 
 export class CreateCommentDTO {
     @IsUUID()
@@ -8,7 +9,7 @@ export class CreateCommentDTO {
     @IsString()
     @IsIn(['BLOG', 'LESSON'])
     @ApiProperty()
-    targetType: string
+    targetType: TargetType
     @IsString()
     @MinLength(1)
     @MaxLength(200)

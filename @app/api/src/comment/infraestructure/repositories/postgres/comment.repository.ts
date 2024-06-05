@@ -39,7 +39,7 @@ export class CommentPostgresRepository implements CommentRepository {
         } else {
             commentsORM = await this.commentRespository.find({
                 where: {
-                    postId: targetId,
+                    blogId: targetId,
                 },
                 ...options,
             })

@@ -6,25 +6,36 @@ import { Controller } from 'src/core/infraestructure/controllers/decorators/cont
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { ApiHeader } from '@nestjs/swagger'
-import { BlogPostgresRepository } from '../../repositories/postgres/blog.repository'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { BLOG_ROUTE_PREFIX, BLOG_DOC_PREFIX } from '../prefix'
 import { CreateBlogDTO } from './dto/create.blog.dto'
 import { CreateBlogResponse } from '../../../../../src/blog/application/commands/create/types/response'
 import { CreateBlogCommand } from 'src/blog/application/commands/create/create.blog.command'
+import { TrainerByBlogPostgresRepository } from '../../repositories/postgres/trainer.repository'
+import { BlogTitleNotExistDecorator } from 'src/blog/application/commands/create/decorators/title.exist.decorator'
+import { TrainerExistDecorator } from 'src/blog/application/commands/create/decorators/trainer.exist.decorator'
+import { CategoryByBlogPostgresRepository } from '../../repositories/postgres/category.repository'
+import { CategoryExistDecorator } from 'src/blog/application/commands/create/decorators/category.exist.decorator'
+import { TransactionHandlerDecorator } from 'src/core/application/decorators/transaction.handler.decorator'
+import { PostgresTransactionProvider } from 'src/core/infraestructure/repositories/transaction/postgres.transaction'
+import { BlogPostgresTransactionalRepository } from '../../repositories/postgres/blog.repository.transactional'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
     docTitle: BLOG_DOC_PREFIX,
 })
 export class CreateBlogController
-implements ControllerContract<[body: CreateBlogDTO], { id: string }>
+    implements ControllerContract<[body: CreateBlogDTO], { id: string }>
 {
     constructor(
         @Inject(UUID_GEN_NATIVE)
         private idGen: IDGenerator<string>,
 
-        private blogRepository: BlogPostgresRepository,
+        private trainerRepository: TrainerByBlogPostgresRepository,
+
+        private categoryRepository: CategoryByBlogPostgresRepository,
+
+        private transactionProvider: PostgresTransactionProvider,
     ) {}
 
     @Post('create')
@@ -34,8 +45,28 @@ implements ControllerContract<[body: CreateBlogDTO], { id: string }>
         name: 'auth',
     })
     async execute(@Body() body: CreateBlogDTO): Promise<CreateBlogResponse> {
+        const manager = await this.transactionProvider.create()
+        const blogRepository = new BlogPostgresTransactionalRepository(
+            manager.queryRunner,
+        )
+        const commandBase = new CreateBlogCommand(this.idGen, blogRepository)
+        const commandWithTitleValidator = new BlogTitleNotExistDecorator(
+            commandBase,
+            blogRepository,
+        )
+        const commandWithTrainerValidator = new TrainerExistDecorator(
+            commandWithTitleValidator,
+            this.trainerRepository,
+        )
+        const commandWithCategoryValidator = new CategoryExistDecorator(
+            commandWithTrainerValidator,
+            this.categoryRepository,
+        )
         const result = await new ErrorDecorator(
-            new CreateBlogCommand(this.idGen, this.blogRepository),
+            new TransactionHandlerDecorator(
+                commandWithCategoryValidator,
+                manager.transactionHandler,
+            ),
             (e) => new HttpException(e.message, 400),
         ).execute(body)
         return result.unwrap()
