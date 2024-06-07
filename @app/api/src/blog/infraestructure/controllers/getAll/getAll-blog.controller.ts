@@ -10,7 +10,6 @@ import { GetAllBlogQuery } from 'src/blog/application/queries/getAll/getAll.blog
 import { CategoryByBlogPostgresRepository } from '../../repositories/postgres/category.repository'
 import { TrainerByBlogPostgresRepository } from '../../repositories/postgres/trainer.repository'
 import { ImageByBlogPostgresRepository } from '../../repositories/postgres/image.repository'
-import { FilterType } from 'src/blog/application/queries/getAll/types/dto'
 import { GetAllBlogsDTO } from './dto/getAll.blogs.dto'
 
 @Controller({
@@ -18,7 +17,7 @@ import { GetAllBlogsDTO } from './dto/getAll.blogs.dto'
     docTitle: BLOG_DOC_PREFIX,
 })
 export class GetAllBlogController
-    implements
+implements
         ControllerContract<[query: GetAllBlogsDTO], GetAllBlogResponse[]>
 {
     constructor(
