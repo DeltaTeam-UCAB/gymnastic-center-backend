@@ -1,8 +1,6 @@
 export interface DomainEventRecord {}
 
-type EventBase = {
-    timestamp?: Date
-}
+type EventBase = object
 
 export type DomainEventBase = {
     name: string
@@ -24,6 +22,7 @@ export function domainEventFactory<T extends EventBase>(name: string) {
     ): DomainEventInstance<
         T & {
             name: string
+            timestamp: Date
         }
     > => ({
         name,
