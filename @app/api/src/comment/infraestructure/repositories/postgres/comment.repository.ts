@@ -15,7 +15,14 @@ export class CommentPostgresRepository implements CommentRepository {
         private likeRespository: Repository<Like>,
     ) {}
     async save(comment: Comment): Promise<Result<Comment>> {
-        await this.commentRespository.save(comment)
+        const commentORM = {
+            ...comment,
+            lessonId:
+                comment.targetType === 'LESSON' ? comment.targetId : undefined,
+            blogId:
+                comment.targetType === 'BLOG' ? comment.targetId : undefined,
+        }
+        await this.commentRespository.save(commentORM)
         return Result.success(comment)
     }
     async getComments(

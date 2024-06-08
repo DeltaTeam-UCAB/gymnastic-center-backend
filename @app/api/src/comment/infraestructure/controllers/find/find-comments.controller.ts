@@ -12,6 +12,7 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
 import { isNotNull } from 'src/utils/null-manager/null-checker'
 import { ApiHeader } from '@nestjs/swagger'
 import { Optional } from '@mono/types-utils'
+import { UserByCommentPostgresRepository } from '../../repositories/postgres/user.repository'
 
 @Controller({
     path: 'comment',
@@ -24,7 +25,10 @@ export class FindCommentsController
             FindCommentsResponse[]
         >
 {
-    constructor(private commentRepo: CommentPostgresRepository) {}
+    constructor(
+        private commentRepo: CommentPostgresRepository,
+        private userRepo: UserByCommentPostgresRepository,
+    ) {}
 
     @Get('many')
     @UseGuards(UserGuard)
@@ -51,7 +55,7 @@ export class FindCommentsController
         }
 
         const result = await new ErrorDecorator(
-            new FindCommentsQuery(this.commentRepo),
+            new FindCommentsQuery(this.commentRepo, this.userRepo),
             (e) => new HttpException(e.message, 400),
         ).execute({
             page: query.page,

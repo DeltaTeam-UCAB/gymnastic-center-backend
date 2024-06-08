@@ -3,11 +3,15 @@ import { FindCommentsDTO } from './types/dto'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { CommentRepository } from '../../repositories/comment.repository'
 import { FindCommentsResponse } from './types/response'
+import { UserRepository } from '../../repositories/user.repository'
 
 export class FindCommentsQuery
     implements ApplicationService<FindCommentsDTO, FindCommentsResponse[]>
 {
-    constructor(private commentRepository: CommentRepository) {}
+    constructor(
+        private commentRepository: CommentRepository,
+        private userRepository: UserRepository,
+    ) {}
 
     async execute(
         data: FindCommentsDTO,
@@ -18,10 +22,10 @@ export class FindCommentsQuery
             data.page,
             data.perPage,
         )
-        const commentsResponse = comments.map((c) => {
+        const commentsResponse = await comments.asyncMap(async (c) => {
             const commentResponse = {
                 id: c.id,
-                user: c.userId,
+                user: (await this.userRepository.getById(data.userId))!.name,
                 countLikes: c.likes.length,
                 countDislikes: c.dislikes.length,
                 body: c.description,
