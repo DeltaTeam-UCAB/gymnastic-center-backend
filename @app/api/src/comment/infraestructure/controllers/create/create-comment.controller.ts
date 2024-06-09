@@ -4,7 +4,7 @@ import { CreateCommentResponse } from 'src/comment/application/commands/create/t
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Body, HttpException, Inject, Post, UseGuards } from '@nestjs/common'
 import { ApiHeader } from '@nestjs/swagger'
-import { Roles } from 'src/client/infraestructure/guards/roles.guard'
+import { Roles } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
@@ -24,7 +24,7 @@ import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provide
     docTitle: 'Comment',
 })
 export class CreateController
-    implements
+implements
         ControllerContract<
             [body: CreateCommentDTO, user: User],
             CreateCommentResponse
