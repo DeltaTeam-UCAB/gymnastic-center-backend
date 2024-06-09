@@ -1,3 +1,3 @@
-suiteDeclare('Blog suite')
+await suiteDeclare('Blog suite')
 
 export {}

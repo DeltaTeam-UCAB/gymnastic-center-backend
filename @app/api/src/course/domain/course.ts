@@ -185,8 +185,7 @@ export class Course extends AggregateRoot<CourseID> {
             !this.level ||
             !this.duration ||
             !this.category ||
-            !this.trainer ||
-            this.lessons.some((e) => e.image && e.video)
+            !this.trainer
         )
             throw unvalidCourse()
     }
