@@ -73,7 +73,7 @@ export class BlogPostgresRepository implements BlogRepository {
     async getAll(filters: GetAllBlogsDTO): Promise<Blog[]> {
         const blogs = await this.blogProvider.find({
             take: filters.perPage,
-            skip: filters.perPage * filters.page,
+            skip: filters.perPage * (filters.page - 1),
             where: {
                 trainer: filters.trainer,
                 category: filters.category,
