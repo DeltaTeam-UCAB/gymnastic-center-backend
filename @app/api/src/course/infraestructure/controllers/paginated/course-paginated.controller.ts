@@ -10,16 +10,14 @@ import { ImagePostgresByCourseRepository } from '../../repositories/postgres/ima
 import { GetCoursesManyResponse } from 'src/course/application/queries/many/types/response'
 import { TrainerPostgresByCourseRepository } from '../../repositories/postgres/trainer.repository'
 import { CategoryPostgresByCourseRepository } from '../../repositories/postgres/category.repository'
+import { GetAllCoursesDTO } from './dto/getAll.blogs.dto'
 @Controller({
     path: COURSE_ROUTE_PREFIX,
     docTitle: COURSE_DOC_PREFIX,
 })
 export class CoursesManyController
-    implements
-        ControllerContract<
-            [limit: number, offset: number],
-            GetCoursesManyResponse
-        >
+implements
+        ControllerContract<[data: GetAllCoursesDTO], GetCoursesManyResponse>
 {
     constructor(
         private courseRepository: CoursePostgresRepository,
@@ -34,15 +32,14 @@ export class CoursesManyController
     })
     @UseGuards(UserGuard)
     async execute(
-        @Query('page') page: number,
-        @Query('perPage') perPage: number,
+        @Query() data: GetAllCoursesDTO,
     ): Promise<GetCoursesManyResponse> {
         const result = await new GetCoursesManyQuery(
             this.courseRepository,
             this.categoryRepository,
             this.trainerRepository,
             this.imageRepository,
-        ).execute({ page, perPage })
+        ).execute(data)
 
         return result.unwrap()
     }

@@ -5,6 +5,8 @@ import { Optional } from '@mono/types-utils'
 export type GetManyCoursesData = {
     page: number
     perPage: number
+    category?: string
+    trainer?: string
 }
 
 export interface CourseRepository {
