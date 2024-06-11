@@ -33,7 +33,7 @@ export class CommentPostgresRepository implements CommentRepository {
     ): Promise<Comment[]> {
         const options = {
             take: perPage,
-            skip: page * perPage,
+            skip: (page - 1) * perPage,
         }
         let commentsORM: CommentORM[]
         if (targetType === 'LESSON') {
@@ -41,7 +41,6 @@ export class CommentPostgresRepository implements CommentRepository {
                 where: {
                     lessonId: targetId,
                 },
-                ...options,
             })
         } else {
             commentsORM = await this.commentRespository.find({
@@ -49,6 +48,9 @@ export class CommentPostgresRepository implements CommentRepository {
                     blogId: targetId,
                 },
                 ...options,
+                order: {
+                    creationDate: 'DESC',
+                },
             })
         }
         const comments = commentsORM.asyncMap(async (c) => {
