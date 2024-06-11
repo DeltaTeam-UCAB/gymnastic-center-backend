@@ -18,7 +18,7 @@ import { LessonVideo } from '../../../../../src/course/domain/value-objects/less
 import { TrainerID } from '../../../../../src/course/domain/value-objects/trainer.id'
 import { TrainerName } from '../../../../../src/course/domain/value-objects/trainer.name'
 
-export const name = 'Shoul create a course aggregate'
+export const name = 'Should create a course aggregate'
 export const body = () => {
     const course = new Course(
         new CourseID('8b1d451d-ab49-42eb-91f6-4949cf0b8574'),
