@@ -3,7 +3,8 @@ import { unvalidSubscriptionProgress } from '../exceptions/unvalid.subscription.
 
 export class SubscriptionProgress implements ValueObject<SubscriptionProgress> {
     constructor(private _progress: number) {
-        if (_progress < 0 || _progress > 100) throw unvalidSubscriptionProgress()
+        if (_progress < 0 || _progress > 100)
+            throw unvalidSubscriptionProgress()
     }
 
     get progress() {
