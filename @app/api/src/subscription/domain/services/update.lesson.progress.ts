@@ -17,7 +17,7 @@ export const updateLessonProgress: DomainService<
         ? LessonProgress.createFull()
         : new LessonProgress((data.time * 100) / data.totalTime)
     if (
-        data.subscription.lessons.find((e) => e.id === data.lesson)!.progress <
+        data.subscription.lessons.find((e) => e.id == data.lesson)!.progress <
         lessonProgress
     )
         data.subscription.changeLessonProgress(data.lesson, lessonProgress)
