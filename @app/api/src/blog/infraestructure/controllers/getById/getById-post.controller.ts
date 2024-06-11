@@ -10,6 +10,8 @@ import { GetBlogByIdQuery } from 'src/blog/application/queries/getById/getById.b
 import { CategoryByBlogPostgresRepository } from '../../repositories/postgres/category.repository'
 import { TrainerByBlogPostgresRepository } from '../../repositories/postgres/trainer.repository'
 import { ImageByBlogPostgresRepository } from '../../repositories/postgres/image.repository'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -33,6 +35,16 @@ export class GetPostByIdController
     async execute(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<GetBlogByIdResponse> {
+
+        const commandBase = await new GetBlogByIdQuery(
+            this.blogRepository,
+            this.categoryRepository,
+            this.trainerRepository,
+            this.imageRepository,
+        )
+        const nestLogger = new NestLogger('Get by ID Blog logger')
+        new LoggerDecorator(commandBase, nestLogger)
+
         const result = await new GetBlogByIdQuery(
             this.blogRepository,
             this.categoryRepository,

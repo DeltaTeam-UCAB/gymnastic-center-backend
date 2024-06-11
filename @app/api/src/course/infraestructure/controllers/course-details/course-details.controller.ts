@@ -18,6 +18,8 @@ import { VideoPostgresByCourseRepository } from '../../repositories/postgres/vid
 import { TrainerPostgresByCourseRepository } from '../../repositories/postgres/trainer.repository'
 import { CategoryPostgresByCourseRepository } from '../../repositories/postgres/category.repository'
 import { GetCourseDetailsResponse } from 'src/course/application/queries/courseDetails/types/response'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -41,6 +43,17 @@ export class CourseDetailsController
     async execute(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<GetCourseDetailsResponse> {
+
+        const commandBase = await new GetCourseDetailsQuery(
+            this.courseRepo,
+            this.imageRepo,
+            this.videoRepository,
+            this.trainerRepository,
+            this.categoryRepository,
+        )
+        const nestLogger = new NestLogger('Get course details logger')
+        new LoggerDecorator(commandBase, nestLogger)
+
         const result = await new ErrorDecorator(
             new GetCourseDetailsQuery(
                 this.courseRepo,
