@@ -2,8 +2,7 @@ import { AggregateRoot } from 'src/core/domain/aggregates/aggregate.root'
 import { CommentID } from './value-objects/comment.id'
 import { CommentContent } from './value-objects/comment.content'
 import { Client } from './entities/client'
-import { WhoDislikedID } from './value-objects/who-disliked.id'
-import { WhoLikedID } from './value-objects/who-liked.id'
+import { ClientID } from './value-objects/client.id'
 import { Target } from './value-objects/target'
 import { commentCreated } from './events/comment.created'
 import { commentLiked } from './events/comment.liked'
@@ -19,8 +18,8 @@ export class Comment extends AggregateRoot<CommentID> {
         private data: {
             content: CommentContent
             client: Client
-            whoLiked: WhoLikedID[]
-            whoDisliked: WhoDislikedID[]
+            whoLiked: ClientID[]
+            whoDisliked: ClientID[]
             target: Target
         },
     ) {
@@ -53,7 +52,7 @@ export class Comment extends AggregateRoot<CommentID> {
         return this.data.target
     }
 
-    like(whoLiked: WhoLikedID) {
+    like(whoLiked: ClientID) {
         this.data.whoLiked.push(whoLiked)
         this.publish(
             commentLiked({
@@ -63,7 +62,7 @@ export class Comment extends AggregateRoot<CommentID> {
         )
     }
 
-    dislike(whoDisliked: WhoDislikedID) {
+    dislike(whoDisliked: ClientID) {
         this.data.whoDisliked.push(whoDisliked)
         this.publish(
             commentDisliked({
@@ -73,7 +72,7 @@ export class Comment extends AggregateRoot<CommentID> {
         )
     }
 
-    removeLike(whoLiked: WhoLikedID) {
+    removeLike(whoLiked: ClientID) {
         this.data.whoLiked.filter((l) => !l.equals(whoLiked))
         this.publish(
             commentRemovedLike({
@@ -83,7 +82,7 @@ export class Comment extends AggregateRoot<CommentID> {
         )
     }
 
-    removeDislike(whoDisliked: WhoDislikedID) {
+    removeDislike(whoDisliked: ClientID) {
         this.data.whoDisliked.filter((d) => !d.equals(whoDisliked))
         this.publish(
             commentRemovedDislike({
