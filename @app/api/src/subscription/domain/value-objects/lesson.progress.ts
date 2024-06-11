@@ -18,4 +18,12 @@ export class LessonProgress implements ValueObject<LessonProgress> {
     equals(other?: LessonProgress | undefined): boolean {
         return other?.percent === this.percent
     }
+
+    static createEmpty() {
+        return new LessonProgress(0)
+    }
+
+    static createFull() {
+        return new LessonProgress(100)
+    }
 }
