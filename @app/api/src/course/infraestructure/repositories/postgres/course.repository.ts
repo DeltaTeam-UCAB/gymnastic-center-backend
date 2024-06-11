@@ -109,6 +109,10 @@ export class CoursePostgresRepository implements CourseRepository {
         const courses = await this.courseProvider.find({
             skip: data.perPage * (data.page - 1),
             take: data.perPage,
+            where: {
+                category: data.category,
+                trainer: data.trainer,
+            },
         })
         return courses.map((e) => ({
             ...e,
