@@ -21,6 +21,8 @@ import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { ApiHeader } from '@nestjs/swagger'
 import { ImagePostgresByCategoryRepository } from '../../repositories/postgres/image.postgres.repository'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 
 @Controller({
     path: 'category',
@@ -44,12 +46,20 @@ export class CreateCategoryController
     async execute(
         @Body() body: CreateCategoryDTO,
     ): Promise<CreateCategoryResponse> {
+        const commandBase = new CreateCategoryCommand(
+            this.idGen,
+            this.categoryRepository,
+            this.imageRepository,
+        )
+
+        const nestLogger = new NestLogger('Create Category logger')
+        new LoggerDecorator(
+            commandBase,
+            nestLogger,
+        )
+
         const result = await new ErrorDecorator(
-            new CreateCategoryCommand(
-                this.idGen,
-                this.categoryRepository,
-                this.imageRepository,
-            ),
+            commandBase,
             (e) => {
                 if (e.name === IMAGE_NOT_FOUND)
                     return new HttpException(e.message, 404)

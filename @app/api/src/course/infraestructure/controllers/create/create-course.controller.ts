@@ -26,6 +26,8 @@ import { COURSE_TITLE_EXIST } from 'src/course/application/errors/course.title.e
 import { PostgresTransactionProvider } from 'src/core/infraestructure/repositories/transaction/postgres.transaction'
 import { CoursePostgresTransactionalRepository } from '../../repositories/postgres/course.repository.transactional'
 import { TransactionHandlerDecorator } from 'src/core/application/decorators/transaction.handler.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -67,6 +69,13 @@ export class CreateCourseController
             courseRepository,
             new ConcreteDateProvider(),
         )
+
+        const nestLogger = new NestLogger('Create Course logger')
+        new LoggerDecorator(
+            commandBase,
+            nestLogger,
+        )
+
         const commandTitleValidation = new CourseTitleNotExistDecorator(
             commandBase,
             courseRepository,

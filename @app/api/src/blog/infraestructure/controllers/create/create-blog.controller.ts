@@ -1,4 +1,4 @@
-import { Body, HttpException, Inject, Post, UseGuards } from '@nestjs/common'
+import { Body, HttpException, Inject, Logger, Post, UseGuards } from '@nestjs/common'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
@@ -19,6 +19,8 @@ import { CategoryExistDecorator } from 'src/blog/application/commands/create/dec
 import { TransactionHandlerDecorator } from 'src/core/application/decorators/transaction.handler.decorator'
 import { PostgresTransactionProvider } from 'src/core/infraestructure/repositories/transaction/postgres.transaction'
 import { BlogPostgresTransactionalRepository } from '../../repositories/postgres/blog.repository.transactional'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -45,11 +47,18 @@ export class CreateBlogController
         name: 'auth',
     })
     async execute(@Body() body: CreateBlogDTO): Promise<CreateBlogResponse> {
+
         const manager = await this.transactionProvider.create()
         const blogRepository = new BlogPostgresTransactionalRepository(
             manager.queryRunner,
         )
         const commandBase = new CreateBlogCommand(this.idGen, blogRepository)
+        const nestLogger = new NestLogger('Create Blog logger')
+        new LoggerDecorator(
+            commandBase,
+            nestLogger,
+        )
+
         const commandWithTitleValidator = new BlogTitleNotExistDecorator(
             commandBase,
             blogRepository,
