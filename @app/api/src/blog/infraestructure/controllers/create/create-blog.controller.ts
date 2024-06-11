@@ -1,4 +1,4 @@
-import { Body, HttpException, Inject, Logger, Post, UseGuards } from '@nestjs/common'
+import { Body, HttpException, Inject, Post, UseGuards } from '@nestjs/common'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
@@ -47,17 +47,13 @@ export class CreateBlogController
         name: 'auth',
     })
     async execute(@Body() body: CreateBlogDTO): Promise<CreateBlogResponse> {
-
         const manager = await this.transactionProvider.create()
         const blogRepository = new BlogPostgresTransactionalRepository(
             manager.queryRunner,
         )
         const commandBase = new CreateBlogCommand(this.idGen, blogRepository)
         const nestLogger = new NestLogger('Create Blog logger')
-        new LoggerDecorator(
-            commandBase,
-            nestLogger,
-        )
+        new LoggerDecorator(commandBase, nestLogger)
 
         const commandWithTitleValidator = new BlogTitleNotExistDecorator(
             commandBase,

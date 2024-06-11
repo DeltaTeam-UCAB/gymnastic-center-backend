@@ -53,21 +53,15 @@ export class CreateCategoryController
         )
 
         const nestLogger = new NestLogger('Create Category logger')
-        new LoggerDecorator(
-            commandBase,
-            nestLogger,
-        )
+        new LoggerDecorator(commandBase, nestLogger)
 
-        const result = await new ErrorDecorator(
-            commandBase,
-            (e) => {
-                if (e.name === IMAGE_NOT_FOUND)
-                    return new HttpException(e.message, 404)
-                if (e.name === CATEGORY_NAME_EXIST)
-                    return new HttpException(e.message, 400)
-                return new InternalServerErrorException()
-            },
-        ).execute(body)
+        const result = await new ErrorDecorator(commandBase, (e) => {
+            if (e.name === IMAGE_NOT_FOUND)
+                return new HttpException(e.message, 404)
+            if (e.name === CATEGORY_NAME_EXIST)
+                return new HttpException(e.message, 400)
+            return new InternalServerErrorException()
+        }).execute(body)
         return result.unwrap()
     }
 }

@@ -59,7 +59,6 @@ implements
         @Body() _body: UploadImageDTO,
     ): Promise<{ id: string }> {
         try {
-
             const commandBase = new SaveImageCommand(
                 this.idGen,
                 this.imageRepository,
@@ -67,10 +66,7 @@ implements
             )
 
             const nestLogger = new NestLogger('Upload image logger')
-            new LoggerDecorator(
-                commandBase,
-                nestLogger,
-            )
+            new LoggerDecorator(commandBase, nestLogger)
 
             const result = await new ErrorDecorator(
                 commandBase,
