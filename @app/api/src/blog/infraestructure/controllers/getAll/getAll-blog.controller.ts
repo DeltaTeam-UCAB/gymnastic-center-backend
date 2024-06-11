@@ -37,7 +37,6 @@ implements
     async execute(
         @Query() query: GetAllBlogsDTO,
     ): Promise<GetAllBlogResponse[]> {
-
         const commandBase = await new GetAllBlogQuery(
             this.blogRepository,
             this.categoryRepository,

@@ -43,7 +43,6 @@ export class CourseDetailsController
     async execute(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<GetCourseDetailsResponse> {
-
         const commandBase = await new GetCourseDetailsQuery(
             this.courseRepo,
             this.imageRepo,

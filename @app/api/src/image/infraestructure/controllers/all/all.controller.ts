@@ -26,7 +26,6 @@ export class FindImageController
     })
     @UseGuards(UserGuard, RolesGuard)
     async execute(): Promise<GetAllImagesResponse> {
-
         const commandBase = new GetAllImagesQuery(this.imageRepository)
         const nestLogger = new NestLogger('Find all images logger')
         new LoggerDecorator(commandBase, nestLogger)

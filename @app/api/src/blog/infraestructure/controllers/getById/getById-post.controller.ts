@@ -35,7 +35,6 @@ export class GetPostByIdController
     async execute(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<GetBlogByIdResponse> {
-
         const commandBase = await new GetBlogByIdQuery(
             this.blogRepository,
             this.categoryRepository,
