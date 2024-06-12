@@ -43,26 +43,16 @@ export class CourseDetailsController
     async execute(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<GetCourseDetailsResponse> {
-        const commandBase = await new GetCourseDetailsQuery(
-            this.courseRepo,
-            this.imageRepo,
-            this.videoRepository,
-            this.trainerRepository,
-            this.categoryRepository,
-        )
-        const nestLogger = new NestLogger('Get course details logger')
-        new LoggerDecorator(commandBase, nestLogger).execute({
-            id,
-        })
 
+        const nestLogger = new NestLogger('Get course details logger')
         const result = await new ErrorDecorator(
-            new GetCourseDetailsQuery(
+            new LoggerDecorator(new GetCourseDetailsQuery(
                 this.courseRepo,
                 this.imageRepo,
                 this.videoRepository,
                 this.trainerRepository,
                 this.categoryRepository,
-            ),
+            ),nestLogger),
             (e) => new HttpException(e.message, 404),
         ).execute({
             id,

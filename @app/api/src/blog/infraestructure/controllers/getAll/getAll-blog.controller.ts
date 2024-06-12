@@ -37,27 +37,14 @@ implements
     async execute(
         @Query() query: GetAllBlogsDTO,
     ): Promise<GetAllBlogResponse[]> {
-        const commandBase = await new GetAllBlogQuery(
-            this.blogRepository,
-            this.categoryRepository,
-            this.trainerRepository,
-            this.imageRepository,
-        )
+        
         const nestLogger = new NestLogger('Get all Blog logger')
-        new LoggerDecorator(commandBase, nestLogger).execute({
-            page: query.page,
-            perPage: query.perPage,
-            filter: query.filter,
-            category: query.category,
-            trainer: query.trainer,
-        })
-
-        const result = await new GetAllBlogQuery(
+        const result = await new LoggerDecorator(new GetAllBlogQuery(
             this.blogRepository,
             this.categoryRepository,
             this.trainerRepository,
             this.imageRepository,
-        ).execute({
+        ), nestLogger).execute({
             page: query.page,
             perPage: query.perPage,
             filter: query.filter,

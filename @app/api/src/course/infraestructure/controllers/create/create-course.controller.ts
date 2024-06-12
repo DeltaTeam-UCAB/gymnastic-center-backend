@@ -64,17 +64,14 @@ export class CreateCourseController
         const courseRepository = new CoursePostgresTransactionalRepository(
             manager.queryRunner,
         )
-        const commandBase = new CreateCourseCommand(
-            this.idGen,
-            courseRepository,
-            new ConcreteDateProvider(),
-        )
-
         const nestLogger = new NestLogger('Create Course logger')
-        new LoggerDecorator(commandBase, nestLogger).execute(body)
-
+        
         const commandTitleValidation = new CourseTitleNotExistDecorator(
-            commandBase,
+            new CreateCourseCommand(
+                this.idGen,
+                courseRepository,
+                new ConcreteDateProvider(),
+            ),
             courseRepository,
         )
         const commandWithCategoryValidator = new CategoryExistDecorator(
@@ -95,7 +92,7 @@ export class CreateCourseController
         )
         const result = await new ErrorDecorator(
             new TransactionHandlerDecorator(
-                commandWithVideoValidator,
+                new LoggerDecorator(commandWithVideoValidator, nestLogger),
                 manager.transactionHandler,
             ),
             (e) => {

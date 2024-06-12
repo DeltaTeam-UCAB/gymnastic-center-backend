@@ -51,12 +51,10 @@ export class CreateBlogController
         const blogRepository = new BlogPostgresTransactionalRepository(
             manager.queryRunner,
         )
-        const commandBase = new CreateBlogCommand(this.idGen, blogRepository)
         const nestLogger = new NestLogger('Create Blog logger')
-        new LoggerDecorator(commandBase, nestLogger).execute(body)
-
+        
         const commandWithTitleValidator = new BlogTitleNotExistDecorator(
-            commandBase,
+            new CreateBlogCommand(this.idGen, blogRepository),
             blogRepository,
         )
         const commandWithTrainerValidator = new TrainerExistDecorator(
@@ -69,7 +67,7 @@ export class CreateBlogController
         )
         const result = await new ErrorDecorator(
             new TransactionHandlerDecorator(
-                commandWithCategoryValidator,
+                new LoggerDecorator(commandWithCategoryValidator, nestLogger),
                 manager.transactionHandler,
             ),
             (e) => new HttpException(e.message, 400),

@@ -33,16 +33,12 @@ implements ControllerContract<[id: string], GetImageByIdResponse>
     async execute(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<GetImageByIdResponse> {
-        const commandBase = new GetImageByIdQuery(this.imageRepository)
         const nestLogger = new NestLogger('Find image logger')
-        new LoggerDecorator(commandBase, nestLogger).execute({
-            id,
-        })
-
-        const result = await new ErrorDecorator(
-            new GetImageByIdQuery(this.imageRepository),
+        const service = await new ErrorDecorator(
+            new LoggerDecorator(new GetImageByIdQuery(this.imageRepository), nestLogger),
             (e) => new HttpException(e.message, 404),
-        ).execute({
+        )
+        const result = await service.execute({
             id,
         })
         return result.unwrap()

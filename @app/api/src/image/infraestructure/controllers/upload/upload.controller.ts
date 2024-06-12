@@ -59,19 +59,13 @@ implements
         @Body() _body: UploadImageDTO,
     ): Promise<{ id: string }> {
         try {
-            const commandBase = new SaveImageCommand(
-                this.idGen,
-                this.imageRepository,
-                this.imageStorage,
-            )
-
             const nestLogger = new NestLogger('Upload image logger')
-            new LoggerDecorator(commandBase, nestLogger).execute({
-                path: file.path,
-            })
-
             const result = await new ErrorDecorator(
-                commandBase,
+                new LoggerDecorator(new SaveImageCommand(
+                    this.idGen,
+                    this.imageRepository,
+                    this.imageStorage,
+                ), nestLogger),
                 () => new InternalServerErrorException(),
             ).execute({
                 path: file.path,
