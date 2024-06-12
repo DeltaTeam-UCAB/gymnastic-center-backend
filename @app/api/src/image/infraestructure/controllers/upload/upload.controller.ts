@@ -61,11 +61,14 @@ implements
         try {
             const nestLogger = new NestLogger('Upload image logger')
             const result = await new ErrorDecorator(
-                new LoggerDecorator(new SaveImageCommand(
-                    this.idGen,
-                    this.imageRepository,
-                    this.imageStorage,
-                ), nestLogger),
+                new LoggerDecorator(
+                    new SaveImageCommand(
+                        this.idGen,
+                        this.imageRepository,
+                        this.imageStorage,
+                    ),
+                    nestLogger,
+                ),
                 () => new InternalServerErrorException(),
             ).execute({
                 path: file.path,

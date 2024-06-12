@@ -52,7 +52,7 @@ export class CreateBlogController
             manager.queryRunner,
         )
         const nestLogger = new NestLogger('Create Blog logger')
-        
+
         const commandWithTitleValidator = new BlogTitleNotExistDecorator(
             new CreateBlogCommand(this.idGen, blogRepository),
             blogRepository,

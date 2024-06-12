@@ -46,19 +46,24 @@ export class CreateCategoryController
     async execute(
         @Body() body: CreateCategoryDTO,
     ): Promise<CreateCategoryResponse> {
-        
         const nestLogger = new NestLogger('Create Category logger')
-        const result = await new ErrorDecorator(new LoggerDecorator(new CreateCategoryCommand(
-            this.idGen,
-            this.categoryRepository,
-            this.imageRepository,
-        ), nestLogger), (e) => {
-            if (e.name === IMAGE_NOT_FOUND)
-                return new HttpException(e.message, 404)
-            if (e.name === CATEGORY_NAME_EXIST)
-                return new HttpException(e.message, 400)
-            return new InternalServerErrorException()
-        }).execute(body)
+        const result = await new ErrorDecorator(
+            new LoggerDecorator(
+                new CreateCategoryCommand(
+                    this.idGen,
+                    this.categoryRepository,
+                    this.imageRepository,
+                ),
+                nestLogger,
+            ),
+            (e) => {
+                if (e.name === IMAGE_NOT_FOUND)
+                    return new HttpException(e.message, 404)
+                if (e.name === CATEGORY_NAME_EXIST)
+                    return new HttpException(e.message, 400)
+                return new InternalServerErrorException()
+            },
+        ).execute(body)
         return result.unwrap()
     }
 }

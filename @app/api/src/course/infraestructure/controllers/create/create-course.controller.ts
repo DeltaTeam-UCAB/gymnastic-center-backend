@@ -65,7 +65,7 @@ export class CreateCourseController
             manager.queryRunner,
         )
         const nestLogger = new NestLogger('Create Course logger')
-        
+
         const commandTitleValidation = new CourseTitleNotExistDecorator(
             new CreateCourseCommand(
                 this.idGen,

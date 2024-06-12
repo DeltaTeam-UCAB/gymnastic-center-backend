@@ -35,14 +35,16 @@ export class GetPostByIdController
     async execute(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<GetBlogByIdResponse> {
-
         const nestLogger = new NestLogger('Get by ID Blog logger')
-        const result = await new LoggerDecorator(new GetBlogByIdQuery(
-            this.blogRepository,
-            this.categoryRepository,
-            this.trainerRepository,
-            this.imageRepository,
-        ), nestLogger).execute({
+        const result = await new LoggerDecorator(
+            new GetBlogByIdQuery(
+                this.blogRepository,
+                this.categoryRepository,
+                this.trainerRepository,
+                this.imageRepository,
+            ),
+            nestLogger,
+        ).execute({
             id,
         })
         return result.unwrap()
