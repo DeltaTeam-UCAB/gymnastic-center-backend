@@ -44,7 +44,13 @@ implements
             this.imageRepository,
         )
         const nestLogger = new NestLogger('Get all Blog logger')
-        new LoggerDecorator(commandBase, nestLogger)
+        new LoggerDecorator(commandBase, nestLogger).execute({
+            page: query.page,
+            perPage: query.perPage,
+            filter: query.filter,
+            category: query.category,
+            trainer: query.trainer,
+        })
 
         const result = await new GetAllBlogQuery(
             this.blogRepository,

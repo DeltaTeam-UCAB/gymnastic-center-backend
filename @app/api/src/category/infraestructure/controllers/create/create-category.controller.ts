@@ -53,7 +53,7 @@ export class CreateCategoryController
         )
 
         const nestLogger = new NestLogger('Create Category logger')
-        new LoggerDecorator(commandBase, nestLogger)
+        new LoggerDecorator(commandBase, nestLogger).execute(body)
 
         const result = await new ErrorDecorator(commandBase, (e) => {
             if (e.name === IMAGE_NOT_FOUND)

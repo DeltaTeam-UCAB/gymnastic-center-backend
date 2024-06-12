@@ -53,7 +53,7 @@ export class CreateBlogController
         )
         const commandBase = new CreateBlogCommand(this.idGen, blogRepository)
         const nestLogger = new NestLogger('Create Blog logger')
-        new LoggerDecorator(commandBase, nestLogger)
+        new LoggerDecorator(commandBase, nestLogger).execute(body)
 
         const commandWithTitleValidator = new BlogTitleNotExistDecorator(
             commandBase,

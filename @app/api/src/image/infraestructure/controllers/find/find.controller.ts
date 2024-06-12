@@ -35,7 +35,9 @@ implements ControllerContract<[id: string], GetImageByIdResponse>
     ): Promise<GetImageByIdResponse> {
         const commandBase = new GetImageByIdQuery(this.imageRepository)
         const nestLogger = new NestLogger('Find image logger')
-        new LoggerDecorator(commandBase, nestLogger)
+        new LoggerDecorator(commandBase, nestLogger).execute({
+            id,
+        })
 
         const result = await new ErrorDecorator(
             new GetImageByIdQuery(this.imageRepository),

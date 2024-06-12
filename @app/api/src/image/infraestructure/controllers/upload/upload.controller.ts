@@ -66,7 +66,9 @@ implements
             )
 
             const nestLogger = new NestLogger('Upload image logger')
-            new LoggerDecorator(commandBase, nestLogger)
+            new LoggerDecorator(commandBase, nestLogger).execute({
+                path: file.path,
+            })
 
             const result = await new ErrorDecorator(
                 commandBase,

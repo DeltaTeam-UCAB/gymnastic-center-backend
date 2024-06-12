@@ -51,7 +51,9 @@ export class CourseDetailsController
             this.categoryRepository,
         )
         const nestLogger = new NestLogger('Get course details logger')
-        new LoggerDecorator(commandBase, nestLogger)
+        new LoggerDecorator(commandBase, nestLogger).execute({
+            id,
+        })
 
         const result = await new ErrorDecorator(
             new GetCourseDetailsQuery(

@@ -42,7 +42,9 @@ export class GetPostByIdController
             this.imageRepository,
         )
         const nestLogger = new NestLogger('Get by ID Blog logger')
-        new LoggerDecorator(commandBase, nestLogger)
+        new LoggerDecorator(commandBase, nestLogger).execute({
+            id,
+        })
 
         const result = await new GetBlogByIdQuery(
             this.blogRepository,

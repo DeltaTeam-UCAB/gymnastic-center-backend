@@ -28,7 +28,7 @@ export class FindImageController
     async execute(): Promise<GetAllImagesResponse> {
         const commandBase = new GetAllImagesQuery(this.imageRepository)
         const nestLogger = new NestLogger('Find all images logger')
-        new LoggerDecorator(commandBase, nestLogger)
+        new LoggerDecorator(commandBase, nestLogger).execute(commandBase)
 
         const result = await new GetAllImagesQuery(
             this.imageRepository,

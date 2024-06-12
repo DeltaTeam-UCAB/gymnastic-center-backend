@@ -71,7 +71,7 @@ export class CreateCourseController
         )
 
         const nestLogger = new NestLogger('Create Course logger')
-        new LoggerDecorator(commandBase, nestLogger)
+        new LoggerDecorator(commandBase, nestLogger).execute(body)
 
         const commandTitleValidation = new CourseTitleNotExistDecorator(
             commandBase,
