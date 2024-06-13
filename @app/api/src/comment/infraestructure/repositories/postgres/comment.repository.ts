@@ -41,6 +41,10 @@ export class CommentPostgresRepository implements CommentRepository {
                 where: {
                     lessonId: targetId,
                 },
+                ...options,
+                order: {
+                    creationDate: 'DESC',
+                },
             })
         } else {
             commentsORM = await this.commentRespository.find({
