@@ -8,6 +8,8 @@ import { IMAGE_DOC_PREFIX, IMAGE_ROUTE_PREFIX } from '../prefix'
 import { GetAllImagesQuery } from 'src/image/application/queries/get-all/get.all.image.query'
 import { GetAllImagesResponse } from 'src/image/application/queries/get-all/types/response'
 import { ImagePostgresRepository } from '../../repositories/postgres/image.repository'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 
 @Controller({
     path: IMAGE_ROUTE_PREFIX,
@@ -24,9 +26,13 @@ export class FindImageController
     })
     @UseGuards(UserGuard, RolesGuard)
     async execute(): Promise<GetAllImagesResponse> {
-        const result = await new GetAllImagesQuery(
-            this.imageRepository,
-        ).execute()
+        const nestLogger = new NestLogger('Find all images logger')
+        const service = new LoggerDecorator(
+            await new GetAllImagesQuery(this.imageRepository),
+            nestLogger,
+        )
+
+        const result = await service.execute({})
         return result.unwrap()
     }
 }

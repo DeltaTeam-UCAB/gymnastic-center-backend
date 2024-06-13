@@ -26,6 +26,8 @@ import { COURSE_TITLE_EXIST } from 'src/course/application/errors/course.title.e
 import { PostgresTransactionProvider } from 'src/core/infraestructure/repositories/transaction/postgres.transaction'
 import { CoursePostgresTransactionalRepository } from '../../repositories/postgres/course.repository.transactional'
 import { TransactionHandlerDecorator } from 'src/core/application/decorators/transaction.handler.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -62,13 +64,14 @@ export class CreateCourseController
         const courseRepository = new CoursePostgresTransactionalRepository(
             manager.queryRunner,
         )
-        const commandBase = new CreateCourseCommand(
-            this.idGen,
-            courseRepository,
-            new ConcreteDateProvider(),
-        )
+        const nestLogger = new NestLogger('Create Course logger')
+
         const commandTitleValidation = new CourseTitleNotExistDecorator(
-            commandBase,
+            new CreateCourseCommand(
+                this.idGen,
+                courseRepository,
+                new ConcreteDateProvider(),
+            ),
             courseRepository,
         )
         const commandWithCategoryValidator = new CategoryExistDecorator(
@@ -89,7 +92,7 @@ export class CreateCourseController
         )
         const result = await new ErrorDecorator(
             new TransactionHandlerDecorator(
-                commandWithVideoValidator,
+                new LoggerDecorator(commandWithVideoValidator, nestLogger),
                 manager.transactionHandler,
             ),
             (e) => {

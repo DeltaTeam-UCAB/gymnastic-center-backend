@@ -19,6 +19,8 @@ import { CategoryExistDecorator } from 'src/blog/application/commands/create/dec
 import { TransactionHandlerDecorator } from 'src/core/application/decorators/transaction.handler.decorator'
 import { PostgresTransactionProvider } from 'src/core/infraestructure/repositories/transaction/postgres.transaction'
 import { BlogPostgresTransactionalRepository } from '../../repositories/postgres/blog.repository.transactional'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -49,9 +51,10 @@ export class CreateBlogController
         const blogRepository = new BlogPostgresTransactionalRepository(
             manager.queryRunner,
         )
-        const commandBase = new CreateBlogCommand(this.idGen, blogRepository)
+        const nestLogger = new NestLogger('Create Blog logger')
+
         const commandWithTitleValidator = new BlogTitleNotExistDecorator(
-            commandBase,
+            new CreateBlogCommand(this.idGen, blogRepository),
             blogRepository,
         )
         const commandWithTrainerValidator = new TrainerExistDecorator(
@@ -64,7 +67,7 @@ export class CreateBlogController
         )
         const result = await new ErrorDecorator(
             new TransactionHandlerDecorator(
-                commandWithCategoryValidator,
+                new LoggerDecorator(commandWithCategoryValidator, nestLogger),
                 manager.transactionHandler,
             ),
             (e) => new HttpException(e.message, 400),

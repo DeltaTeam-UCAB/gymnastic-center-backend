@@ -14,6 +14,8 @@ import { GetImageByIdResponse } from 'src/image/application/queries/get-by-id/ty
 import { GetImageByIdQuery } from 'src/image/application/queries/get-by-id/get.image.id.query'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { ImagePostgresRepository } from '../../repositories/postgres/image.repository'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 
 @Controller({
     path: IMAGE_ROUTE_PREFIX,
@@ -31,10 +33,15 @@ implements ControllerContract<[id: string], GetImageByIdResponse>
     async execute(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<GetImageByIdResponse> {
-        const result = await new ErrorDecorator(
-            new GetImageByIdQuery(this.imageRepository),
+        const nestLogger = new NestLogger('Find image logger')
+        const service = await new ErrorDecorator(
+            new LoggerDecorator(
+                new GetImageByIdQuery(this.imageRepository),
+                nestLogger,
+            ),
             (e) => new HttpException(e.message, 404),
-        ).execute({
+        )
+        const result = await service.execute({
             id,
         })
         return result.unwrap()

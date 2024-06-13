@@ -24,6 +24,8 @@ import { CLOUDINARY_IMAGE_STORAGE } from 'src/core/infraestructure/storage/image
 import { SaveImageCommand } from 'src/image/application/commands/save/save.image.command'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { ImagePostgresRepository } from '../../repositories/postgres/image.repository'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 
 @Controller({
     path: IMAGE_ROUTE_PREFIX,
@@ -57,11 +59,15 @@ implements
         @Body() _body: UploadImageDTO,
     ): Promise<{ id: string }> {
         try {
+            const nestLogger = new NestLogger('Upload image logger')
             const result = await new ErrorDecorator(
-                new SaveImageCommand(
-                    this.idGen,
-                    this.imageRepository,
-                    this.imageStorage,
+                new LoggerDecorator(
+                    new SaveImageCommand(
+                        this.idGen,
+                        this.imageRepository,
+                        this.imageStorage,
+                    ),
+                    nestLogger,
                 ),
                 () => new InternalServerErrorException(),
             ).execute({
