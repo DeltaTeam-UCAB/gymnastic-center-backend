@@ -10,6 +10,8 @@ import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { ApiHeader } from '@nestjs/swagger'
 import { GetCountNotificationsNotReadedResponse } from 'src/notification/application/queries/not-readed/types/response'
 import { GetCountNotificationsNotReadedQuery } from 'src/notification/application/queries/not-readed/notifications.not.readed.query'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'notification',
@@ -35,8 +37,11 @@ implements
         @User() user: CurrentUserResponse,
     ): Promise<GetCountNotificationsNotReadedResponse> {
         const result = await new ErrorDecorator(
-            new GetCountNotificationsNotReadedQuery(
-                this.notificationRepository,
+            new LoggerDecorator(
+                new GetCountNotificationsNotReadedQuery(
+                    this.notificationRepository,
+                ),
+                new NestLogger('CountNotificationsNotReaded'),
             ),
             (e) => new HttpException(e.message, 404),
         ).execute({

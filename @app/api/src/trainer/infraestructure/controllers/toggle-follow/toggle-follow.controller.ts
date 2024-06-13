@@ -17,6 +17,8 @@ import { FindTrainerQuery } from 'src/trainer/application/queries/find/find.trai
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { ApiHeader } from '@nestjs/swagger'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'trainer',
@@ -39,9 +41,12 @@ export class ToggleFollowController
         @UserDecorator() user: User,
     ): Promise<ToggleFollowResponse> {
         const result = await new ErrorDecorator(
-            new ToggleFolowCommand(
-                this.trainerRepo,
-                new FindTrainerQuery(this.trainerRepo),
+            new LoggerDecorator(
+                new ToggleFolowCommand(
+                    this.trainerRepo,
+                    new FindTrainerQuery(this.trainerRepo),
+                ),
+                new NestLogger('ToggleFollow'),
             ),
             (e) => new HttpException(e.message, 400),
         ).execute({ userId: user.id, trainerId: param })

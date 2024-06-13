@@ -16,6 +16,8 @@ import { ApiHeader } from '@nestjs/swagger'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { User } from 'src/user/application/models/user'
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'trainer',
@@ -38,7 +40,10 @@ export class FindTrainerController
         @UserDecorator() user: User,
     ): Promise<FindTrainerResponse> {
         const result = await new ErrorDecorator(
-            new FindTrainerQuery(this.trainerRepo),
+            new LoggerDecorator(
+                new FindTrainerQuery(this.trainerRepo),
+                new NestLogger('FindTrainer'),
+            ),
             (e) => new HttpException(e.message, 400),
         ).execute({
             userId: user.id,
