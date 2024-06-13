@@ -1,13 +1,13 @@
 import { ApplicationService } from 'src/core/application/service/application.service'
 import { Result } from 'src/core/application/result-handler/result.handler'
+import { Course } from '../../models/course'
 import { CategoryRepository } from '../../repositories/category.repository'
-import { TrainerRepository } from '../../repositories/trainer.repository'
-import { ImageRepository } from '../../repositories/image.repository'
-import { GetSubscribedCoursesResponse } from './types/response'
-import { GetSubscribedCoursesDTO } from './types/dto'
 import { CourseRepository } from '../../repositories/course.repository'
+import { ImageRepository } from '../../repositories/image.repository'
 import { SubscriptionRepository } from '../../repositories/subscription.repository'
-import { Course } from 'src/course/application/models/course'
+import { TrainerRepository } from '../../repositories/trainer.repository'
+import { GetSubscribedCoursesDTO } from './types/dto'
+import { GetSubscribedCoursesResponse } from './types/response'
 
 export class GetSubscribedCoursesPaginatedQuery
     implements
@@ -30,19 +30,17 @@ export class GetSubscribedCoursesPaginatedQuery
 
         const courses: Course[] = []
 
-        if (subscriptions) {
-            const coursePromises = subscriptions.map(async (subscription) => {
+        const coursePromises = await subscriptions.asyncMap(
+            async (subscription) => {
                 return this.courseRepo.getById(subscription.course)
-            })
+            },
+        )
 
-            const retrievedCourses = await Promise.all(coursePromises)
-
-            retrievedCourses.forEach((course) => {
-                if (course) {
-                    courses.push(course)
-                }
-            })
-        }
+        coursePromises.forEach((course) => {
+            if (course) {
+                courses.push(course)
+            }
+        })
 
         return Result.success(
             await courses.asyncMap(async (course) => ({
