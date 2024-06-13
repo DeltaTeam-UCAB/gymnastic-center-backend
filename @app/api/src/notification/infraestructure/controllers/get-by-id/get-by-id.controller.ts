@@ -11,6 +11,8 @@ import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { ApiHeader } from '@nestjs/swagger'
 import { GetNotificationByIdResponse } from 'src/notification/application/queries/get-id/types/response'
 import { GetNotificationByIdQuery } from 'src/notification/application/queries/get-id/get.notification.id.query'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'notification',
@@ -37,7 +39,12 @@ export class GetNotificationByIdController
         @User() user: CurrentUserResponse,
     ): Promise<GetNotificationByIdResponse> {
         await new ErrorDecorator(
-            new MarkNotificationAsReadedCommand(this.notificationRepository),
+            new LoggerDecorator(
+                new MarkNotificationAsReadedCommand(
+                    this.notificationRepository,
+                ),
+                new NestLogger('GetNotificationById'),
+            ),
             (e) => new HttpException(e.message, 400),
         ).execute({
             client: user.id,

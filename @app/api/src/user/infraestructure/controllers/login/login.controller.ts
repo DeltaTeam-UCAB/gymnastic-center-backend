@@ -10,6 +10,8 @@ import { UserPostgresRepository } from '../../repositories/postgres/user.reposit
 import { LoginResponse } from 'src/user/application/commads/login/types/response'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { LoginCommand } from 'src/user/application/commads/login/login.command'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'auth',
@@ -26,10 +28,13 @@ export class LoginController
     @Post('login')
     async execute(@Body() body: LoginDTO): Promise<LoginResponse> {
         const result = await new ErrorDecorator(
-            new LoginCommand(
-                this.userRepo,
-                this.crypto,
-                this.jwtProvider.create(),
+            new LoggerDecorator(
+                new LoginCommand(
+                    this.userRepo,
+                    this.crypto,
+                    this.jwtProvider.create(),
+                ),
+                new NestLogger('Login'),
             ),
             (e) => new HttpException(e.message, 400),
         ).execute(body)

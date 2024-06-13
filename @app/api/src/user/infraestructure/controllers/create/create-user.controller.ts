@@ -10,6 +10,8 @@ import { UserPostgresRepository } from '../../repositories/postgres/user.reposit
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { CreateUserCommand } from 'src/user/application/commads/create/create.user.command'
 import { CreateUserResponse } from 'src/user/application/commads/create/types/response'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'auth',
@@ -26,7 +28,10 @@ export class CreateUserController
     @Post('register')
     async execute(@Body() body: CreateUserDTO): Promise<CreateUserResponse> {
         const result = await new ErrorDecorator(
-            new CreateUserCommand(this.idGen, this.crypto, this.userRepo),
+            new LoggerDecorator(
+                new CreateUserCommand(this.idGen, this.crypto, this.userRepo),
+                new NestLogger('CreateUser'),
+            ),
             (e) => new HttpException(e.message, 400),
         ).execute(body)
         return result.unwrap()

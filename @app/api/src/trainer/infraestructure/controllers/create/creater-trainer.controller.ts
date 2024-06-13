@@ -11,6 +11,8 @@ import { TrainerPostgresRepository } from '../../repositories/postgres/trainer.r
 import { ApiHeader } from '@nestjs/swagger'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'trainer',
@@ -35,7 +37,10 @@ export class CreateTrainerController
         @Body() body: CreateTrainerDTO,
     ): Promise<CreateTrainerResponse> {
         const result = await new ErrorDecorator(
-            new CreateTrainerCommand(this.idGen, this.trainerRepo),
+            new LoggerDecorator(
+                new CreateTrainerCommand(this.idGen, this.trainerRepo),
+                new NestLogger('CreateTrainer'),
+            ),
             (e) => new HttpException(e.message, 400),
         ).execute(body)
         return result.unwrap()

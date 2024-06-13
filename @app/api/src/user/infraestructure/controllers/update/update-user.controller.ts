@@ -12,6 +12,8 @@ import { UpdateUserResponse } from 'src/user/application/commads/update/types/re
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { UpdateUserCommand } from 'src/user/application/commads/update/update.user.command'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'user',
@@ -38,7 +40,10 @@ export class UpdateUserController
         @Body() data: UpdateUserDTO,
     ): Promise<UpdateUserResponse> {
         const result = await new ErrorDecorator(
-            new UpdateUserCommand(this.crypto, this.userRepo),
+            new LoggerDecorator(
+                new UpdateUserCommand(this.crypto, this.userRepo),
+                new NestLogger('UpdateUser'),
+            ),
             (e) => new HttpException(e.message, 400),
         ).execute({
             id: user.id,

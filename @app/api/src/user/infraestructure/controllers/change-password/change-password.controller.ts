@@ -8,6 +8,8 @@ import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provide
 import { Body, HttpException, Inject, Put } from '@nestjs/common'
 import { SHA256_CRYPTO } from 'src/core/infraestructure/crypto/sha256/sha256.module'
 import { Crypto } from 'src/core/application/crypto/crypto'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'auth',
@@ -23,10 +25,13 @@ implements ControllerContract<[body: ChangePasswordDTO], void>
     @Put('change/password')
     async execute(@Body() body: ChangePasswordDTO): Promise<void> {
         await new ErrorDecorator(
-            new ChangePasswordCommand(
-                this.userRepository,
-                new ConcreteDateProvider(),
-                this.crypto,
+            new LoggerDecorator(
+                new ChangePasswordCommand(
+                    this.userRepository,
+                    new ConcreteDateProvider(),
+                    this.crypto,
+                ),
+                new NestLogger('ChangePassword'),
             ),
             (e) => new HttpException(e.message, 400),
         ).execute(body)

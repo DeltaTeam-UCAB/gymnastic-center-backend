@@ -10,6 +10,8 @@ import { MarkNotificationAsReadedCommand } from 'src/notification/application/co
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { ApiHeader } from '@nestjs/swagger'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'notification',
@@ -36,7 +38,12 @@ implements
         @User() user: CurrentUserResponse,
     ): Promise<MarkNotificationAsReadedResponse> {
         const result = await new ErrorDecorator(
-            new MarkNotificationAsReadedCommand(this.notificationRepository),
+            new LoggerDecorator(
+                new MarkNotificationAsReadedCommand(
+                    this.notificationRepository,
+                ),
+                new NestLogger('MarkReadedNotification'),
+            ),
             (e) => new HttpException(e.message, 400),
         ).execute({
             client: user.id,
