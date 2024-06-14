@@ -12,7 +12,10 @@ export const body = async () => {
     const user = createUser({
         id: userId,
     })
-    const userRepository = new UserRepositoryMock([user])
+    const user2 = createUser({
+        name: 'user2',
+    })
+    const userRepository = new UserRepositoryMock([user, user2])
     const dateProvider = new DateProviderMock()
     const comment = createComment({
         creationDate: dateProvider.current,
@@ -20,6 +23,7 @@ export const body = async () => {
         targetId: '12345',
         targetType: 'BLOG',
         dislikes: [userId],
+        userId: user2.id,
     })
     const commentRepository = new CommentRepositoryMock([comment])
 
@@ -40,7 +44,7 @@ export const body = async () => {
             countLikes: 0,
             date: dateProvider.current,
             id: '12345544',
-            user: user.name,
+            user: user2.name,
             userDisliked: true,
             userLiked: false,
         },
