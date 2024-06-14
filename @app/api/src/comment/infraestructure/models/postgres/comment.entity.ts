@@ -15,36 +15,36 @@ export class Comment {
     @PrimaryColumn({
         type: 'uuid',
     })
-    id: string
+        id: string
     @Column({
         type: 'uuid',
     })
-    userId: string
+        userId: string
     @ManyToMany(() => User)
     @JoinColumn()
-    user: User
+        user: User
     @Column({
         type: 'uuid',
         nullable: true,
     })
-    lessonId: string
+        lessonId: string
     @ManyToMany(() => Lesson)
     @JoinColumn()
-    lesson: Lesson
+        lesson: Lesson
     @Column({
         type: 'uuid',
         nullable: true,
     })
-    blogId: string
+        blogId: string
     @ManyToMany(() => Blog)
     @JoinColumn()
-    blog: Blog
+        blog: Blog
     @Column({
         type: 'varchar',
     })
-    description: string
+        description: string
     @CreateDateColumn({
-        type: 'date',
+        type: 'timestamp',
     })
-    creationDate: Date
+        creationDate: Date
 }
