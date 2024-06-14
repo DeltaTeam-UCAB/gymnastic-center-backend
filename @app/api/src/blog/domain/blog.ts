@@ -12,6 +12,11 @@ import { blogBodyChanged } from './events/blog.body.changed'
 import { unvalidBlog } from './exceptions/unvalid.blog'
 import { blogTagAdded } from './events/blog.tag.added'
 import { blogTagRemoved } from './events/blog.tag.removed'
+import { blogCategoryChanged } from './events/blog.category.changed'
+import { blogTrainerChanged } from './events/blog.trainer.changed'
+import { blogImageAdded } from './events/blog.image.added'
+import { blogImageRemoved } from './events/blog.image.removed'
+import { BlogDate } from './value-objects/blog.date'
 
 export class Blog extends AggregateRoot<BlogId> {
     constructor(
@@ -23,6 +28,7 @@ export class Blog extends AggregateRoot<BlogId> {
             tags: BlogTag[]
             trainer: Trainer
             category: Category
+            date: BlogDate
         },
     ) {
         super(id)
@@ -58,6 +64,10 @@ export class Blog extends AggregateRoot<BlogId> {
         return this.data.category
     }
 
+    get date() {
+        return this.data.date
+    }
+
     changeTitle(title: BlogTitle) {
         this.data.title = title
         this.publish(
@@ -74,6 +84,46 @@ export class Blog extends AggregateRoot<BlogId> {
             blogBodyChanged({
                 id: this.id,
                 body,
+            }),
+        )
+    }
+
+    changeCategory(category: Category) {
+        this.data.category = category
+        this.publish(
+            blogCategoryChanged({
+                id: this.id,
+                category,
+            }),
+        )
+    }
+
+    changeTrainer(trainer: Trainer) {
+        this.data.trainer = trainer
+        this.publish(
+            blogTrainerChanged({
+                id: this.id,
+                trainer,
+            }),
+        )
+    }
+
+    addImage(image: BlogImage) {
+        this.data.images.push(image)
+        this.publish(
+            blogImageAdded({
+                id: this.id,
+                image,
+            }),
+        )
+    }
+
+    removeImage(image: BlogImage) {
+        this.data.images = this.data.images.filter((e) => e != image)
+        this.publish(
+            blogImageRemoved({
+                id: this.id,
+                image,
             }),
         )
     }
@@ -106,7 +156,8 @@ export class Blog extends AggregateRoot<BlogId> {
             !this.images ||
             !this.tags ||
             !this.trainer ||
-            !this.category
+            !this.category ||
+            !this.date
         )
             throw unvalidBlog()
     }
