@@ -25,7 +25,7 @@ export class FindCommentsQuery
         const commentsResponse = await comments.asyncMap(async (c) => {
             const commentResponse = {
                 id: c.id,
-                user: (await this.userRepository.getById(data.userId))!.name,
+                user: (await this.userRepository.getById(c.userId))!.name,
                 countLikes: c.likes.length,
                 countDislikes: c.dislikes.length,
                 body: c.description,
