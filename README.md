@@ -41,6 +41,16 @@ $ pnpm run start:dev
 $ pnpm run start:prod
 ```
 
+## Docker
+
+```bash
+# Just for the database:
+$ docker-compose up -d
+
+# If you want to run the whole app as a container with the database:
+$ docker-compose -f docker-compose.prod.yml --env-file ./@app/api/.env up -d --build
+```
+
 ## Lint
 ```bash
 # run lint with eslint

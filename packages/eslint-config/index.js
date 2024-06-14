@@ -30,7 +30,6 @@ module.exports = {
         'prefer-const': ['error'],
         'prefer-object-spread': ['error'],
         'prefer-regex-literals': ['error'],
-        'sort-imports': ['warn'],
         semi: ['error', 'never'],
         'consistent-return': 2,
         indent: [1, 4],

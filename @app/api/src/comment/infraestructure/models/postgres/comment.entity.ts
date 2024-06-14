@@ -1,5 +1,6 @@
-import { Client } from 'src/client/infraestructure/models/postgres/client.entity'
-import { Course } from 'src/course/infraestructure/models/postgres/course.entity'
+import { Lesson } from 'src/comment/infraestructure/models/postgres/lesson.entity'
+import { Blog } from 'src/comment/infraestructure/models/postgres/blog.entity'
+import { User } from 'src/comment/infraestructure/models/postgres/user.entity'
 import {
     Column,
     CreateDateColumn,
@@ -14,33 +15,36 @@ export class Comment {
     @PrimaryColumn({
         type: 'uuid',
     })
-    id: string
+        id: string
     @Column({
         type: 'uuid',
     })
-    clientId: string
-    @ManyToMany(() => Client)
+        userId: string
+    @ManyToMany(() => User)
     @JoinColumn()
-    client: Client
+        user: User
     @Column({
         type: 'uuid',
         nullable: true,
     })
-    courseId: string
-    @ManyToMany(() => Course)
+        lessonId: string
+    @ManyToMany(() => Lesson)
     @JoinColumn()
-    course: Course
+        lesson: Lesson
     @Column({
         type: 'uuid',
         nullable: true,
     })
-    postId: string
+        blogId: string
+    @ManyToMany(() => Blog)
+    @JoinColumn()
+        blog: Blog
     @Column({
         type: 'varchar',
     })
-    description: string
+        description: string
     @CreateDateColumn({
-        type: 'date',
+        type: 'timestamp',
     })
-    creationDate: Date
+        creationDate: Date
 }

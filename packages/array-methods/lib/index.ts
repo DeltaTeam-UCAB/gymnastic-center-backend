@@ -130,8 +130,8 @@ if (!Array.prototype.groupBy)
     ) {
         return this.reduce((acc, e, index) => {
             const key = callback(e, index)
-            if (acc[key]) acc.key.push(e)
-            else acc[key] = [e]
+            if (!acc[key]) acc[key] = []
+            acc[key].push(e)
             return acc
         }, {})
     }

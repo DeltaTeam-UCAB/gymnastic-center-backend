@@ -5,5 +5,6 @@ dist_test
 esm
 commonjs
 *.env
-public
+public/uploads
 .DS_Store
+.tap

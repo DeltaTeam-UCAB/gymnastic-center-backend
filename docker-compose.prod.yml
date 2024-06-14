@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16
+    container_name: gymnastic-center-DB
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_DATABASE_NAME}
+
+  gymnastic-center-app:
+    depends_on:
+      - db
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: gymnastic-center
+    container_name: gymnastic-center-app
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      PORT: ${PORT}
+      NODE_ENV: ${NODE_ENV}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_DATABASE_NAME: ${DATABASE_DATABASE_NAME}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_SENDER: ${EMAIL_SENDER}
+      SENDER_PASSWORD: ${SENDER_PASSWORD}
+      EMAIL_SERVICE: ${EMAIL_SERVICE}
+      EMAIL_PORT: ${EMAIL_PORT}
+

@@ -3,7 +3,6 @@ import { Controller } from 'src/core/infraestructure/controllers/decorators/cont
 import { UploadVideoDTO } from './dto/video.dto'
 import {
     Body,
-    HttpException,
     Inject,
     InternalServerErrorException,
     Post,
@@ -19,12 +18,13 @@ import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.modul
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { VideoStorage } from 'src/core/application/storage/video/video.manager'
 import { CLOUDINARY_VIDEO_STORAGE } from 'src/core/infraestructure/storage/video/video.storage.module'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Video } from '../../models/postgres/video'
-import { Repository } from 'typeorm'
 import { VIDEO_DOC_PREFIX, VIDEO_ROUTE_PREFIX } from '../prefix'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { rmSync } from 'fs'
+import { VideoPostgresRepository } from '../../repositories/postgres/video.repository'
+import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
+import { SaveVideoCommand } from 'src/video/application/commands/save/save.video.command'
+import { SaveVideoResponse } from 'src/video/application/commands/save/types/response'
 
 @Controller({
     path: VIDEO_ROUTE_PREFIX,
@@ -34,15 +34,13 @@ export class UploadVideoController
     implements
         ControllerContract<
             [file: Express.Multer.File, body: UploadVideoDTO],
-            {
-                id: string
-            }
+            SaveVideoResponse
         >
 {
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
         @Inject(CLOUDINARY_VIDEO_STORAGE) private videoStorage: VideoStorage,
-        @InjectRepository(Video) private videoRepo: Repository<Video>,
+        private videoRepository: VideoPostgresRepository,
     ) {}
     @Post('upload')
     @Roles('ADMIN')
@@ -56,21 +54,21 @@ export class UploadVideoController
         @UploadedFile() file: Express.Multer.File,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         @Body() _body: UploadVideoDTO,
-    ): Promise<{ id: string }> {
+    ): Promise<SaveVideoResponse> {
         try {
-            const result = await this.videoStorage.save({
+            const result = await new ErrorDecorator(
+                new SaveVideoCommand(
+                    this.idGen,
+                    this.videoRepository,
+                    this.videoStorage,
+                ),
+                () => new InternalServerErrorException(),
+            ).execute({
                 path: file.path,
             })
+            const data = result.unwrap()
             rmSync(file.path)
-            if (result.isError()) throw new HttpException('Failed to save', 400)
-            const videoId = this.idGen.generate()
-            await this.videoRepo.save({
-                id: videoId,
-                src: result.unwrap().url,
-            })
-            return {
-                id: videoId,
-            }
+            return data
         } catch (e) {
             rmSync(file.path)
             throw new InternalServerErrorException()
