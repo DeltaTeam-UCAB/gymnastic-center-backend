@@ -14,7 +14,7 @@ export class LoggerDecorator<T, R> implements ApplicationService<T, R> {
             const result = await this.service.execute(data)
             if (result.isError())
                 this.logger.error(JSON.stringify(result.handleError((e) => e)))
-            if (isNotNull(result.unwrap()))
+            if (!result.isError() && isNotNull(result.unwrap()))
                 this.logger.log('RESULT:', JSON.stringify(result.unwrap()))
             return result
         } catch (error) {
