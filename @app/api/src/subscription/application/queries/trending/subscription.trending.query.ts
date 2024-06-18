@@ -9,8 +9,8 @@ import { subscriptionNotFound } from '../../errors/subscription.not.found'
 import { courseNotExist } from '../../errors/course.not.exist'
 import { calculateCourseProgress } from 'src/subscription/domain/services/calculate.course.progress'
 
-export class GetSubscriptionTrending
-implements
+export class GetSubscriptionTrendingQuery
+    implements
         ApplicationService<
             GetSubscriptionTrendingDTO,
             GetSubscriptionTrendingResponse

@@ -17,13 +17,15 @@ import { ToggleLikeCommand } from 'src/comment/application/commands/toggle-like/
 import { CommentPostgresRepository } from '../../repositories/postgres/comment.repository'
 import { ApiHeader } from '@nestjs/swagger'
 import { CheckCommentExistence } from 'src/comment/application/decorators/check-comment-existence.decorator'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'comment',
     docTitle: 'Comment',
 })
 export class ToggleLikeController
-    implements
+implements
         ControllerContract<[param: string, user: User], ToggleLikeResponse>
 {
     constructor(private commentRepository: CommentPostgresRepository) {}
@@ -39,9 +41,12 @@ export class ToggleLikeController
         @UserDecorator() user: User,
     ): Promise<ToggleLikeResponse> {
         const result = await new ErrorDecorator(
-            new CheckCommentExistence(
-                new ToggleLikeCommand(this.commentRepository),
-                this.commentRepository,
+            new LoggerDecorator(
+                new CheckCommentExistence(
+                    new ToggleLikeCommand(this.commentRepository),
+                    this.commentRepository,
+                ),
+                new NestLogger('Toggle like'),
             ),
             (e) => new HttpException(e.message, 400),
         ).execute({
