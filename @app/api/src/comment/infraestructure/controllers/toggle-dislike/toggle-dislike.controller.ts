@@ -17,13 +17,15 @@ import { ApiHeader } from '@nestjs/swagger'
 import { ToggleDislikeCommand } from 'src/comment/application/commands/toggle-dislike/toggle-dislike.command'
 import { ToggleDislikeResponse } from 'src/comment/application/commands/toggle-dislike/types/response'
 import { CheckCommentExistence } from 'src/comment/application/decorators/check-comment-existence.decorator'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'comment',
     docTitle: 'Comment',
 })
 export class ToggleDislikeController
-implements
+    implements
         ControllerContract<[param: string, user: User], ToggleDislikeResponse>
 {
     constructor(private commentRepository: CommentPostgresRepository) {}
@@ -39,9 +41,12 @@ implements
         @UserDecorator() user: User,
     ): Promise<ToggleDislikeResponse> {
         const result = await new ErrorDecorator(
-            new CheckCommentExistence(
-                new ToggleDislikeCommand(this.commentRepository),
-                this.commentRepository,
+            new LoggerDecorator(
+                new CheckCommentExistence(
+                    new ToggleDislikeCommand(this.commentRepository),
+                    this.commentRepository,
+                ),
+                new NestLogger('Toggle dislike'),
             ),
             (e) => new HttpException(e.message, 400),
         ).execute({

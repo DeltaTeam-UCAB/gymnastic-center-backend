@@ -18,13 +18,15 @@ import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.
 import { User } from 'src/user/application/models/user'
 import { CheckTargetExistence } from 'src/comment/application/decorators/check-target-existence.decorator'
 import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
+import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'comment',
     docTitle: 'Comment',
 })
 export class CreateController
-implements
+    implements
         ControllerContract<
             [body: CreateCommentDTO, user: User],
             CreateCommentResponse
@@ -48,14 +50,17 @@ implements
         @UserDecorator() user: User,
     ): Promise<CreateCommentResponse> {
         const result = await new ErrorDecorator(
-            new CheckTargetExistence(
-                new CreateCommentCommand(
-                    this.commentRepo,
-                    new ConcreteDateProvider(),
-                    this.idGen,
+            new LoggerDecorator(
+                new CheckTargetExistence(
+                    new CreateCommentCommand(
+                        this.commentRepo,
+                        new ConcreteDateProvider(),
+                        this.idGen,
+                    ),
+                    this.lessonRepo,
+                    this.blogRepo,
                 ),
-                this.lessonRepo,
-                this.blogRepo,
+                new NestLogger('Create comment'),
             ),
             (e) => new HttpException(e.message, 400),
         ).execute({
