@@ -23,7 +23,11 @@ export class ServerBuilder implements Builder<INestApplication> {
     }
 
     setValidationPipe() {
-        this.app.useGlobalPipes(new ValidationPipe())
+        this.app.useGlobalPipes(
+            new ValidationPipe({
+                transform: true,
+            }),
+        )
         return this
     }
 
