@@ -15,12 +15,4 @@ export interface TrainerRepository {
     ): Promise<Trainer[]>
     getAll(perPage: number, page: number): Promise<Trainer[]>
     existByName(name: TrainerName): Promise<boolean>
-    followTrainer(
-        userId: ClientID,
-        trainerId: TrainerID,
-    ): Promise<Result<boolean>>
-    unfollowTrainer(
-        userId: ClientID,
-        trainerId: TrainerID,
-    ): Promise<Result<boolean>>
 }

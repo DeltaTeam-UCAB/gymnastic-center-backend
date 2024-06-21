@@ -29,6 +29,15 @@ export class TrainerPostgresRepository implements TrainerRepository {
             }),
             ['id'],
         )
+        await this.followRepository.delete({
+            trainerId: trainer.id.id,
+        })
+        trainer.followers.asyncForEach(async (f) => {
+            await this.followRepository.save({
+                userId: f.id,
+                trainerId: trainer.id.id,
+            })
+        })
         return Result.success(trainer)
     }
 
@@ -126,27 +135,5 @@ export class TrainerPostgresRepository implements TrainerRepository {
             name: name.name,
         })
         return exists
-    }
-
-    async followTrainer(
-        userId: ClientID,
-        trainerId: TrainerID,
-    ): Promise<Result<boolean>> {
-        this.followRepository.save({
-            userId: userId.id,
-            trainerId: trainerId.id,
-        })
-        return Result.success(true)
-    }
-
-    async unfollowTrainer(
-        userId: ClientID,
-        trainerId: TrainerID,
-    ): Promise<Result<boolean>> {
-        this.followRepository.delete({
-            userId: userId.id,
-            trainerId: trainerId.id,
-        })
-        return Result.success(false)
     }
 }

@@ -21,14 +21,12 @@ export class ToggleFolowCommand
         if (!isNotNull(trainer)) return Result.error(trainerNotFoundError())
         const clientId = new ClientID(data.userId)
         const userFollow = trainer.isFollowedBy(clientId)
-        let result: Result<boolean>
         if (userFollow) {
             trainer.removeFollower(clientId)
-            result = await this.trainerRepo.unfollowTrainer(clientId, trainerId)
         } else {
             trainer.addFollower(clientId)
-            result = await this.trainerRepo.followTrainer(clientId, trainerId)
         }
+        const result = await this.trainerRepo.save(trainer)
         if (result.isError()) return result.convertToOther()
         return Result.success({ userFollow: !userFollow })
     }
