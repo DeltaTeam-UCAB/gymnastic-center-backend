@@ -42,10 +42,7 @@ export class ToggleFollowController
     ): Promise<ToggleFollowResponse> {
         const result = await new ErrorDecorator(
             new LoggerDecorator(
-                new ToggleFolowCommand(
-                    this.trainerRepo,
-                    new FindTrainerQuery(this.trainerRepo),
-                ),
+                new ToggleFolowCommand(this.trainerRepo),
                 new NestLogger('ToggleFollow'),
             ),
             (e) => new HttpException(e.message, 400),

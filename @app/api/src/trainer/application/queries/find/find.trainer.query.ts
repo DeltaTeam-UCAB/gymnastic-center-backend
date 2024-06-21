@@ -5,6 +5,8 @@ import { TrainerRepository } from '../../repositories/trainer.repository'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
 import { trainerNotFoundError } from '../../errors/trainer.not.found'
 import { FindTrainerDTO } from './types/dto'
+import { ClientID } from 'src/trainer/domain/value-objects/client.id'
+import { TrainerID } from 'src/trainer/domain/value-objects/trainer.id'
 
 export class FindTrainerQuery
     implements ApplicationService<FindTrainerDTO, FindTrainerResponse>
@@ -12,16 +14,16 @@ export class FindTrainerQuery
     constructor(private trainerRepo: TrainerRepository) {}
 
     async execute(data: FindTrainerDTO): Promise<Result<FindTrainerResponse>> {
-        const trainer = await this.trainerRepo.getById(data.trainerId)
+        const trainer = await this.trainerRepo.getById(
+            new TrainerID(data.trainerId),
+        )
         if (!isNotNull(trainer)) return Result.error(trainerNotFoundError())
-        const userFollow = trainer.followers.includes(data.userId)
-        const followers = trainer.followers.length
         return Result.success({
-            id: trainer.id,
-            name: trainer.name,
-            location: trainer.location,
-            followers: followers,
-            userFollow: userFollow,
+            id: trainer.id.id,
+            name: trainer.name.name,
+            location: trainer.location.location,
+            followers: trainer.followers.length,
+            userFollow: trainer.isFollowedBy(new ClientID(data.userId)),
         })
     }
 }
