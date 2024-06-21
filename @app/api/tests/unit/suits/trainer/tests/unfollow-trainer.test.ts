@@ -24,7 +24,6 @@ export const body = async () => {
     const toggleFollowCommand = new ToggleFolowCommand(trainerRepo)
     await toggleFollowCommand.execute(followData)
     const trainer = await trainerRepo.getById(new TrainerID(trainerId))
-    console.log(trainer)
     lookFor(trainer).toBeDefined()
     lookFor(trainer?.followers.length).equals(0)
 }
