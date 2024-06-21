@@ -6,27 +6,26 @@ import { FindTrainerDTO } from '../../../../../src/trainer/application/queries/f
 export const name = 'Should find trainer following'
 
 export const body = async () => {
-    const trainerId = '123456789'
-    const userFollowsId = '987654321'
+    const trainerId = '5a3b8cde-6168-4e01-944d-50f74f8e8352'
+    const userFollowsId = '14529b59-395f-460e-b2dc-bd4b17d7028d'
     const dataFollows = {
         trainerId,
         userId: userFollowsId,
     } satisfies FindTrainerDTO
-    const trainerRepo = new TrainerRepositoryMock([
-        createTrainer({
-            id: trainerId,
-            name: 'test trainer',
-            location: 'test location',
-            followers: [userFollowsId, '123459876'],
-        }),
-    ])
+    const trainer = createTrainer({
+        id: trainerId,
+        name: 'test trainer',
+        location: 'test location',
+        followers: [userFollowsId, '7a884fbd-8c0e-4991-9fad-bb1c040a1515'],
+    })
+    const trainerRepo = new TrainerRepositoryMock([trainer])
     const findTrainerQuery = new FindTrainerQuery(trainerRepo)
     const resultFollows = await findTrainerQuery.execute(dataFollows)
     lookFor(resultFollows.unwrap()).toDeepEqual({
         id: trainerId,
         name: 'test trainer',
         location: 'test location',
-        followers: [userFollowsId, '123459876'].length,
+        followers: trainer.followers.length,
         userFollow: true,
     })
 }

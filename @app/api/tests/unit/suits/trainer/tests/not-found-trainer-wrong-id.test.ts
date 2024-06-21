@@ -8,12 +8,12 @@ export const name = 'Should not find a trainer with unvalid ID'
 
 export const body = async () => {
     const data = {
-        userId: '9999999999',
-        trainerId: '123456789',
+        userId: '92e9e433-51e9-4dfb-8d64-009102146c1b',
+        trainerId: '14529b59-395f-460e-b2dc-bd4b17d7028d',
     } satisfies FindTrainerDTO
     const trainerRepo = new TrainerRepositoryMock([
         createTrainer({
-            id: '987654321',
+            id: '7a884fbd-8c0e-4991-9fad-bb1c040a1515',
         }),
     ])
     const result = await new FindTrainerQuery(trainerRepo).execute(data)
