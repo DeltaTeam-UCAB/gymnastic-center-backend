@@ -13,6 +13,7 @@ import { isNotNull } from 'src/utils/null-manager/null-checker'
 import { ApiHeader } from '@nestjs/swagger'
 import { Optional } from '@mono/types-utils'
 import { UserByCommentPostgresRepository } from '../../repositories/postgres/user.repository'
+import { TargetType } from 'src/comment/application/types/target-type'
 
 @Controller({
     path: 'comment',
@@ -25,10 +26,7 @@ export class FindCommentsController
             FindCommentsResponse[]
         >
 {
-    constructor(
-        private commentRepo: CommentPostgresRepository,
-        private userRepo: UserByCommentPostgresRepository,
-    ) {}
+    constructor(private commentRepo: CommentPostgresRepository) {}
 
     @Get('many')
     @UseGuards(UserGuard)
@@ -40,10 +38,10 @@ export class FindCommentsController
         @UserDecorator() user: User,
     ): Promise<FindCommentsResponse[]> {
         if (!isNotNull(query.blog) && !isNotNull(query.lesson)) {
-            new HttpException('Blog and Lesson ID are null', 400)
+            throw new HttpException('Blog and Lesson ID are null', 400)
         }
 
-        let targetType: 'BLOG' | 'LESSON'
+        let targetType: TargetType
         let targetId: Optional<string>
 
         if (isNotNull(query.blog)) {
@@ -55,7 +53,7 @@ export class FindCommentsController
         }
 
         const result = await new ErrorDecorator(
-            new FindCommentsQuery(this.commentRepo, this.userRepo),
+            new FindCommentsQuery(this.commentRepo),
             (e) => new HttpException(e.message, 400),
         ).execute({
             page: query.page,

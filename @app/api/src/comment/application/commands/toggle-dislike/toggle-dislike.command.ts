@@ -3,6 +3,9 @@ import { ToggleDislikeDTO } from './types/dto'
 import { ToggleDislikeResponse } from './types/response'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { CommentRepository } from '../../repositories/comment.repository'
+import { CommentID } from 'src/comment/domain/value-objects/comment.id'
+import { ClientID } from 'src/comment/domain/value-objects/client.id'
+import { Comment } from 'src/comment/domain/comment'
 
 export class ToggleDislikeCommand
     implements ApplicationService<ToggleDislikeDTO, ToggleDislikeResponse>
@@ -12,10 +15,20 @@ export class ToggleDislikeCommand
     async execute(
         data: ToggleDislikeDTO,
     ): Promise<Result<ToggleDislikeResponse>> {
-        const dislike = await this.commentRepository.toggleDislike(
-            data.userId,
-            data.commentId,
-        )
+        const comment = (await this.commentRepository.getCommentById(
+            new CommentID(data.commentId),
+        )) as Comment
+        const clientId = new ClientID(data.userId)
+        let dislike
+        if (comment.clientDisliked(clientId)) {
+            comment.removeDislike(clientId)
+            dislike = false
+        } else {
+            if (comment.clientLiked(clientId)) comment.removeLike(clientId)
+            comment.dislike(clientId)
+            dislike = true
+        }
+        await this.commentRepository.save(comment)
         return Result.success({ dislike })
     }
 }
