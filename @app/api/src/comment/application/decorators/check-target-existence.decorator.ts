@@ -2,7 +2,7 @@ import { ApplicationService } from 'src/core/application/service/application.ser
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { LessonRepository } from '../repositories/lesson.repository'
 import { BlogRepository } from '../repositories/blog.repository'
-import { postNotFoundError } from '../errors/post.not.found'
+import { blogNotFoundError } from '../errors/blog.not.found'
 import { lessonNotFoundError } from '../errors/lesson.not.found'
 import { BlogID } from 'src/comment/domain/value-objects/blog.id'
 import { LessonID } from 'src/comment/domain/value-objects/lesson.id'
@@ -28,7 +28,7 @@ export class CheckTargetExistence<T extends TargetInfo, R>
             targetFound = await this.blogRepository.existsById(
                 new BlogID(data.targetId),
             )
-            if (!targetFound) return Result.error(postNotFoundError())
+            if (!targetFound) return Result.error(blogNotFoundError())
         } else if (data.targetType === 'LESSON') {
             targetFound = await this.lessonRepository.existsById(
                 new LessonID(data.targetId),

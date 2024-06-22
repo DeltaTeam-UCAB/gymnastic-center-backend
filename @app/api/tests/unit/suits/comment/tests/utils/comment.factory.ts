@@ -29,10 +29,7 @@ export const createComment = (data?: {
                     data?.userId ?? '9817f2b2-2ffc-418e-8083-e80746e7ec2f',
                 ),
                 {
-                    name: new ClientName(
-                        data?.userName ??
-                            '206786bc-f11e-4f06-8a61-98f7771f18e5',
-                    ),
+                    name: new ClientName(data?.userName ?? 'test client name'),
                 },
             ),
             content: new CommentContent(

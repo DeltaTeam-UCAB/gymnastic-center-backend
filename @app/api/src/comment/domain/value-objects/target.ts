@@ -21,10 +21,10 @@ export class Target implements ValueObject<Target> {
 
     equals(other?: Target | undefined): boolean {
         if (other?.lessonTarget() && this.lessonTarget())
-            return other.lesson === this.lesson
+            return other.lesson == this.lesson
 
         if (other?.blogTarget() && this.blogTarget())
-            return other.blog === this.blog
+            return other.blog == this.blog
 
         return false
     }

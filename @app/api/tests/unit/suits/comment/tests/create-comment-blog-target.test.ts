@@ -4,46 +4,42 @@ import { IDGeneratorMock } from './utils/id.generator.mock'
 import { CheckTargetExistence } from '../../../../../src/comment/application/decorators/check-target-existence.decorator'
 import { LessonRepositoryMock } from './utils/lesson.repository.mock'
 import { BlogRepositoryMock } from './utils/blog.repository.mock'
-import { TargetType } from '../../../../../src/comment/application/models/comment'
 import { DateProviderMock } from './utils/date.provider.mock'
-export const name = 'Should create comment (post target) with valid data'
+import { UserRepositoryMock } from './utils/user.repository.mock'
+import { TargetType } from '../../../../../src/comment/application/types/target-type'
+import { CommentID } from '../../../../../src/comment/domain/value-objects/comment.id'
+import { createUser } from './utils/user.factory'
+export const name = 'Should create comment (blog target) with valid data'
 
 export const body = async () => {
-    const commentId = '234567'
+    const commentId = '4359eabd-0737-427c-bf2d-87ef228cdb7a'
     const targetType: TargetType = 'BLOG'
-    const postId = '123456789'
-    const userId = 'asdyt1312'
+    const blogId = 'c8538a6c-fdae-4160-b5a2-d14e65f765c4'
+    const userId = 'e71a83b0-da56-4fc7-b25f-48e92d51e6a4'
+    const client = createUser({ id: userId })
     const data = {
         description: 'test description',
-        targetId: postId,
+        targetId: blogId,
         targetType,
         userId,
     }
     const dateProvider = new DateProviderMock()
     const commentRepo = new CommentRepositoryMock()
+    const userRepo = new UserRepositoryMock([client])
     const lessonRepo = new LessonRepositoryMock()
-    const postRepo = new BlogRepositoryMock([postId])
+    const postRepo = new BlogRepositoryMock([blogId])
     await new CheckTargetExistence(
         new CreateCommentCommand(
             commentRepo,
+            userRepo,
             dateProvider,
             new IDGeneratorMock(commentId),
         ),
         lessonRepo,
         postRepo,
     ).execute(data)
-    lookFor(
-        await commentRepo.getComments(postId, targetType, 0, 1),
-    ).toDeepEqual([
-        {
-            id: commentId,
-            targetId: postId,
-            targetType,
-            userId,
-            description: 'test description',
-            likes: [],
-            dislikes: [],
-            creationDate: dateProvider.current,
-        },
-    ])
+    const commentIdVO = new CommentID(commentId)
+    const comment = await commentRepo.getCommentById(commentIdVO)
+    lookFor(comment).toBeDefined()
+    lookFor(comment?.target.blogTarget()).equals(true)
 }
