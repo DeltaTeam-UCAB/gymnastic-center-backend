@@ -3,6 +3,9 @@ import { ToggleLikeDTO } from './types/dto'
 import { ToggleLikeResponse } from './types/response'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { CommentRepository } from '../../repositories/comment.repository'
+import { CommentID } from 'src/comment/domain/value-objects/comment.id'
+import { Comment } from 'src/comment/domain/comment'
+import { ClientID } from 'src/comment/domain/value-objects/client.id'
 
 export class ToggleLikeCommand
     implements ApplicationService<ToggleLikeDTO, ToggleLikeResponse>
@@ -10,10 +13,22 @@ export class ToggleLikeCommand
     constructor(private commentRepository: CommentRepository) {}
 
     async execute(data: ToggleLikeDTO): Promise<Result<ToggleLikeResponse>> {
-        const like = await this.commentRepository.toggleLike(
-            data.userId,
-            data.commentId,
-        )
+        const comment = (await this.commentRepository.getCommentById(
+            new CommentID(data.commentId),
+        )) as Comment
+        const clientId = new ClientID(data.userId)
+        let like
+        if (comment.clientLiked(clientId)) {
+            comment.removeLike(clientId)
+            like = false
+        } else {
+            if (comment.clientDisliked(clientId))
+                comment.removeDislike(clientId)
+
+            comment.like(clientId)
+            like = true
+        }
+        this.commentRepository.save(comment)
         return Result.success({ like })
     }
 }
