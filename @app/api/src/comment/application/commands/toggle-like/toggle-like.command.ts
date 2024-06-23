@@ -6,11 +6,15 @@ import { CommentRepository } from '../../repositories/comment.repository'
 import { CommentID } from 'src/comment/domain/value-objects/comment.id'
 import { Comment } from 'src/comment/domain/comment'
 import { ClientID } from 'src/comment/domain/value-objects/client.id'
+import { EventPublisher } from 'src/core/application/event-handler/event.handler'
 
 export class ToggleLikeCommand
     implements ApplicationService<ToggleLikeDTO, ToggleLikeResponse>
 {
-    constructor(private commentRepository: CommentRepository) {}
+    constructor(
+        private commentRepository: CommentRepository,
+        private eventPublisher: EventPublisher,
+    ) {}
 
     async execute(data: ToggleLikeDTO): Promise<Result<ToggleLikeResponse>> {
         const comment = (await this.commentRepository.getCommentById(
@@ -29,6 +33,7 @@ export class ToggleLikeCommand
             like = true
         }
         this.commentRepository.save(comment)
+        this.eventPublisher.publish(comment.pullEvents())
         return Result.success({ like })
     }
 }

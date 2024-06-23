@@ -12,7 +12,6 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
 import { isNotNull } from 'src/utils/null-manager/null-checker'
 import { ApiHeader } from '@nestjs/swagger'
 import { Optional } from '@mono/types-utils'
-import { UserByCommentPostgresRepository } from '../../repositories/postgres/user.repository'
 import { TargetType } from 'src/comment/application/types/target-type'
 
 @Controller({
@@ -20,7 +19,7 @@ import { TargetType } from 'src/comment/application/types/target-type'
     docTitle: 'Comment',
 })
 export class FindCommentsController
-    implements
+implements
         ControllerContract<
             [query: FindCommentsDTO, user: User],
             FindCommentsResponse[]
