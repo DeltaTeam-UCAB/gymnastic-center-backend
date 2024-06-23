@@ -13,4 +13,5 @@ export interface NotificationRepository {
     getById(id: string): Promise<Optional<Notification>>
     getMany(data: NotificationManyData): Promise<Notification[]>
     countNotReaded(clientId: string): Promise<number>
+    deleteByUser(client: string): Promise<Result<void>>
 }
