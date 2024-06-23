@@ -3,6 +3,7 @@ import { createSubscription } from './utils/subscription.factory'
 import { SubscriptionRepositoryMock } from './utils/subscription.repository.mock'
 import { UpdateSubscriptionCommand } from '../../../../../src/subscription/application/commands/update/update.command'
 import { DateProviderMock } from './utils/date.provider.mock'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 
 export const name = 'Should update subscription progress'
 export const body = async () => {
@@ -25,6 +26,7 @@ export const body = async () => {
     const result = await new UpdateSubscriptionCommand(
         subscriptionRepository,
         new DateProviderMock(),
+        eventPublisherStub,
     ).execute({
         course: course.id.id,
         client: subscription.client.id,

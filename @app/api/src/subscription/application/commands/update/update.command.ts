@@ -11,6 +11,7 @@ import { LessonID } from 'src/subscription/domain/value-objects/lesson.id'
 import { LessonLastTime } from 'src/subscription/domain/value-objects/lesson.last.time'
 import { Time } from 'src/subscription/domain/value-objects/time'
 import { updateLessonProgress } from 'src/subscription/domain/services/update.lesson.progress'
+import { EventPublisher } from 'src/core/application/event-handler/event.handler'
 
 export class UpdateSubscriptionCommand
 implements
@@ -19,6 +20,7 @@ implements
     constructor(
         private subscriptionRepository: SubscriptionRepository,
         private dateProvider: DateProvider,
+        private eventPublisher: EventPublisher,
     ) {}
     async execute(
         data: UpadeSubscriptionDTO,
@@ -43,6 +45,7 @@ implements
         })
         const result = await this.subscriptionRepository.save(subscription)
         if (result.isError()) return result.convertToOther()
+        this.eventPublisher.publish(subscription.pullEvents())
         return Result.success({
             id: subscription.id.id,
         })
