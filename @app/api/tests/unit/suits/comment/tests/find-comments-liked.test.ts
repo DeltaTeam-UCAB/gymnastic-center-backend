@@ -1,50 +1,49 @@
 import { FindCommentsQuery } from '../../../../../src/comment/application/queries/find/find-comments.query'
+import { TargetType } from '../../../../../src/comment/application/types/target-type'
 import { createComment } from './utils/comment.factory'
 import { CommentRepositoryMock } from './utils/comment.repository.mock'
 import { DateProviderMock } from './utils/date.provider.mock'
 import { createUser } from './utils/user.factory'
-import { UserRepositoryMock } from './utils/user.repository.mock'
 
 export const name = 'Should find comments with user like'
 
 export const body = async () => {
-    const userId = '12132332'
+    const userId = 'e71a83b0-da56-4fc7-b25f-48e92d51e6a4'
     const user = createUser({
         id: userId,
     })
     const user2 = createUser({
-        name: 'user2',
+        name: 'test name 2',
     })
-    const userRepository = new UserRepositoryMock([user, user2])
     const dateProvider = new DateProviderMock()
+    const commentId = '4359eabd-0737-427c-bf2d-87ef228cdb7a'
+    const targetId = 'c8538a6c-fdae-4160-b5a2-d14e65f765c4'
+    const targetType: TargetType = 'BLOG'
     const comment = createComment({
         creationDate: dateProvider.current,
-        id: '12345544',
-        targetId: '12345',
-        targetType: 'BLOG',
+        id: commentId,
+        targetId,
+        targetType,
         likes: [userId],
-        userId: user2.id,
+        userId: user2.id.id,
+        userName: user2.name.name,
     })
     const commentRepository = new CommentRepositoryMock([comment])
-
-    const result = await new FindCommentsQuery(
-        commentRepository,
-        userRepository,
-    ).execute({
-        targetId: '12345',
-        targetType: 'BLOG',
-        userId: userId,
+    const result = await new FindCommentsQuery(commentRepository).execute({
+        targetId,
+        targetType,
+        userId,
         perPage: 5,
-        page: 0,
+        page: 1,
     })
     lookFor(result.unwrap()).toDeepEqual([
         {
-            body: 'test description',
+            body: comment.content.content,
             countDislikes: 0,
             countLikes: 1,
             date: dateProvider.current,
-            id: '12345544',
-            user: user2.name,
+            id: commentId,
+            user: comment.client.name.name,
             userDisliked: false,
             userLiked: true,
         },

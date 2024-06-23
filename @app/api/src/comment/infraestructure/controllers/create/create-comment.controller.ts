@@ -20,6 +20,7 @@ import { CheckTargetExistence } from 'src/comment/application/decorators/check-t
 import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { UserByCommentPostgresRepository } from '../../repositories/postgres/user.repository'
 
 @Controller({
     path: 'comment',
@@ -35,6 +36,7 @@ export class CreateController
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
         private commentRepo: CommentPostgresRepository,
+        private userRepo: UserByCommentPostgresRepository,
         private blogRepo: BlogPostgresByCommentRepository,
         private lessonRepo: LessonPostgresByCommentRepository,
     ) {}
@@ -54,6 +56,7 @@ export class CreateController
                 new CheckTargetExistence(
                     new CreateCommentCommand(
                         this.commentRepo,
+                        this.userRepo,
                         new ConcreteDateProvider(),
                         this.idGen,
                     ),

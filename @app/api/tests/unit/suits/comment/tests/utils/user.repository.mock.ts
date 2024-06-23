@@ -1,11 +1,12 @@
 import { Optional } from '@mono/types-utils'
-import { User } from '../../../../../../src/comment/application/models/user'
 import { UserRepository } from '../../../../../../src/comment/application/repositories/user.repository'
+import { ClientID } from '../../../../../../src/comment/domain/value-objects/client.id'
+import { Client } from '../../../../../../src/comment/domain/entities/client'
 
 export class UserRepositoryMock implements UserRepository {
-    constructor(private categories: User[] = []) {}
+    constructor(private users: Client[] = []) {}
 
-    async getById(id: string): Promise<Optional<User>> {
-        return this.categories.find((c) => c.id === id)
+    async getById(id: ClientID): Promise<Optional<Client>> {
+        return this.users.find((c) => c.id == id)
     }
 }

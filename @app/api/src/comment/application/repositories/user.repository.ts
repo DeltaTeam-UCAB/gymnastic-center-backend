@@ -1,6 +1,7 @@
 import { Optional } from '@mono/types-utils'
-import { User } from '../models/user'
+import { ClientID } from 'src/comment/domain/value-objects/client.id'
+import { Client } from 'src/comment/domain/entities/client'
 
 export interface UserRepository {
-    getById(id: string): Promise<Optional<User>>
+    getById(id: ClientID): Promise<Optional<Client>>
 }

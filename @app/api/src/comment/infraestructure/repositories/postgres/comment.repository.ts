@@ -1,11 +1,22 @@
 import { InjectRepository } from '@nestjs/typeorm'
-import { Comment, TargetType } from 'src/comment/application/models/comment'
 import { CommentRepository } from 'src/comment/application/repositories/comment.repository'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { Comment as CommentORM } from '../../models/postgres/comment.entity'
 import { Repository } from 'typeorm'
 import { Like } from '../../models/postgres/like.entity'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
+import { Comment } from 'src/comment/domain/comment'
+import { Target } from 'src/comment/domain/value-objects/target'
+import { CommentID } from 'src/comment/domain/value-objects/comment.id'
+import { Client } from 'src/comment/domain/entities/client'
+import { ClientID } from 'src/comment/domain/value-objects/client.id'
+import { User } from '../../models/postgres/user.entity'
+import { ClientName } from 'src/comment/domain/value-objects/client.name'
+import { CommentContent } from 'src/comment/domain/value-objects/comment.content'
+import { CommentDate } from 'src/comment/domain/value-objects/comment.date'
+import { Optional } from '@mono/types-utils'
+import { BlogID } from 'src/comment/domain/value-objects/blog.id'
+import { LessonID } from 'src/comment/domain/value-objects/lesson.id'
 
 export class CommentPostgresRepository implements CommentRepository {
     constructor(
@@ -13,21 +24,77 @@ export class CommentPostgresRepository implements CommentRepository {
         private commentRespository: Repository<CommentORM>,
         @InjectRepository(Like)
         private likeRespository: Repository<Like>,
+        @InjectRepository(User)
+        private userRespository: Repository<User>,
     ) {}
+    async getCommentById(id: CommentID): Promise<Optional<Comment>> {
+        const exists = await this.commentRespository.exists({
+            where: {
+                id: id.id,
+            },
+        })
+        if (!exists) return null
+        const comment = (await this.commentRespository.findOneBy({
+            id: id.id,
+        })) as CommentORM
+        const likes = await this.likeRespository.findBy({
+            commentId: id.id,
+            like: true,
+        })
+        const dislikes = await this.likeRespository.findBy({
+            commentId: id.id,
+            like: false,
+        })
+        const client = (await this.userRespository.findOneBy({
+            id: comment.userId,
+        })) as User
+        return new Comment(id, {
+            client: new Client(new ClientID(client.id), {
+                name: new ClientName(client.name),
+            }),
+            content: new CommentContent(comment.description),
+            target: isNotNull(comment.blogId)
+                ? Target.blog(new BlogID(comment.blogId))
+                : Target.lesson(new LessonID(comment.lessonId)),
+            creationDate: new CommentDate(comment.creationDate),
+            whoLiked: likes.map((l) => new ClientID(l.userId)),
+            whoDisliked: dislikes.map((d) => new ClientID(d.userId)),
+        })
+    }
     async save(comment: Comment): Promise<Result<Comment>> {
         const commentORM = {
-            ...comment,
-            lessonId:
-                comment.targetType === 'LESSON' ? comment.targetId : undefined,
-            blogId:
-                comment.targetType === 'BLOG' ? comment.targetId : undefined,
+            id: comment.id.id,
+            userId: comment.client.id.id,
+            description: comment.content.content,
+            lessonId: comment.target.lessonTarget()
+                ? comment.target.lesson.id
+                : undefined,
+            blogId: comment.target.blogTarget()
+                ? comment.target.blog.id
+                : undefined,
         }
         await this.commentRespository.save(commentORM)
+        await this.likeRespository.delete({
+            commentId: comment.id.id,
+        })
+        comment.whoLiked.forEach(async (l) =>
+            this.likeRespository.save({
+                commentId: comment.id.id,
+                userId: l.id,
+                like: true,
+            }),
+        )
+        comment.whoDisliked.forEach(async (d) =>
+            this.likeRespository.save({
+                commentId: comment.id.id,
+                userId: d.id,
+                like: false,
+            }),
+        )
         return Result.success(comment)
     }
     async getComments(
-        targetId: string,
-        targetType: TargetType,
+        target: Target,
         page: number,
         perPage: number,
     ): Promise<Comment[]> {
@@ -36,10 +103,10 @@ export class CommentPostgresRepository implements CommentRepository {
             skip: (page - 1) * perPage,
         }
         let commentsORM: CommentORM[]
-        if (targetType === 'LESSON') {
+        if (target.lessonTarget()) {
             commentsORM = await this.commentRespository.find({
                 where: {
-                    lessonId: targetId,
+                    lessonId: target.lesson.id,
                 },
                 ...options,
                 order: {
@@ -49,7 +116,7 @@ export class CommentPostgresRepository implements CommentRepository {
         } else {
             commentsORM = await this.commentRespository.find({
                 where: {
-                    blogId: targetId,
+                    blogId: target.blog.id,
                 },
                 ...options,
                 order: {
@@ -74,74 +141,27 @@ export class CommentPostgresRepository implements CommentRepository {
             const dislikes: string[] = dislikesORM.map((l) => {
                 return l.userId
             })
-            const comment: Comment = {
-                id: c.id,
-                description: c.description,
-                targetId: targetId,
-                targetType: targetType,
-                userId: c.userId,
-                creationDate: c.creationDate,
-                likes: likes,
-                dislikes: dislikes,
-            }
+            const user = (await this.userRespository.findOneBy({
+                id: c.userId,
+            })) as User
+            const comment = new Comment(new CommentID(c.id), {
+                client: new Client(new ClientID(c.userId), {
+                    name: new ClientName(user.name),
+                }),
+                content: new CommentContent(c.description),
+                target,
+                whoLiked: likes.map((l) => new ClientID(l)),
+                whoDisliked: dislikes.map((l) => new ClientID(l)),
+                creationDate: new CommentDate(c.creationDate),
+            })
             return comment
         })
         return comments
     }
-    async existsById(id: string): Promise<boolean> {
+    async existsById(id: CommentID): Promise<boolean> {
         const exists = await this.commentRespository.existsBy({
-            id,
+            id: id.id,
         })
         return exists
-    }
-    async toggleLike(userId: string, commentId: string): Promise<boolean> {
-        const userLike = await this.likeRespository.findOneBy({
-            userId,
-            commentId,
-        })
-        let like
-        if (
-            !isNotNull(userLike) ||
-            (isNotNull(userLike) && userLike.like === false)
-        ) {
-            like = true
-            await this.likeRespository.save({
-                like: true,
-                userId: userId,
-                commentId: commentId,
-            })
-        } else {
-            like = false
-            await this.likeRespository.delete({
-                userId,
-                commentId,
-            })
-        }
-        return like
-    }
-    async toggleDislike(userId: string, commentId: string): Promise<boolean> {
-        const userDislike = await this.likeRespository.findOneBy({
-            userId,
-            commentId,
-        })
-        let dislike
-        if (
-            !isNotNull(userDislike) ||
-            (isNotNull(userDislike) && userDislike.like === true)
-        ) {
-            dislike = true
-            await this.likeRespository.save({
-                like: false,
-                userId: userId,
-                commentId: commentId,
-            })
-        } else {
-            dislike = false
-            await this.likeRespository.delete({
-                userId,
-                commentId,
-            })
-        }
-        return dislike
     }
 }

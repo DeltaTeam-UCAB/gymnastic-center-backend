@@ -3,37 +3,30 @@ import { ToggleFollowDTO } from './types/dto'
 import { ToggleFollowResponse } from './types/response'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { TrainerRepository } from '../../repositories/trainer.repository'
-import { FindTrainerDTO } from '../../queries/find/types/dto'
-import { FindTrainerResponse } from '../../queries/find/types/response'
+import { ClientID } from 'src/trainer/domain/value-objects/client.id'
+import { TrainerID } from 'src/trainer/domain/value-objects/trainer.id'
+import { isNotNull } from 'src/utils/null-manager/null-checker'
+import { trainerNotFoundError } from '../../errors/trainer.not.found'
 
 export class ToggleFolowCommand
     implements ApplicationService<ToggleFollowDTO, ToggleFollowResponse>
 {
-    constructor(
-        private trainerRepo: TrainerRepository,
-        private findTrainerService: ApplicationService<
-            FindTrainerDTO,
-            FindTrainerResponse
-        >,
-    ) {}
+    constructor(private trainerRepo: TrainerRepository) {}
 
     async execute(
         data: ToggleFollowDTO,
     ): Promise<Result<ToggleFollowResponse>> {
-        const trainer = await this.findTrainerService.execute(data)
-        if (trainer.isError()) return trainer.convertToOther()
-        const userFollow = trainer.unwrap().userFollow
-        let result: Result<boolean>
-        if (userFollow)
-            result = await this.trainerRepo.unfollowTrainer(
-                data.userId,
-                data.trainerId,
-            )
-        else
-            result = await this.trainerRepo.followTrainer(
-                data.userId,
-                data.trainerId,
-            )
+        const trainerId = new TrainerID(data.trainerId)
+        const trainer = await this.trainerRepo.getById(trainerId)
+        if (!isNotNull(trainer)) return Result.error(trainerNotFoundError())
+        const clientId = new ClientID(data.userId)
+        const userFollow = trainer.isFollowedBy(clientId)
+        if (userFollow) {
+            trainer.removeFollower(clientId)
+        } else {
+            trainer.addFollower(clientId)
+        }
+        const result = await this.trainerRepo.save(trainer)
         if (result.isError()) return result.convertToOther()
         return Result.success({ userFollow: !userFollow })
     }
