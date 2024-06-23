@@ -6,11 +6,15 @@ import { CommentRepository } from '../../repositories/comment.repository'
 import { CommentID } from 'src/comment/domain/value-objects/comment.id'
 import { ClientID } from 'src/comment/domain/value-objects/client.id'
 import { Comment } from 'src/comment/domain/comment'
+import { EventPublisher } from 'src/core/application/event-handler/event.handler'
 
 export class ToggleDislikeCommand
     implements ApplicationService<ToggleDislikeDTO, ToggleDislikeResponse>
 {
-    constructor(private commentRepository: CommentRepository) {}
+    constructor(
+        private commentRepository: CommentRepository,
+        private eventPublisher: EventPublisher,
+    ) {}
 
     async execute(
         data: ToggleDislikeDTO,
@@ -29,6 +33,7 @@ export class ToggleDislikeCommand
             dislike = true
         }
         await this.commentRepository.save(comment)
+        this.eventPublisher.publish(comment.pullEvents())
         return Result.success({ dislike })
     }
 }

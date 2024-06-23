@@ -21,13 +21,14 @@ import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provide
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { UserByCommentPostgresRepository } from '../../repositories/postgres/user.repository'
+import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 
 @Controller({
     path: 'comment',
     docTitle: 'Comment',
 })
 export class CreateController
-    implements
+implements
         ControllerContract<
             [body: CreateCommentDTO, user: User],
             CreateCommentResponse
@@ -39,6 +40,7 @@ export class CreateController
         private userRepo: UserByCommentPostgresRepository,
         private blogRepo: BlogPostgresByCommentRepository,
         private lessonRepo: LessonPostgresByCommentRepository,
+        private eventHandler: RabbitMQEventHandler,
     ) {}
 
     @Post('release')
@@ -59,6 +61,7 @@ export class CreateController
                         this.userRepo,
                         new ConcreteDateProvider(),
                         this.idGen,
+                        this.eventHandler,
                     ),
                     this.lessonRepo,
                     this.blogRepo,

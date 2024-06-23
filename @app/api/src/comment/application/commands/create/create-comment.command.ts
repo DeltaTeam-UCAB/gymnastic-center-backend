@@ -7,7 +7,6 @@ import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { DateProvider } from 'src/core/application/date/date.provider'
 import { Comment } from 'src/comment/domain/comment'
 import { CommentID } from 'src/comment/domain/value-objects/comment.id'
-import { Client } from 'src/comment/domain/entities/client'
 import { UserRepository } from '../../repositories/user.repository'
 import { ClientID } from 'src/comment/domain/value-objects/client.id'
 import { CommentContent } from 'src/comment/domain/value-objects/comment.content'
@@ -16,15 +15,17 @@ import { Target } from 'src/comment/domain/value-objects/target'
 import { BlogID } from 'src/comment/domain/value-objects/blog.id'
 import { LessonID } from 'src/comment/domain/value-objects/lesson.id'
 import { userNotFoundError } from '../../errors/user.not.found'
+import { EventPublisher } from 'src/core/application/event-handler/event.handler'
 
 export class CreateCommentCommand
-    implements ApplicationService<CreateCommentDTO, CreateCommentResponse>
+implements ApplicationService<CreateCommentDTO, CreateCommentResponse>
 {
     constructor(
         private commentRepository: CommentRepository,
         private userRepository: UserRepository,
         private dateProvider: DateProvider,
         private idGen: IDGenerator<string>,
+        private eventPublisher: EventPublisher,
     ) {}
 
     async execute(
@@ -49,6 +50,7 @@ export class CreateCommentCommand
             whoLiked: [],
         })
         await this.commentRepository.save(comment)
+        this.eventPublisher.publish(comment.pullEvents())
         return Result.success({ commentId })
     }
 }

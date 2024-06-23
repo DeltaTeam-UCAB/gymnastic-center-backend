@@ -11,6 +11,7 @@ import { BlogRepositoryMock } from './utils/blog.repository.mock'
 import { createUser } from './utils/user.factory'
 import { UserRepositoryMock } from './utils/user.repository.mock'
 import { TargetType } from '../../../../../src/comment/application/types/target-type'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 
 export const name = 'Should not create a comment with an unvalid lesson ID'
 
@@ -38,6 +39,7 @@ export const body = async () => {
                 userRepo,
                 dateProvider,
                 new IDGeneratorMock(commentId),
+                eventPublisherStub,
             ),
             lessonRepo,
             postRepo,

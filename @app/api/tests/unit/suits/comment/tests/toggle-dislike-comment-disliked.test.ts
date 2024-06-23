@@ -7,6 +7,7 @@ import { ClientID } from '../../../../../src/comment/domain/value-objects/client
 import { CommentID } from '../../../../../src/comment/domain/value-objects/comment.id'
 import { createComment } from './utils/comment.factory'
 import { CommentRepositoryMock } from './utils/comment.repository.mock'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 
 export const name = 'Should undislike disliked comment'
 
@@ -26,7 +27,7 @@ export const body = async () => {
     const commentRepo = new CommentRepositoryMock([testComment])
 
     await new CheckCommentExistence<ToggleDislikeDTO, ToggleDislikeResponse>(
-        new ToggleDislikeCommand(commentRepo),
+        new ToggleDislikeCommand(commentRepo, eventPublisherStub),
         commentRepo,
     ).execute({
         commentId,

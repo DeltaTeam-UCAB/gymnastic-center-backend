@@ -17,19 +17,23 @@ import { ApiHeader } from '@nestjs/swagger'
 import { MarkEndDTO } from './dto/dto'
 import { UpdateSubscriptionCommand } from 'src/subscription/application/commands/update/update.command'
 import { UpdateSubscriptionResponse } from 'src/subscription/application/commands/update/types/response'
+import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 
 @Controller({
     path: 'progress',
     docTitle: 'Subscription',
 })
 export class MarkEndLessonController
-implements
+    implements
         ControllerContract<
             [user: CurrentUserResponse, body: MarkEndDTO],
             UpdateSubscriptionResponse
         >
 {
-    constructor(private transactionProvider: PostgresTransactionProvider) {}
+    constructor(
+        private transactionProvider: PostgresTransactionProvider,
+        private eventPublisher: RabbitMQEventHandler,
+    ) {}
     @Post('mark/end')
     @ApiHeader({
         name: 'auth',
@@ -50,6 +54,7 @@ implements
                                 transactionHandler.queryRunner,
                             ),
                             new ConcreteDateProvider(),
+                            this.eventPublisher,
                         ),
                     ),
                     transactionHandler.transactionHandler,

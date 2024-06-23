@@ -9,6 +9,7 @@ import { UserRepositoryMock } from './utils/user.repository.mock'
 import { TargetType } from '../../../../../src/comment/application/types/target-type'
 import { CommentID } from '../../../../../src/comment/domain/value-objects/comment.id'
 import { createUser } from './utils/user.factory'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 export const name = 'Should create comment (blog target) with valid data'
 
 export const body = async () => {
@@ -34,6 +35,7 @@ export const body = async () => {
             userRepo,
             dateProvider,
             new IDGeneratorMock(commentId),
+            eventPublisherStub,
         ),
         lessonRepo,
         postRepo,

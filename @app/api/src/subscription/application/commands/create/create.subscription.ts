@@ -15,6 +15,7 @@ import { DateProvider } from 'src/core/application/date/date.provider'
 import { Time } from 'src/subscription/domain/value-objects/time'
 import { Lesson } from 'src/subscription/domain/entities/lesson'
 import { LessonProgress } from 'src/subscription/domain/value-objects/lesson.progress'
+import { EventPublisher } from 'src/core/application/event-handler/event.handler'
 
 export class CreateSubscriptionCommand
     implements
@@ -25,6 +26,7 @@ export class CreateSubscriptionCommand
         private subscriptionRepository: SubscriptionRepository,
         private courseRepository: CourseRepository,
         private dateProvider: DateProvider,
+        private eventPublisher: EventPublisher,
     ) {}
     async execute(
         data: CreateSubscriptionDTO,
@@ -56,6 +58,7 @@ export class CreateSubscriptionCommand
         )
         const result = await this.subscriptionRepository.save(subscription)
         if (result.isError()) return result.convertToOther()
+        this.eventPublisher.publish(subscription.pullEvents())
         return Result.success({
             id: subscription.id.id,
         })

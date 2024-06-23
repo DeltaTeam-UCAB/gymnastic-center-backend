@@ -11,3 +11,14 @@ export interface EventHandler {
         callback: (event: DomainEventRecord[T]) => Promise<void>,
     ): Subscription
 }
+
+export interface EventPublisher {
+    publish(events: DomainEventBase[]): void
+}
+
+export interface EventListener {
+    subscribe<T extends DomainEventBase>(
+        name: T,
+        callback: (event: T) => Promise<void>,
+    ): Subscription
+}
