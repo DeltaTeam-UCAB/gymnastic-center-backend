@@ -25,6 +25,8 @@ import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provide
 import { CategoryPostgresByNotificationRepository } from '../../repositories/postgres/category.repository'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { NotificationDecorator } from 'src/notification/application/commands/create/decorators/notification.decorator'
+import { FirebaseNotificationManager } from '../../firebase/firebase.notification.manager'
 
 export class CourseCreatedEventListener {
     constructor(
@@ -74,10 +76,13 @@ export class CourseCreatedEventListener {
             async (event) => {
                 await new CourseRecomendationPolicy(
                     new LoggerDecorator(
-                        new CreateNotificationCommand(
-                            this.idGenerator,
-                            this.notificationRepository,
-                            new ConcreteDateProvider(),
+                        new NotificationDecorator(
+                            new CreateNotificationCommand(
+                                this.idGenerator,
+                                this.notificationRepository,
+                                new ConcreteDateProvider(),
+                            ),
+                            new FirebaseNotificationManager(),
                         ),
                         new NestLogger('Create notification'),
                     ),
