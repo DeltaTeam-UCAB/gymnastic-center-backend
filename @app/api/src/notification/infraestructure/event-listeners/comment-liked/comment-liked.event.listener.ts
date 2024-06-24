@@ -13,6 +13,8 @@ import { CreateNotificationCommand } from 'src/notification/application/commands
 import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { NotificationDecorator } from 'src/notification/application/commands/create/decorators/notification.decorator'
+import { FirebaseNotificationManager } from '../../firebase/firebase.notification.manager'
 
 @Injectable()
 export class CommentLikedEventListener {
@@ -37,10 +39,13 @@ export class CommentLikedEventListener {
             async (event) => {
                 await new CommentLikedPolicy(
                     new LoggerDecorator(
-                        new CreateNotificationCommand(
-                            this.uuidGenerator,
-                            this.notificationRepository,
-                            new ConcreteDateProvider(),
+                        new NotificationDecorator(
+                            new CreateNotificationCommand(
+                                this.uuidGenerator,
+                                this.notificationRepository,
+                                new ConcreteDateProvider(),
+                            ),
+                            new FirebaseNotificationManager(),
                         ),
                         new NestLogger('Create notification'),
                     ),
