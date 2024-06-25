@@ -20,7 +20,7 @@ import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
     docTitle: 'User',
 })
 export class UpdateUserController
-implements
+    implements
         ControllerContract<
             [user: CurrentUserResponse, data: UpdateUserDTO],
             UpdateUserResponse
