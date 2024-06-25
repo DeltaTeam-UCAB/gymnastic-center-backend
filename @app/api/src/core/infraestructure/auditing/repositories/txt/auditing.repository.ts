@@ -13,7 +13,7 @@ export class AuditingTxtRepository implements IAuditingRepository {
             data.operation
         } | Succes: ${data.succes} | Date: ${
             data.ocurredOn
-        } | Data: ${JSON.stringify(data.data)}\n`
+        } | Data: ${data.data}\n`
         
 
         const dirPath = path.join(process.cwd(),

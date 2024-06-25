@@ -26,6 +26,11 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
 import { ImagePostgresRepository } from '../../repositories/postgres/image.repository'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
+import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
+
 
 @Controller({
     path: IMAGE_ROUTE_PREFIX,
@@ -34,7 +39,11 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
 export class UploadImageController
 implements
         ControllerContract<
-            [file: Express.Multer.File, body: UploadImageDTO],
+            [
+                file: Express.Multer.File,
+                body: UploadImageDTO,
+                user: CurrentUserResponse,
+            ],
             {
                 id: string
             }
@@ -57,17 +66,30 @@ implements
         @UploadedFile() file: Express.Multer.File,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         @Body() _body: UploadImageDTO,
+        @UserDecorator() user: CurrentUserResponse,
     ): Promise<{ id: string }> {
         try {
+            const audit = {
+                user: user.id,
+                operation: 'Upload Image',
+                succes: true,
+                ocurredOn: new Date(Date.now()),
+                data: JSON.stringify(_body),
+            }
             const nestLogger = new NestLogger('Upload image logger')
+
             const result = await new ErrorDecorator(
-                new LoggerDecorator(
-                    new SaveImageCommand(
-                        this.idGen,
-                        this.imageRepository,
-                        this.imageStorage,
+                new AuditDecorator(
+                    new LoggerDecorator(
+                        new SaveImageCommand(
+                            this.idGen,
+                            this.imageRepository,
+                            this.imageStorage,
+                        ),
+                        nestLogger,
                     ),
-                    nestLogger,
+                    new AuditingTxtRepository(),
+                    audit,
                 ),
                 () => new InternalServerErrorException(),
             ).execute({

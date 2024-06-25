@@ -28,6 +28,10 @@ import { CoursePostgresTransactionalRepository } from '../../repositories/postgr
 import { TransactionHandlerDecorator } from 'src/core/application/decorators/transaction.handler.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
+import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -36,7 +40,7 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
 export class CreateCourseController
     implements
         ControllerContract<
-            [body: CreateCourseDTO],
+            [body: CreateCourseDTO, user: CurrentUserResponse],
             {
                 id: string
             }
@@ -59,7 +63,16 @@ export class CreateCourseController
     @UseGuards(UserGuard, RolesGuard)
     async execute(
         @Body() body: CreateCourseDTO,
+        @UserDecorator() user: CurrentUserResponse,
     ): Promise<CreateCourseResponse> {
+        const audit = {
+            user: user.id,
+            operation: 'Create Course',
+            succes: true,
+            ocurredOn: new Date(Date.now()),
+            data: JSON.stringify(body),
+        }
+
         const manager = await this.transactionProvider.create()
         const courseRepository = new CoursePostgresTransactionalRepository(
             manager.queryRunner,
@@ -90,9 +103,14 @@ export class CreateCourseController
             commandWithImageValidator,
             this.videoRepository,
         )
+
         const result = await new ErrorDecorator(
             new TransactionHandlerDecorator(
-                new LoggerDecorator(commandWithVideoValidator, nestLogger),
+                new AuditDecorator(
+                    new LoggerDecorator(commandWithVideoValidator, nestLogger),
+                    new AuditingTxtRepository(),
+                    audit,
+                ),
                 manager.transactionHandler,
             ),
             (e) => {

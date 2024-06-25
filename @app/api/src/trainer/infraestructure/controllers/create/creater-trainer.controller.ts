@@ -44,13 +44,12 @@ export class CreateTrainerController
         @Body() body: CreateTrainerDTO,
         @UserDecorator() user: CurrentUserResponse,
     ): Promise<CreateTrainerResponse> {
-        user
         const audit = {
             user: user.id,
             operation: 'Create Trainer',
             succes: true,
             ocurredOn: new Date(Date.now()),
-            data: undefined,
+            data: JSON.stringify(body),
         }
 
         const result = await new ErrorDecorator(

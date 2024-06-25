@@ -10,6 +10,10 @@ import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provide
 import { RecoveryCodeEmailSender } from '../../sender/recovery.code.sender'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
+import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
+import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 
 @Controller({
     path: 'auth',
@@ -18,7 +22,7 @@ import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 export class ForgetPasswordController
     implements
         ControllerContract<
-            [body: ForgetPasswordDTO],
+            [body: ForgetPasswordDTO, user: CurrentUserResponse],
             {
                 date: Date
             }
@@ -26,17 +30,32 @@ export class ForgetPasswordController
 {
     constructor(private userRepository: UserPostgresRepository) {}
     @Post('forget/password')
-    async execute(@Body() body: ForgetPasswordDTO): Promise<{
+    async execute(
+        @Body() body: ForgetPasswordDTO,
+        @UserDecorator() user: CurrentUserResponse,
+    ): Promise<{
         date: Date
     }> {
+        const audit = {
+            user: user.id,
+            operation: 'Forget Password',
+            succes: true,
+            ocurredOn: new Date(Date.now()),
+            data: JSON.stringify(body),
+        }
+
         await new RecoveryPasswordSenderDecorator(
-            new LoggerDecorator(
-                new RecoveryPasswordCommand(
-                    this.userRepository,
-                    new CryptoRandomCodeGenerator(),
-                    new ConcreteDateProvider(),
+            new AuditDecorator(
+                new LoggerDecorator(
+                    new RecoveryPasswordCommand(
+                        this.userRepository,
+                        new CryptoRandomCodeGenerator(),
+                        new ConcreteDateProvider(),
+                    ),
+                    new NestLogger('ForgetPassword'),
                 ),
-                new NestLogger('ForgetPassword'),
+                new AuditingTxtRepository(),
+                audit,
             ),
             this.userRepository,
             new RecoveryCodeEmailSender(),
