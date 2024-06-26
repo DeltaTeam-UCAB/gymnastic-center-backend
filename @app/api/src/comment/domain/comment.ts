@@ -12,6 +12,7 @@ import { commentrRemovedLike as commentRemovedLike } from './events/comment.remo
 import { commentRemovedDislike } from './events/comment.removed.dislike'
 import { commentContentChanged } from './events/comment.content.changed'
 import { CommentDate } from './value-objects/comment.date'
+import { commentDeleted } from './events/comment.deleted'
 
 export class Comment extends AggregateRoot<CommentID> {
     constructor(
@@ -118,6 +119,14 @@ export class Comment extends AggregateRoot<CommentID> {
 
     clientDisliked(clientId: ClientID) {
         return this.whoDisliked.some((c) => c == clientId)
+    }
+
+    delete() {
+        this.publish(
+            commentDeleted({
+                id: this.id,
+            }),
+        )
     }
 
     validateState(): void {
