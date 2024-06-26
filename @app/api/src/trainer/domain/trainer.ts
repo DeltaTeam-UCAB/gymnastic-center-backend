@@ -9,6 +9,7 @@ import { trainerLocationChanged } from './events/trainer.location.changed'
 import { followerAdded } from './events/follower.added'
 import { followerRemoved } from './events/follower.removed'
 import { trainerNameChanged } from './events/trainer.name.changed'
+import { trainerDeleted } from './events/trainer.deleted'
 
 export class Trainer extends AggregateRoot<TrainerID> {
     constructor(
@@ -83,6 +84,14 @@ export class Trainer extends AggregateRoot<TrainerID> {
             followerRemoved({
                 id: this.id,
                 follower,
+            }),
+        )
+    }
+
+    delete() {
+        this.publish(
+            trainerDeleted({
+                id: this.id,
             }),
         )
     }
