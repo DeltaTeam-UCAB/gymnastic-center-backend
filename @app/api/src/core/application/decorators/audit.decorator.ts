@@ -20,7 +20,6 @@ export class AuditDecorator<T, R> implements ApplicationService<T, R> {
             }
             if (!result.isError() && isNotNull(result.unwrap())) {
                 this.dto.succes = true
-                this.dto.data = result.unwrap()
                 this.auditter.saveAudit(this.dto)
             }
             return result

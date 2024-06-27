@@ -22,6 +22,7 @@ export class CurrentUserController
     async execute(
         @UserDecorator() user: CurrentUserResponse,
     ): Promise<CurrentUserResponse> {
+        console.log(JSON.stringify(user))
         return user
     }
 }

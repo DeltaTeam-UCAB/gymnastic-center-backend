@@ -13,7 +13,9 @@ export class AuditingTxtRepository implements IAuditingRepository {
             data.operation
         } | Succes: ${data.succes} | Date: ${
             data.ocurredOn
-        } | Data: ${data.data}\n`
+        } | Data: ${
+            data.data  
+        }\n`
         
 
         const dirPath = path.join(process.cwd(),

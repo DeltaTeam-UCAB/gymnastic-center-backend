@@ -12,21 +12,13 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
 import { LoginCommand } from 'src/user/application/commads/login/login.command'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
-import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
-import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
-import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
-import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 
 @Controller({
     path: 'auth',
     docTitle: 'Auth',
 })
 export class LoginController
-    implements
-        ControllerContract<
-            [body: LoginDTO, user: CurrentUserResponse],
-            LoginResponse
-        >
+    implements ControllerContract<[body: LoginDTO], LoginResponse>
 {
     constructor(
         @Inject(SHA256_CRYPTO) private crypto: Crypto,
@@ -34,29 +26,15 @@ export class LoginController
         @Inject(JWT_PROVIDER_TOKEN) private jwtProvider: JwtProviderService,
     ) {}
     @Post('login')
-    async execute(
-        @Body() body: LoginDTO,
-        @UserDecorator() user: CurrentUserResponse,
-    ): Promise<LoginResponse> {
-        const audit = {
-            user: user.id,
-            operation: 'Log In',
-            succes: true,
-            ocurredOn: new Date(Date.now()),
-            data: JSON.stringify(body),
-        }
+    async execute(@Body() body: LoginDTO): Promise<LoginResponse> {
         const result = await new ErrorDecorator(
-            new AuditDecorator(
-                new LoggerDecorator(
-                    new LoginCommand(
-                        this.userRepo,
-                        this.crypto,
-                        this.jwtProvider.create(),
-                    ),
-                    new NestLogger('Login'),
+            new LoggerDecorator(
+                new LoginCommand(
+                    this.userRepo,
+                    this.crypto,
+                    this.jwtProvider.create(),
                 ),
-                new AuditingTxtRepository(),
-                audit,
+                new NestLogger('Login'),
             ),
             (e) => new HttpException(e.message, 400),
         ).execute(body)

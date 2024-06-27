@@ -3,5 +3,5 @@ export class AuditingDto {
     operation: string
     succes: boolean
     ocurredOn: Date
-    data: any
+    data: string
 }

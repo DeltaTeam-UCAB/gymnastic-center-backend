@@ -51,7 +51,6 @@ export class CreateTrainerController
             ocurredOn: new Date(Date.now()),
             data: JSON.stringify(body),
         }
-
         const result = await new ErrorDecorator(
             new AuditDecorator(
                 new LoggerDecorator(
