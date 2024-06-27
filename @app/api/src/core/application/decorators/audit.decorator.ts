@@ -1,13 +1,13 @@
 import { Result } from '../result-handler/result.handler'
 import { ApplicationService } from '../service/application.service'
-import { IAuditingRepository } from '../auditing/repository/audit.repository'
+import { AuditingRepository } from '../auditing/repository/audit.repository'
 import { isNotNull } from '../../../utils/null-manager/null-checker'
 import { AuditingDto } from '../auditing/dto/dto'
 
 export class AuditDecorator<T, R> implements ApplicationService<T, R> {
     constructor(
         private service: ApplicationService<T, R>,
-        private auditter: IAuditingRepository,
+        private auditter: AuditingRepository,
         private dto: AuditingDto,
     ) {}
     async execute(data: T): Promise<Result<R>> {
