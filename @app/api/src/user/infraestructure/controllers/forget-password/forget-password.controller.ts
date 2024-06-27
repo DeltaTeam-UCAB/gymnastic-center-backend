@@ -10,6 +10,7 @@ import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provide
 import { RecoveryCodeEmailSender } from '../../sender/recovery.code.sender'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { RecoveryCodePushSender } from '../../sender/recovery.code.push'
 
 @Controller({
     path: 'auth',
@@ -29,7 +30,7 @@ export class ForgetPasswordController
     async execute(@Body() body: ForgetPasswordDTO): Promise<{
         date: Date
     }> {
-        await new RecoveryPasswordSenderDecorator(
+        let service = new RecoveryPasswordSenderDecorator(
             new LoggerDecorator(
                 new RecoveryPasswordCommand(
                     this.userRepository,
@@ -40,7 +41,14 @@ export class ForgetPasswordController
             ),
             this.userRepository,
             new RecoveryCodeEmailSender(),
-        ).execute(body)
+        )
+        if (body.token)
+            service = new RecoveryPasswordSenderDecorator(
+                service,
+                this.userRepository,
+                new RecoveryCodePushSender(body.token),
+            )
+        await service.execute(body)
         return {
             date: new Date(),
         }
