@@ -3,7 +3,7 @@ import {
     NotificationManagerInput,
 } from 'src/notification/application/services/notification.manager'
 import { getTokens } from './token.storage'
-import { firebaseInitialized } from './firebase.configuration'
+import { firebaseInitialized } from 'src/core/infraestructure/firebase/app.init'
 
 export class FirebaseNotificationManager implements NotificationManager {
     async notify(data: NotificationManagerInput): Promise<void> {

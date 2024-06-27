@@ -10,10 +10,7 @@ import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provide
 import { RecoveryCodeEmailSender } from '../../sender/recovery.code.sender'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
-import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
-import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
-import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
-import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { RecoveryCodePushSender } from '../../sender/recovery.code.push'
 
 @Controller({
     path: 'auth',
@@ -36,30 +33,25 @@ export class ForgetPasswordController
     ): Promise<{
         date: Date
     }> {
-        const audit = {
-            user: user.id,
-            operation: 'Forget Password',
-            succes: true,
-            ocurredOn: new Date(Date.now()),
-            data: JSON.stringify(body),
-        }
-
-        await new RecoveryPasswordSenderDecorator(
-            new AuditDecorator(
-                new LoggerDecorator(
-                    new RecoveryPasswordCommand(
-                        this.userRepository,
-                        new CryptoRandomCodeGenerator(),
-                        new ConcreteDateProvider(),
-                    ),
-                    new NestLogger('ForgetPassword'),
+        let service = new RecoveryPasswordSenderDecorator(
+            new LoggerDecorator(
+                new RecoveryPasswordCommand(
+                    this.userRepository,
+                    new CryptoRandomCodeGenerator(),
+                    new ConcreteDateProvider(),
                 ),
-                new AuditingTxtRepository(),
-                audit,
+                new NestLogger('ForgetPassword'),
             ),
             this.userRepository,
             new RecoveryCodeEmailSender(),
-        ).execute(body)
+        )
+        if (body.token)
+            service = new RecoveryPasswordSenderDecorator(
+                service,
+                this.userRepository,
+                new RecoveryCodePushSender(body.token),
+            )
+        await service.execute(body)
         return {
             date: new Date(),
         }
