@@ -15,22 +15,24 @@ import { CommentPostgresRepository } from '../../repositories/postgres/comment.r
 import { BlogPostgresByCommentRepository } from '../../repositories/postgres/blog.repository'
 import { LessonPostgresByCommentRepository } from '../../repositories/postgres/lesson.repository'
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
-import { User } from 'src/user/application/models/user'
 import { CheckTargetExistence } from 'src/comment/application/decorators/check-target-existence.decorator'
 import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { UserByCommentPostgresRepository } from '../../repositories/postgres/user.repository'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
+import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
+import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
+import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
 
 @Controller({
     path: 'comment',
     docTitle: 'Comment',
 })
 export class CreateController
-implements
+    implements
         ControllerContract<
-            [body: CreateCommentDTO, user: User],
+            [body: CreateCommentDTO, user: CurrentUserResponse],
             CreateCommentResponse
         >
 {
@@ -51,20 +53,32 @@ implements
     @UseGuards(UserGuard, RolesGuard)
     async execute(
         @Body() body: CreateCommentDTO,
-        @UserDecorator() user: User,
+        @UserDecorator() user: CurrentUserResponse,
     ): Promise<CreateCommentResponse> {
+        const audit = {
+            user: user.id,
+            operation: 'Create Comment',
+            succes: true,
+            ocurredOn: new Date(Date.now()),
+            data: JSON.stringify(body),
+        }
+
         const result = await new ErrorDecorator(
             new LoggerDecorator(
-                new CheckTargetExistence(
-                    new CreateCommentCommand(
-                        this.commentRepo,
-                        this.userRepo,
-                        new ConcreteDateProvider(),
-                        this.idGen,
-                        this.eventHandler,
+                new AuditDecorator(
+                    new CheckTargetExistence(
+                        new CreateCommentCommand(
+                            this.commentRepo,
+                            this.userRepo,
+                            new ConcreteDateProvider(),
+                            this.idGen,
+                            this.eventHandler,
+                        ),
+                        this.lessonRepo,
+                        this.blogRepo,
                     ),
-                    this.lessonRepo,
-                    this.blogRepo,
+                    new AuditingTxtRepository(),
+                    audit,
                 ),
                 new NestLogger('Create comment'),
             ),

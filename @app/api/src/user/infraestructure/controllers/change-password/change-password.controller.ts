@@ -10,28 +10,51 @@ import { SHA256_CRYPTO } from 'src/core/infraestructure/crypto/sha256/sha256.mod
 import { Crypto } from 'src/core/application/crypto/crypto'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
+import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 
 @Controller({
     path: 'auth',
     docTitle: 'Auth',
 })
 export class ChangePasswordController
-implements ControllerContract<[body: ChangePasswordDTO], void>
+    implements
+        ControllerContract<
+            [body: ChangePasswordDTO, user: CurrentUserResponse],
+            void
+        >
 {
     constructor(
         private userRepository: UserPostgresRepository,
         @Inject(SHA256_CRYPTO) private crypto: Crypto,
     ) {}
     @Put('change/password')
-    async execute(@Body() body: ChangePasswordDTO): Promise<void> {
+    async execute(
+        @Body() body: ChangePasswordDTO,
+        @UserDecorator() user: CurrentUserResponse,
+    ): Promise<void> {
+        const audit = {
+            user: user.id,
+            operation: 'Change Password',
+            succes: true,
+            ocurredOn: new Date(Date.now()),
+            data: JSON.stringify(body),
+        }
+
         await new ErrorDecorator(
-            new LoggerDecorator(
-                new ChangePasswordCommand(
-                    this.userRepository,
-                    new ConcreteDateProvider(),
-                    this.crypto,
+            new AuditDecorator(
+                new LoggerDecorator(
+                    new ChangePasswordCommand(
+                        this.userRepository,
+                        new ConcreteDateProvider(),
+                        this.crypto,
+                    ),
+                    new NestLogger('ChangePassword'),
                 ),
-                new NestLogger('ChangePassword'),
+                new AuditingTxtRepository(),
+                audit,
             ),
             (e) => new HttpException(e.message, 400),
         ).execute(body)
