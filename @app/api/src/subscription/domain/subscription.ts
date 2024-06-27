@@ -13,6 +13,7 @@ import { subscriptionCreated } from './events/subscription.created'
 import { lastTimeChanged } from './events/last.time.changed'
 import { lessonLastTimeChanged } from './events/lesson.last.time.changed'
 import { lessonProgressChanged } from './events/lesson.progress.changed'
+import { subscriptionDeleted } from './events/subscription.deleted'
 
 export class Subscription extends AggregateRoot<SubscriptionID> {
     constructor(
@@ -87,6 +88,14 @@ export class Subscription extends AggregateRoot<SubscriptionID> {
                 id: this.id,
                 lessonId,
                 progress,
+            }),
+        )
+    }
+
+    delete() {
+        this.publish(
+            subscriptionDeleted({
+                id: this.id,
             }),
         )
     }

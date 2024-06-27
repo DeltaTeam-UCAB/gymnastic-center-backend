@@ -4,6 +4,8 @@ import { Builder } from 'src/utils/builder/builder'
 import { DocumentationProps } from './types/documentation.props'
 import { TypeClass } from '@mono/types-utils'
 import { createServer } from '../create-server/create.server'
+import { HttpAdapterHost } from '@nestjs/core'
+import { AllExceptionsFilter } from '../../exception-filter/exception.filter'
 
 export class ServerBuilder implements Builder<INestApplication> {
     private constructor(private app: INestApplication) {}
@@ -23,7 +25,11 @@ export class ServerBuilder implements Builder<INestApplication> {
     }
 
     setValidationPipe() {
-        this.app.useGlobalPipes(new ValidationPipe())
+        this.app.useGlobalPipes(
+            new ValidationPipe({
+                transform: true,
+            }),
+        )
         return this
     }
 
@@ -46,6 +52,8 @@ export class ServerBuilder implements Builder<INestApplication> {
         if (!(appModule as any).__isAppModule)
             throw new Error('Invalid application module')
         const app = await createServer(appModule)
+        const { httpAdapter } = app.get(HttpAdapterHost)
+        app.useGlobalFilters(new AllExceptionsFilter(httpAdapter))
         return new ServerBuilder(app)
     }
 }

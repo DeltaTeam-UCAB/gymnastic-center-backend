@@ -2,13 +2,14 @@ import { createTrainer } from './utils/trainer.factory'
 import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
 import { ToggleFolowCommand } from '../../../../../src/trainer/application/commands/toggle-follow/toggle.follow.command'
 import { ToggleFollowDTO } from '../../../../../src/trainer/application/commands/toggle-follow/types/dto'
-import { FindTrainerQuery } from '../../../../../src/trainer/application/queries/find/find.trainer.query'
+import { TrainerID } from '../../../../../src/trainer/domain/value-objects/trainer.id'
+import { ClientID } from '../../../../../src/trainer/domain/value-objects/client.id'
 
 export const name = 'Should follow trainer'
 
 export const body = async () => {
-    const trainerId = '123456789'
-    const userId = '987654321'
+    const trainerId = '92e9e433-51e9-4dfb-8d64-009102146c1b'
+    const userId = '14529b59-395f-460e-b2dc-bd4b17d7028d'
     const followData = {
         trainerId,
         userId,
@@ -20,15 +21,9 @@ export const body = async () => {
             location: 'test location',
         }),
     ])
-    const toggleFollowCommand = new ToggleFolowCommand(
-        trainerRepo,
-        new FindTrainerQuery(trainerRepo),
-    )
+    const toggleFollowCommand = new ToggleFolowCommand(trainerRepo)
     await toggleFollowCommand.execute(followData)
-    lookFor(await trainerRepo.getById(trainerId)).toDeepEqual({
-        id: trainerId,
-        name: 'test trainer',
-        location: 'test location',
-        followers: [userId],
-    })
+    const trainer = await trainerRepo.getById(new TrainerID(trainerId))
+    lookFor(trainer).toBeDefined()
+    lookFor(trainer?.isFollowedBy(new ClientID(userId))).equals(true)
 }

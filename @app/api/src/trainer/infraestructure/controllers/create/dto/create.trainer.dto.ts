@@ -4,7 +4,7 @@ import { IsString, MinLength } from 'class-validator'
 export class CreateTrainerDTO {
     @ApiProperty()
     @IsString()
-    @MinLength(6)
+    @MinLength(3)
     name: string
     @ApiProperty()
     @IsString()

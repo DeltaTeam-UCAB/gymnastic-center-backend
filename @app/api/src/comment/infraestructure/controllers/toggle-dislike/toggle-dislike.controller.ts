@@ -19,16 +19,20 @@ import { ToggleDislikeResponse } from 'src/comment/application/commands/toggle-d
 import { CheckCommentExistence } from 'src/comment/application/decorators/check-comment-existence.decorator'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 
 @Controller({
     path: 'comment',
     docTitle: 'Comment',
 })
 export class ToggleDislikeController
-    implements
+implements
         ControllerContract<[param: string, user: User], ToggleDislikeResponse>
 {
-    constructor(private commentRepository: CommentPostgresRepository) {}
+    constructor(
+        private commentRepository: CommentPostgresRepository,
+        private eventHandler: RabbitMQEventHandler,
+    ) {}
 
     @Post('toggle/dislike/:id')
     @Roles('CLIENT')
@@ -43,7 +47,10 @@ export class ToggleDislikeController
         const result = await new ErrorDecorator(
             new LoggerDecorator(
                 new CheckCommentExistence(
-                    new ToggleDislikeCommand(this.commentRepository),
+                    new ToggleDislikeCommand(
+                        this.commentRepository,
+                        this.eventHandler,
+                    ),
                     this.commentRepository,
                 ),
                 new NestLogger('Toggle dislike'),

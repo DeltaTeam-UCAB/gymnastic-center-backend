@@ -4,10 +4,10 @@ import { MarkNotificationAsReadedResponse } from './types/response'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { NotificationRepository } from '../../repositories/notification.repository'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
-import { notificationNotFoundError } from '../../erros/notification.not.found'
+import { notificationNotFoundError } from '../../errors/notification.not.found'
 
 export class MarkNotificationAsReadedCommand
-    implements
+implements
         ApplicationService<
             MarkNotificationAsReadedDTO,
             MarkNotificationAsReadedResponse

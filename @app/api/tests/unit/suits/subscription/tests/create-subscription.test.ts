@@ -5,6 +5,7 @@ import { SubscriptionRepositoryMock } from './utils/subscription.repository.mock
 import { IDGeneratorMock } from './utils/id.generator.mock'
 import { ClientID } from '../../../../../src/subscription/domain/value-objects/client.id'
 import { DateProviderMock } from './utils/date.provider.mock'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 
 export const name = 'Should create a subscription'
 export const body = async () => {
@@ -20,6 +21,7 @@ export const body = async () => {
         subscriptionRepository,
         courseRepository,
         new DateProviderMock(),
+        eventPublisherStub,
     ).execute({
         client: clientId,
         course: course.id.id,

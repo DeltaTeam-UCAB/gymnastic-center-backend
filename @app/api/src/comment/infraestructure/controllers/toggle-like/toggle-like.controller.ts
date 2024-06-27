@@ -19,16 +19,20 @@ import { ApiHeader } from '@nestjs/swagger'
 import { CheckCommentExistence } from 'src/comment/application/decorators/check-comment-existence.decorator'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 
 @Controller({
     path: 'comment',
     docTitle: 'Comment',
 })
 export class ToggleLikeController
-implements
+    implements
         ControllerContract<[param: string, user: User], ToggleLikeResponse>
 {
-    constructor(private commentRepository: CommentPostgresRepository) {}
+    constructor(
+        private commentRepository: CommentPostgresRepository,
+        private eventHandler: RabbitMQEventHandler,
+    ) {}
 
     @Post('toggle/like/:id')
     @Roles('CLIENT')
@@ -43,7 +47,10 @@ implements
         const result = await new ErrorDecorator(
             new LoggerDecorator(
                 new CheckCommentExistence(
-                    new ToggleLikeCommand(this.commentRepository),
+                    new ToggleLikeCommand(
+                        this.commentRepository,
+                        this.eventHandler,
+                    ),
                     this.commentRepository,
                 ),
                 new NestLogger('Toggle like'),

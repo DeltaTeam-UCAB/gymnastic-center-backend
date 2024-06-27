@@ -22,7 +22,7 @@ import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/reposit
     docTitle: 'User',
 })
 export class UpdateUserController
-implements
+    implements
         ControllerContract<
             [user: CurrentUserResponse, data: UpdateUserDTO],
             UpdateUserResponse

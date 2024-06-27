@@ -26,13 +26,14 @@ import { Controller } from 'src/core/infraestructure/controllers/decorators/cont
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { ApiHeader } from '@nestjs/swagger'
+import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 
 @Controller({
     path: 'progress',
     docTitle: 'Subscription',
 })
 export class CreateSubscriptionController
-    implements
+implements
         ControllerContract<
             [user: CurrentUserResponse, course: string],
             CreateSubscriptionResponse
@@ -42,6 +43,7 @@ export class CreateSubscriptionController
         @Inject(UUID_GEN_NATIVE) private idGenerator: IDGenerator<string>,
         private courseRepository: CoursePostgresBySubscriptionRepository,
         private transactionProvider: PostgresTransactionProvider,
+        private eventPublisher: RabbitMQEventHandler,
     ) {}
     @Post('create/:course')
     @ApiHeader({
@@ -65,6 +67,7 @@ export class CreateSubscriptionController
                             ),
                             this.courseRepository,
                             new ConcreteDateProvider(),
+                            this.eventPublisher,
                         ),
                     ),
                     transactionHandler.transactionHandler,

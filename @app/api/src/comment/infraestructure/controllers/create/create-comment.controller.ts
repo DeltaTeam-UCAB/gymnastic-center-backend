@@ -19,6 +19,8 @@ import { CheckTargetExistence } from 'src/comment/application/decorators/check-t
 import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { UserByCommentPostgresRepository } from '../../repositories/postgres/user.repository'
+import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
@@ -37,8 +39,10 @@ export class CreateController
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
         private commentRepo: CommentPostgresRepository,
+        private userRepo: UserByCommentPostgresRepository,
         private blogRepo: BlogPostgresByCommentRepository,
         private lessonRepo: LessonPostgresByCommentRepository,
+        private eventHandler: RabbitMQEventHandler,
     ) {}
 
     @Post('release')
@@ -58,22 +62,25 @@ export class CreateController
             ocurredOn: new Date(Date.now()),
             data: JSON.stringify(body),
         }
+
         const result = await new ErrorDecorator(
-            new AuditDecorator(
-                new LoggerDecorator(
+            new LoggerDecorator(
+                new AuditDecorator(
                     new CheckTargetExistence(
                         new CreateCommentCommand(
                             this.commentRepo,
+                            this.userRepo,
                             new ConcreteDateProvider(),
                             this.idGen,
+                            this.eventHandler,
                         ),
                         this.lessonRepo,
                         this.blogRepo,
                     ),
-                    new NestLogger('Create comment'),
+                    new AuditingTxtRepository(),
+                    audit,
                 ),
-                new AuditingTxtRepository(),
-                audit,
+                new NestLogger('Create comment'),
             ),
             (e) => new HttpException(e.message, 400),
         ).execute({

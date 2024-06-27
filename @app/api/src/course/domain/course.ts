@@ -20,6 +20,7 @@ import { courseCategoryChanged } from './events/course.category.changed'
 import { courseTrainerChanged } from './events/course.trainer.changed'
 import { courseTagAdded } from './events/course.tag.added'
 import { courseTagRemoved } from './events/course.tag.removed'
+import { courseDeleted } from './events/course.deleted'
 
 export class Course extends AggregateRoot<CourseID> {
     constructor(
@@ -171,6 +172,14 @@ export class Course extends AggregateRoot<CourseID> {
             courseTagRemoved({
                 id: this.id,
                 tag,
+            }),
+        )
+    }
+
+    delete() {
+        this.publish(
+            courseDeleted({
+                id: this.id,
             }),
         )
     }

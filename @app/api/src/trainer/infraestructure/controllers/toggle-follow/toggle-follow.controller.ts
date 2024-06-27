@@ -13,7 +13,6 @@ import { ToggleFollowResponse } from 'src/trainer/application/commands/toggle-fo
 import { User } from 'src/user/application/models/user'
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { TrainerPostgresRepository } from '../../repositories/postgres/trainer.repository'
-import { FindTrainerQuery } from 'src/trainer/application/queries/find/find.trainer.query'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { ApiHeader } from '@nestjs/swagger'
@@ -25,7 +24,7 @@ import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
     docTitle: 'Trainer',
 })
 export class ToggleFollowController
-    implements
+implements
         ControllerContract<[param: string, user: User], ToggleFollowResponse>
 {
     constructor(private trainerRepo: TrainerPostgresRepository) {}
@@ -42,10 +41,7 @@ export class ToggleFollowController
     ): Promise<ToggleFollowResponse> {
         const result = await new ErrorDecorator(
             new LoggerDecorator(
-                new ToggleFolowCommand(
-                    this.trainerRepo,
-                    new FindTrainerQuery(this.trainerRepo),
-                ),
+                new ToggleFolowCommand(this.trainerRepo),
                 new NestLogger('ToggleFollow'),
             ),
             (e) => new HttpException(e.message, 400),

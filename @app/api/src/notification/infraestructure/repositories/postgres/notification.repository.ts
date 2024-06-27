@@ -48,4 +48,11 @@ export class NotificationPostgresRepository implements NotificationRepository {
             },
         })
     }
+
+    async deleteByUser(client: string): Promise<Result<void>> {
+        await this.notificationProvider.delete({
+            client,
+        })
+        return Result.success(undefined)
+    }
 }

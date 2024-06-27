@@ -18,7 +18,9 @@ export type DomainEventInstance<T extends EventBase> = {
 
 export function domainEventFactory<T extends EventBase>(name: string) {
     return (
-        data: T,
+        data: T & {
+            timestamp?: Date
+        },
     ): DomainEventInstance<
         T & {
             name: string
@@ -26,7 +28,7 @@ export function domainEventFactory<T extends EventBase>(name: string) {
         }
     > => ({
         name,
-        timestamp: new Date(),
+        timestamp: data.timestamp ?? new Date(),
         ...data,
     })
 }

@@ -11,6 +11,8 @@ import { commentDisliked } from './events/comment.disliked'
 import { commentrRemovedLike as commentRemovedLike } from './events/comment.removed.like'
 import { commentRemovedDislike } from './events/comment.removed.dislike'
 import { commentContentChanged } from './events/comment.content.changed'
+import { CommentDate } from './value-objects/comment.date'
+import { commentDeleted } from './events/comment.deleted'
 
 export class Comment extends AggregateRoot<CommentID> {
     constructor(
@@ -21,6 +23,7 @@ export class Comment extends AggregateRoot<CommentID> {
             whoLiked: ClientID[]
             whoDisliked: ClientID[]
             target: Target
+            creationDate: CommentDate
         },
     ) {
         super(id)
@@ -52,6 +55,10 @@ export class Comment extends AggregateRoot<CommentID> {
         return this.data.target
     }
 
+    get date() {
+        return this.data.creationDate
+    }
+
     like(whoLiked: ClientID) {
         this.data.whoLiked.push(whoLiked)
         this.publish(
@@ -73,7 +80,9 @@ export class Comment extends AggregateRoot<CommentID> {
     }
 
     removeLike(whoLiked: ClientID) {
-        this.data.whoLiked.filter((l) => !l.equals(whoLiked))
+        this.data.whoLiked = this.data.whoLiked.filter(
+            (l) => !l.equals(whoLiked),
+        )
         this.publish(
             commentRemovedLike({
                 id: this.id,
@@ -83,7 +92,9 @@ export class Comment extends AggregateRoot<CommentID> {
     }
 
     removeDislike(whoDisliked: ClientID) {
-        this.data.whoDisliked.filter((d) => !d.equals(whoDisliked))
+        this.data.whoDisliked = this.data.whoDisliked.filter(
+            (d) => !d.equals(whoDisliked),
+        )
         this.publish(
             commentRemovedDislike({
                 id: this.id,
@@ -98,6 +109,22 @@ export class Comment extends AggregateRoot<CommentID> {
             commentContentChanged({
                 id: this.id,
                 content,
+            }),
+        )
+    }
+
+    clientLiked(clientId: ClientID) {
+        return this.whoLiked.some((c) => c == clientId)
+    }
+
+    clientDisliked(clientId: ClientID) {
+        return this.whoDisliked.some((c) => c == clientId)
+    }
+
+    delete() {
+        this.publish(
+            commentDeleted({
+                id: this.id,
             }),
         )
     }
