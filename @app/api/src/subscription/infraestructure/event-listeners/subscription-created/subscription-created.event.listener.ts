@@ -37,9 +37,11 @@ export class SubscriptionCreatedEventListener {
                     lessons: (json.lessons as Record<any, any>[]).map(
                         (lesson) =>
                             new Lesson(new LessonID(lesson._id._id), {
-                                lastTime: new LessonLastTime(
-                                    lesson.data.lastTime._seconds,
-                                ),
+                                lastTime: lesson.data.lastTime
+                                    ? new LessonLastTime(
+                                        lesson.data.lastTime._seconds,
+                                    )
+                                    : undefined,
                                 progress: new LessonProgress(
                                     lesson.data.progress._percent,
                                 ),
