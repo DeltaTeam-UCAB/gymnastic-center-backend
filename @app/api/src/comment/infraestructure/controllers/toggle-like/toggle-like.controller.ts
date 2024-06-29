@@ -15,7 +15,6 @@ import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { ToggleLikeCommand } from 'src/comment/application/commands/toggle-like/toggle-like.command'
 import { CommentPostgresRepository } from '../../repositories/postgres/comment.repository'
-import { ApiHeader } from '@nestjs/swagger'
 import { CheckCommentExistence } from 'src/comment/application/decorators/check-comment-existence.decorator'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
@@ -24,9 +23,10 @@ import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rab
 @Controller({
     path: 'comment',
     docTitle: 'Comment',
+    bearerAuth: true,
 })
 export class ToggleLikeController
-    implements
+implements
         ControllerContract<[param: string, user: User], ToggleLikeResponse>
 {
     constructor(
@@ -37,9 +37,6 @@ export class ToggleLikeController
     @Post('toggle/like/:id')
     @Roles('CLIENT')
     @UseGuards(UserGuard, RolesGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @Param('id', ParseUUIDPipe) param: string,
         @UserDecorator() user: User,

@@ -4,7 +4,6 @@ import { UpdateUserDTO } from './dto/update.user.dto'
 import { User as UserDecorator } from '../../decorators/user.decorator'
 import { Body, HttpException, Inject, Post, UseGuards } from '@nestjs/common'
 import { UserGuard } from '../../guards/user.guard'
-import { ApiHeader } from '@nestjs/swagger'
 import { SHA256_CRYPTO } from 'src/core/infraestructure/crypto/sha256/sha256.module'
 import { Crypto } from 'src/core/application/crypto/crypto'
 import { UserPostgresRepository } from '../../repositories/postgres/user.repository'
@@ -20,6 +19,7 @@ import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/reposit
 @Controller({
     path: 'user',
     docTitle: 'User',
+    bearerAuth: true,
 })
 export class UpdateUserController
     implements
@@ -34,9 +34,6 @@ export class UpdateUserController
     ) {}
     @Post('update')
     @UseGuards(UserGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @UserDecorator() user: CurrentUserResponse,
         @Body() data: UpdateUserDTO,

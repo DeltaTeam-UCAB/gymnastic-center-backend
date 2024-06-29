@@ -3,7 +3,6 @@ import { COURSE_ROUTE_PREFIX, COURSE_DOC_PREFIX } from '../prefix'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Get, Query, UseGuards } from '@nestjs/common'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { ApiHeader } from '@nestjs/swagger'
 import { CoursePostgresRepository } from '../../repositories/postgres/course.repository'
 import { GetCoursesManyQuery } from 'src/course/application/queries/many/course.many.query'
 import { ImagePostgresByCourseRepository } from '../../repositories/postgres/image.repository'
@@ -14,9 +13,10 @@ import { GetAllCoursesDTO } from './dto/getAll.blogs.dto'
 @Controller({
     path: COURSE_ROUTE_PREFIX,
     docTitle: COURSE_DOC_PREFIX,
+    bearerAuth: true,
 })
 export class CoursesManyController
-implements
+    implements
         ControllerContract<[data: GetAllCoursesDTO], GetCoursesManyResponse>
 {
     constructor(
@@ -27,9 +27,6 @@ implements
     ) {}
 
     @Get('many')
-    @ApiHeader({
-        name: 'auth',
-    })
     @UseGuards(UserGuard)
     async execute(
         @Query() data: GetAllCoursesDTO,

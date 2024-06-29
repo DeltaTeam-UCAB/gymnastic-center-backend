@@ -9,7 +9,7 @@ import { join } from 'node:path'
 import { objectValues } from '@mono/object-utils'
 import { TypeClass } from '@mono/types-utils'
 import { getCallStack } from 'src/utils/call-stack/get.call.stack'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 const initializeControllers = (currentPath: string) => {
     const data = globSync(
@@ -127,7 +127,11 @@ export async function ControllerVersionedModule(
     }
 }
 
-export function Controller(data?: { path: string; docTitle?: string }) {
+export function Controller(data?: {
+    path: string
+    docTitle?: string
+    bearerAuth?: boolean
+}) {
     return function <T extends { new (...args: any[]): object }>(target: T) {
         if (
             Object.keys(target.prototype).find(
@@ -137,6 +141,12 @@ export function Controller(data?: { path: string; docTitle?: string }) {
             )
         )
             throw new Error('Invalid controller')
+        if (data?.bearerAuth)
+            return NestController(data?.path ?? '')(
+                ApiTags(data?.docTitle ?? '')(
+                    ApiBearerAuth()(target) as T,
+                ) as T,
+            )
         return NestController(data?.path ?? '')(
             ApiTags(data?.docTitle ?? '')(target) as T,
         )

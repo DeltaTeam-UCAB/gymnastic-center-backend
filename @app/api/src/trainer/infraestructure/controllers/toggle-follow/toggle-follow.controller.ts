@@ -15,16 +15,16 @@ import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.
 import { TrainerPostgresRepository } from '../../repositories/postgres/trainer.repository'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { ApiHeader } from '@nestjs/swagger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
     path: 'trainer',
     docTitle: 'Trainer',
+    bearerAuth: true,
 })
 export class ToggleFollowController
-implements
+    implements
         ControllerContract<[param: string, user: User], ToggleFollowResponse>
 {
     constructor(private trainerRepo: TrainerPostgresRepository) {}
@@ -32,9 +32,6 @@ implements
     @Post('toggle/follow/:id')
     @Roles('CLIENT')
     @UseGuards(UserGuard, RolesGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @Param('id', ParseUUIDPipe) param: string,
         @UserDecorator() user: User,

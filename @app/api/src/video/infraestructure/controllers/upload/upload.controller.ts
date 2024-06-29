@@ -10,7 +10,7 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common'
-import { ApiConsumes, ApiHeader } from '@nestjs/swagger'
+import { ApiConsumes } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { configVideoMulter } from '../../helpers/multer.helper'
@@ -33,6 +33,7 @@ import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.
 @Controller({
     path: VIDEO_ROUTE_PREFIX,
     docTitle: VIDEO_DOC_PREFIX,
+    bearerAuth: true,
 })
 export class UploadVideoController
     implements
@@ -52,9 +53,6 @@ export class UploadVideoController
     ) {}
     @Post('upload')
     @Roles('ADMIN')
-    @ApiHeader({
-        name: 'auth',
-    })
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('video', configVideoMulter))
     @UseGuards(UserGuard, RolesGuard)
