@@ -5,7 +5,6 @@ import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { ApiHeader } from '@nestjs/swagger'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { BLOG_ROUTE_PREFIX, BLOG_DOC_PREFIX } from '../prefix'
 import { CreateBlogDTO } from './dto/create.blog.dto'
@@ -21,13 +20,22 @@ import { PostgresTransactionProvider } from 'src/core/infraestructure/repositori
 import { BlogPostgresTransactionalRepository } from '../../repositories/postgres/blog.repository.transactional'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
+import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
     docTitle: BLOG_DOC_PREFIX,
+    bearerAuth: true,
 })
 export class CreateBlogController
-    implements ControllerContract<[body: CreateBlogDTO], { id: string }>
+    implements
+        ControllerContract<
+            [body: CreateBlogDTO, user: CurrentUserResponse],
+            { id: string }
+        >
 {
     constructor(
         @Inject(UUID_GEN_NATIVE)
@@ -40,10 +48,17 @@ export class CreateBlogController
     @Post('create')
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
-    async execute(@Body() body: CreateBlogDTO): Promise<CreateBlogResponse> {
+    async execute(
+        @Body() body: CreateBlogDTO,
+        @UserDecorator() user: CurrentUserResponse,
+    ): Promise<CreateBlogResponse> {
+        const audit = {
+            user: user.id,
+            operation: 'Create Blog',
+            succes: true,
+            ocurredOn: new Date(Date.now()),
+            data: JSON.stringify(body),
+        }
         const manager = await this.transactionProvider.create()
         const blogRepository = new BlogPostgresTransactionalRepository(
             manager.queryRunner,
@@ -67,9 +82,17 @@ export class CreateBlogController
             commandWithTrainerValidator,
             this.categoryRepository,
         )
+
         const result = await new ErrorDecorator(
             new TransactionHandlerDecorator(
-                new LoggerDecorator(commandWithCategoryValidator, nestLogger),
+                new AuditDecorator(
+                    new LoggerDecorator(
+                        commandWithCategoryValidator,
+                        nestLogger,
+                    ),
+                    new AuditingTxtRepository(),
+                    audit,
+                ),
                 manager.transactionHandler,
             ),
             (e) => new HttpException(e.message, 400),

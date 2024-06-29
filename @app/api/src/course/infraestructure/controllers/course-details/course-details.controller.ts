@@ -5,7 +5,6 @@ import {
     ParseUUIDPipe,
     UseGuards,
 } from '@nestjs/common'
-import { ApiHeader } from '@nestjs/swagger'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { CoursePostgresRepository } from '../../repositories/postgres/course.repository'
@@ -24,9 +23,10 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
 @Controller({
     path: COURSE_ROUTE_PREFIX,
     docTitle: COURSE_DOC_PREFIX,
+    bearerAuth: true,
 })
 export class CourseDetailsController
-    implements ControllerContract<[id: string], GetCourseDetailsResponse>
+implements ControllerContract<[id: string], GetCourseDetailsResponse>
 {
     constructor(
         private courseRepo: CoursePostgresRepository,
@@ -37,9 +37,6 @@ export class CourseDetailsController
     ) {}
     @Get('one/:id')
     @UseGuards(UserGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<GetCourseDetailsResponse> {

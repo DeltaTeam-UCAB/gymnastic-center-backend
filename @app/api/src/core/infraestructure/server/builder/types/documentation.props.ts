@@ -3,4 +3,5 @@ export type DocumentationProps = {
     description: string
     version: string
     path: string
+    bearerAuth: boolean
 }

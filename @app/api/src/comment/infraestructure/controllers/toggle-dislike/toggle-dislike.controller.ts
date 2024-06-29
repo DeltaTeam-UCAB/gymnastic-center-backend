@@ -13,7 +13,6 @@ import { User } from 'src/user/application/models/user'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { CommentPostgresRepository } from '../../repositories/postgres/comment.repository'
-import { ApiHeader } from '@nestjs/swagger'
 import { ToggleDislikeCommand } from 'src/comment/application/commands/toggle-dislike/toggle-dislike.command'
 import { ToggleDislikeResponse } from 'src/comment/application/commands/toggle-dislike/types/response'
 import { CheckCommentExistence } from 'src/comment/application/decorators/check-comment-existence.decorator'
@@ -24,9 +23,10 @@ import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rab
 @Controller({
     path: 'comment',
     docTitle: 'Comment',
+    bearerAuth: true,
 })
 export class ToggleDislikeController
-implements
+    implements
         ControllerContract<[param: string, user: User], ToggleDislikeResponse>
 {
     constructor(
@@ -37,9 +37,6 @@ implements
     @Post('toggle/dislike/:id')
     @Roles('CLIENT')
     @UseGuards(UserGuard, RolesGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @Param('id', ParseUUIDPipe) param: string,
         @UserDecorator() user: User,

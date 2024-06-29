@@ -5,7 +5,6 @@ import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { ApiHeader } from '@nestjs/swagger'
 import { COURSE_ROUTE_PREFIX } from '../prefix'
 import { COURSE_DOC_PREFIX } from '../prefix'
 import { CreateCourseDTO } from './dto/create-course.dto'
@@ -28,15 +27,20 @@ import { CoursePostgresTransactionalRepository } from '../../repositories/postgr
 import { TransactionHandlerDecorator } from 'src/core/application/decorators/transaction.handler.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
+import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
     docTitle: COURSE_DOC_PREFIX,
+    bearerAuth: true,
 })
 export class CreateCourseController
     implements
         ControllerContract<
-            [body: CreateCourseDTO],
+            [body: CreateCourseDTO, user: CurrentUserResponse],
             {
                 id: string
             }
@@ -52,14 +56,20 @@ export class CreateCourseController
     ) {}
 
     @Post('create')
-    @ApiHeader({
-        name: 'auth',
-    })
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
     async execute(
         @Body() body: CreateCourseDTO,
+        @UserDecorator() user: CurrentUserResponse,
     ): Promise<CreateCourseResponse> {
+        const audit = {
+            user: user.id,
+            operation: 'Create Course',
+            succes: true,
+            ocurredOn: new Date(Date.now()),
+            data: JSON.stringify(body),
+        }
+
         const manager = await this.transactionProvider.create()
         const courseRepository = new CoursePostgresTransactionalRepository(
             manager.queryRunner,
@@ -90,9 +100,14 @@ export class CreateCourseController
             commandWithImageValidator,
             this.videoRepository,
         )
+
         const result = await new ErrorDecorator(
             new TransactionHandlerDecorator(
-                new LoggerDecorator(commandWithVideoValidator, nestLogger),
+                new AuditDecorator(
+                    new LoggerDecorator(commandWithVideoValidator, nestLogger),
+                    new AuditingTxtRepository(),
+                    audit,
+                ),
                 manager.transactionHandler,
             ),
             (e) => {

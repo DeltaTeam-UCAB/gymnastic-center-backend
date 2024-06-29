@@ -11,15 +11,15 @@ import { Get, HttpException, UseGuards } from '@nestjs/common'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { ApiHeader } from '@nestjs/swagger'
 import { User } from 'src/user/infraestructure/decorators/user.decorator'
 
 @Controller({
     path: 'progress',
     docTitle: 'Subscription',
+    bearerAuth: true,
 })
 export class GetSubscriptionTrending
-    implements
+implements
         ControllerContract<
             [user: CurrentUserResponse],
             GetSubscriptionTrendingResponse
@@ -31,9 +31,6 @@ export class GetSubscriptionTrending
     ) {}
 
     @Get('trending')
-    @ApiHeader({
-        name: 'auth',
-    })
     @Roles('CLIENT')
     @UseGuards(UserGuard, RolesGuard)
     async execute(

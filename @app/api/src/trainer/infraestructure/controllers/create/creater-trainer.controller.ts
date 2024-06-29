@@ -8,19 +8,26 @@ import { CreateTrainerCommand } from 'src/trainer/application/commands/create/cr
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { TrainerPostgresRepository } from '../../repositories/postgres/trainer.repository'
-import { ApiHeader } from '@nestjs/swagger'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
+import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
+import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { CurrentUserResponse } from '../../../../../src/user/application/queries/current/types/response'
 
 @Controller({
     path: 'trainer',
     docTitle: 'Trainer',
+    bearerAuth: true,
 })
 export class CreateTrainerController
     implements
-        ControllerContract<[body: CreateTrainerDTO], CreateTrainerResponse>
+        ControllerContract<
+            [body: CreateTrainerDTO, user: CurrentUserResponse],
+            CreateTrainerResponse
+        >
 {
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
@@ -30,16 +37,25 @@ export class CreateTrainerController
     @Post()
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @Body() body: CreateTrainerDTO,
+        @UserDecorator() user: CurrentUserResponse,
     ): Promise<CreateTrainerResponse> {
+        const audit = {
+            user: user.id,
+            operation: 'Create Trainer',
+            succes: true,
+            ocurredOn: new Date(Date.now()),
+            data: JSON.stringify(body),
+        }
         const result = await new ErrorDecorator(
-            new LoggerDecorator(
-                new CreateTrainerCommand(this.idGen, this.trainerRepo),
-                new NestLogger('CreateTrainer'),
+            new AuditDecorator(
+                new LoggerDecorator(
+                    new CreateTrainerCommand(this.idGen, this.trainerRepo),
+                    new NestLogger('CreateTrainer'),
+                ),
+                new AuditingTxtRepository(),
+                audit,
             ),
             (e) => new HttpException(e.message, 400),
         ).execute(body)

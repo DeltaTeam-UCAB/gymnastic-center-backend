@@ -10,7 +10,7 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common'
-import { ApiConsumes, ApiHeader } from '@nestjs/swagger'
+import { ApiConsumes } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { configVideoMulter } from '../../helpers/multer.helper'
@@ -25,15 +25,24 @@ import { VideoPostgresRepository } from '../../repositories/postgres/video.repos
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { SaveVideoCommand } from 'src/video/application/commands/save/save.video.command'
 import { SaveVideoResponse } from 'src/video/application/commands/save/types/response'
+import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
+import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
+import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 
 @Controller({
     path: VIDEO_ROUTE_PREFIX,
     docTitle: VIDEO_DOC_PREFIX,
+    bearerAuth: true,
 })
 export class UploadVideoController
     implements
         ControllerContract<
-            [file: Express.Multer.File, body: UploadVideoDTO],
+            [
+                file: Express.Multer.File,
+                body: UploadVideoDTO,
+                user: CurrentUserResponse,
+            ],
             SaveVideoResponse
         >
 {
@@ -44,9 +53,6 @@ export class UploadVideoController
     ) {}
     @Post('upload')
     @Roles('ADMIN')
-    @ApiHeader({
-        name: 'auth',
-    })
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('video', configVideoMulter))
     @UseGuards(UserGuard, RolesGuard)
@@ -54,13 +60,26 @@ export class UploadVideoController
         @UploadedFile() file: Express.Multer.File,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         @Body() _body: UploadVideoDTO,
+        @UserDecorator() user: CurrentUserResponse,
     ): Promise<SaveVideoResponse> {
         try {
+            const audit = {
+                user: user.id,
+                operation: 'Upload Video',
+                succes: true,
+                ocurredOn: new Date(Date.now()),
+                data: JSON.stringify(_body),
+            }
+
             const result = await new ErrorDecorator(
-                new SaveVideoCommand(
-                    this.idGen,
-                    this.videoRepository,
-                    this.videoStorage,
+                new AuditDecorator(
+                    new SaveVideoCommand(
+                        this.idGen,
+                        this.videoRepository,
+                        this.videoStorage,
+                    ),
+                    new AuditingTxtRepository(),
+                    audit,
                 ),
                 () => new InternalServerErrorException(),
             ).execute({

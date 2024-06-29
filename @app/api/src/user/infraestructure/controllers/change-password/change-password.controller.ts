@@ -10,13 +10,19 @@ import { SHA256_CRYPTO } from 'src/core/infraestructure/crypto/sha256/sha256.mod
 import { Crypto } from 'src/core/application/crypto/crypto'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
 
 @Controller({
     path: 'auth',
     docTitle: 'Auth',
+    bearerAuth: true,
 })
 export class ChangePasswordController
-implements ControllerContract<[body: ChangePasswordDTO], void>
+    implements
+        ControllerContract<
+            [body: ChangePasswordDTO, user: CurrentUserResponse],
+            void
+        >
 {
     constructor(
         private userRepository: UserPostgresRepository,

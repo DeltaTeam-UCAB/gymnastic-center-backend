@@ -34,11 +34,12 @@ export class ServerBuilder implements Builder<INestApplication> {
     }
 
     setDocumentation(props: DocumentationProps) {
-        const config = new DocumentBuilder()
+        const configBuilder = new DocumentBuilder()
             .setTitle(props.title)
             .setDescription(props.description)
             .setVersion(props.version)
-            .build()
+        if (props.bearerAuth) configBuilder.addBearerAuth()
+        const config = configBuilder.build()
         const document = SwaggerModule.createDocument(this.app, config)
         SwaggerModule.setup(props.path, this.app, document)
         return this

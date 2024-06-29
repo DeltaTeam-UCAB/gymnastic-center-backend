@@ -11,7 +11,7 @@ import { RecoveryCodeEmailSender } from '../../sender/recovery.code.sender'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { RecoveryCodePushSender } from '../../sender/recovery.code.push'
-
+import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
 @Controller({
     path: 'auth',
     docTitle: 'Auth',
@@ -19,7 +19,7 @@ import { RecoveryCodePushSender } from '../../sender/recovery.code.push'
 export class ForgetPasswordController
     implements
         ControllerContract<
-            [body: ForgetPasswordDTO],
+            [body: ForgetPasswordDTO, user: CurrentUserResponse],
             {
                 date: Date
             }

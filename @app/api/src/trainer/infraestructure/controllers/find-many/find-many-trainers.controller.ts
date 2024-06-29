@@ -4,7 +4,6 @@ import { Controller } from 'src/core/infraestructure/controllers/decorators/cont
 import { TrainerPostgresRepository } from '../../repositories/postgres/trainer.repository'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { ApiHeader } from '@nestjs/swagger'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { User } from 'src/user/application/models/user'
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
@@ -17,9 +16,10 @@ import { FindManyTrainersDTO } from './dto/dto'
 @Controller({
     path: 'trainer',
     docTitle: 'Trainer',
+    bearerAuth: true,
 })
 export class FindTrainerController
-    implements
+implements
         ControllerContract<
             [data: FindManyTrainersDTO, user: User],
             FindManyTrainersResponse[]
@@ -30,9 +30,6 @@ export class FindTrainerController
     @Get('many')
     @Roles('CLIENT')
     @UseGuards(UserGuard, RolesGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @Query() data: FindManyTrainersDTO,
         @UserDecorator() user: User,
