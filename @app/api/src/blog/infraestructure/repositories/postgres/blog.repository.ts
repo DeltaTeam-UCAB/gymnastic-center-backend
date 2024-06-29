@@ -47,7 +47,7 @@ export class BlogPostgresRepository implements BlogRepository {
         private categoryRepository: Repository<CategoryORM>,
     ) {}
 
-    async save(blogs: Blog): Promise<Result<Blog>> { //preguntar si hay que hacer la relacion con el trainer y category
+    async save(blogs: Blog): Promise<Result<Blog>> {
         await this.blogRepository.upsert(
             this.blogRepository.create(new BlogId(blogs.id.id)),
             ['id'],
@@ -132,7 +132,7 @@ export class BlogPostgresRepository implements BlogRepository {
             }),
             date: new BlogDate(blog.date),
         })
-}
+    }
 
     async getAll(filters: GetAllBlogsDTO): Promise<Blog[]> {
         const blogs = await this.blogRepository.find({

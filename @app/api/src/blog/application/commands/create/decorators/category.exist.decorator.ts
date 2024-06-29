@@ -7,7 +7,6 @@ import { categoryNotFoundError } from 'src/blog/application/errors/category.not.
 import { CategoryId } from 'src/blog/domain/value-objects/category.id'
 import { CategoryRepository } from 'src/blog/application/repositories/category.repository'
 
-
 export class CategoryExistDecorator
     implements ApplicationService<CreateBlogDTO, CreateBlogResponse>
 {
