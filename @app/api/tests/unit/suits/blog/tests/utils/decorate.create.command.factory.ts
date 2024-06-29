@@ -13,7 +13,12 @@ export const decorateCreateCommand = (
     trainerRepository: TrainerRepository,
     categoryRepository: CategoryRepository,
 ) => {
-    const commandBase = new CreateBlogCommand(idGen, blogRepository)
+    const commandBase = new CreateBlogCommand(
+        idGen,
+        blogRepository,
+        trainerRepository,
+        categoryRepository,
+    )
     const commandWithTitleValidator = new BlogTitleNotExistDecorator(
         commandBase,
         blogRepository,

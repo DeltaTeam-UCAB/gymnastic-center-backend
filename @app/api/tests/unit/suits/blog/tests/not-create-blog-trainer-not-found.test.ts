@@ -8,28 +8,34 @@ import { TRAINER_NOT_FOUND } from '../../../../../src/blog/application/errors/tr
 import { CategoryRepositoryMock } from './utils/category.repository.mock'
 import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
 import { decorateCreateCommand } from './utils/decorate.create.command.factory'
-import { createTrainer } from './utils/trainer.factory'
+//import { createTrainer } from './utils/trainer.factory'
 import { createCategory } from './utils/category.factory'
 
-export const name = 'Should not create blog if title exist'
+export const name = 'Should not create blog if trainer not found'
 const date = new DateProviderMock(new Date())
 export const body = async () => {
-    const trainer = createTrainer()
-    const category = createCategory()
+    const blogId = '84821c3f-0e66-4bf4-a3a8-520e42e50752'
+    const trainerId = '84821c3f-0e84-4bf4-a3a8-520e42e54121'
+    const categoryId = '84821c3f-0e66-4bf4-a3a8-520e42e54125'
+    const imageId = '84821c3f-0e66-4bf4-a3a8-520e42e54147'
+    const category = createCategory({
+        id: categoryId,
+        name: 'category name test',
+    })
+    const trainerRepository = new TrainerRepositoryMock()
     const categoryRepository = new CategoryRepositoryMock([category])
-    const trainerRepository = new TrainerRepositoryMock([trainer])
     const blogBaseData = {
         title: 'test blog',
         body: 'test made for blog body',
-        images: ['url-imagen1', 'url-imagen2'],
+        images: [imageId],
         tags: ['tag1', 'tag2'],
-        category: category.id,
-        trainer: '127364',
+        category: categoryId,
+        trainer: trainerId,
         date: date.current,
     } satisfies CreateBlogDTO
     const blogRepository = new BlogRepositoryMock()
     const decoratedCommand = decorateCreateCommand(
-        new IdGeneratorMock(),
+        new IdGeneratorMock(blogId),
         blogRepository,
         trainerRepository,
         categoryRepository,

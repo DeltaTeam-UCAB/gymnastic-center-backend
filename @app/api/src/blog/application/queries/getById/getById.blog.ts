@@ -8,6 +8,7 @@ import { blogNotFoundError } from '../../errors/blog.not.found'
 import { CategoryRepository } from '../../repositories/category.repository'
 import { TrainerRepository } from '../../repositories/trainer.repository'
 import { ImageRepository } from '../../repositories/image.repository'
+import { BlogId } from 'src/blog/domain/value-objects/blog.id'
 
 export class GetBlogByIdQuery
     implements ApplicationService<GetBlogByIdDTO, GetBlogByIdResponse>
@@ -20,24 +21,25 @@ export class GetBlogByIdQuery
     ) {}
 
     async execute(data: GetBlogByIdDTO): Promise<Result<GetBlogByIdResponse>> {
-        const blog = await this.blogRepository.getById(data.id)
+        const blog = await this.blogRepository.getById(new BlogId(data.id))
         if (!isNotNull(blog)) return Result.error(blogNotFoundError())
         return Result.success({
-            id: blog.id,
-            date: blog.date,
-            tags: blog.tags,
-            title: blog.title,
-            description: blog.body,
+            id: blog.id.id,
+            date: blog.date.date,
+            tags: blog.tags.map((tag) => tag.tag),
+            title: blog.title.title,
+            description: blog.body.body,
             images: await blog.images.asyncMap(
-                async (img) => (await this.imageRepository.getById(img))!.src,
+                async (img) =>
+                    (await this.imageRepository.getById(img.image))!.src,
             ),
             trainer: {
-                id: blog.trainer,
-                name: (await this.trainerRepository.getById(blog.trainer))!
-                    .name,
+                id: blog.trainer.id.id,
+                name: (await this.trainerRepository.getById(blog.trainer.id))!
+                    .name.name,
             },
-            category: (await this.categoryRepository.getById(blog.category))!
-                .name,
+            category: (await this.categoryRepository.getById(blog.category.id))!
+                .name.name,
         })
     }
 }

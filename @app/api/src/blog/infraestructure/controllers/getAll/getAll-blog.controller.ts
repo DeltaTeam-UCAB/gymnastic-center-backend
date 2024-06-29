@@ -19,7 +19,7 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
     docTitle: BLOG_DOC_PREFIX,
 })
 export class GetAllBlogController
-implements
+    implements
         ControllerContract<[query: GetAllBlogsDTO], GetAllBlogResponse[]>
 {
     constructor(

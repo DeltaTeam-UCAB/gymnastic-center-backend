@@ -9,7 +9,7 @@ import { ApiHeader } from '@nestjs/swagger'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { BLOG_ROUTE_PREFIX, BLOG_DOC_PREFIX } from '../prefix'
 import { CreateBlogDTO } from './dto/create.blog.dto'
-import { CreateBlogResponse } from '../../../../../src/blog/application/commands/create/types/response'
+import { CreateBlogResponse } from 'src/blog/application/commands/create/types/response'
 import { CreateBlogCommand } from 'src/blog/application/commands/create/create.blog.command'
 import { TrainerByBlogPostgresRepository } from '../../repositories/postgres/trainer.repository'
 import { BlogTitleNotExistDecorator } from 'src/blog/application/commands/create/decorators/title.exist.decorator'
@@ -32,11 +32,8 @@ export class CreateBlogController
     constructor(
         @Inject(UUID_GEN_NATIVE)
         private idGen: IDGenerator<string>,
-
         private trainerRepository: TrainerByBlogPostgresRepository,
-
         private categoryRepository: CategoryByBlogPostgresRepository,
-
         private transactionProvider: PostgresTransactionProvider,
     ) {}
 
@@ -51,10 +48,15 @@ export class CreateBlogController
         const blogRepository = new BlogPostgresTransactionalRepository(
             manager.queryRunner,
         )
-        const nestLogger = new NestLogger('Create Blog logger')
+        const nestLogger = new NestLogger('Create Blog Logger')
 
         const commandWithTitleValidator = new BlogTitleNotExistDecorator(
-            new CreateBlogCommand(this.idGen, blogRepository),
+            new CreateBlogCommand(
+                this.idGen,
+                blogRepository,
+                this.trainerRepository,
+                this.categoryRepository,
+            ),
             blogRepository,
         )
         const commandWithTrainerValidator = new TrainerExistDecorator(
