@@ -5,14 +5,14 @@ import { CurrentUserResponse } from 'src/user/application/queries/current/types/
 import { NotificationPostgresRepository } from '../../repositories/postgres/notification.repository'
 import { GetNotificationsManyQuery } from 'src/notification/application/queries/many/notification.many.query'
 import { Get, ParseIntPipe, Query, UseGuards } from '@nestjs/common'
-import { ApiHeader } from '@nestjs/swagger'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { User } from 'src/user/infraestructure/decorators/user.decorator'
 
 @Controller({
-    path: 'notification',
+    path: 'notifications',
     docTitle: 'Notification',
+    bearerAuth: true,
 })
 export class GetNotificationsController
 implements
@@ -25,9 +25,6 @@ implements
         private notificationRepository: NotificationPostgresRepository,
     ) {}
     @Get('many')
-    @ApiHeader({
-        name: 'auth',
-    })
     @Roles('CLIENT')
     @UseGuards(UserGuard, RolesGuard)
     async execute(

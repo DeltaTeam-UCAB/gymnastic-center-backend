@@ -3,7 +3,6 @@ import { CreateCommentDTO } from './dto/create.comment.dto'
 import { CreateCommentResponse } from 'src/comment/application/commands/create/types/response'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Body, HttpException, Inject, Post, UseGuards } from '@nestjs/common'
-import { ApiHeader } from '@nestjs/swagger'
 import { Roles } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
@@ -28,9 +27,10 @@ import { CurrentUserResponse } from 'src/user/application/queries/current/types/
 @Controller({
     path: 'comment',
     docTitle: 'Comment',
+    bearerAuth: true,
 })
 export class CreateController
-    implements
+implements
         ControllerContract<
             [body: CreateCommentDTO, user: CurrentUserResponse],
             CreateCommentResponse
@@ -46,9 +46,6 @@ export class CreateController
     ) {}
 
     @Post('release')
-    @ApiHeader({
-        name: 'auth',
-    })
     @Roles('CLIENT')
     @UseGuards(UserGuard, RolesGuard)
     async execute(

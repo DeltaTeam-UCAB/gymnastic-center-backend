@@ -7,7 +7,6 @@ import {
     ParseUUIDPipe,
     UseGuards,
 } from '@nestjs/common'
-import { ApiHeader } from '@nestjs/swagger'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { IMAGE_DOC_PREFIX, IMAGE_ROUTE_PREFIX } from '../prefix'
 import { GetImageByIdResponse } from 'src/image/application/queries/get-by-id/types/response'
@@ -20,21 +19,19 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
 @Controller({
     path: IMAGE_ROUTE_PREFIX,
     docTitle: IMAGE_DOC_PREFIX,
+    bearerAuth: true,
 })
 export class FindImageController
 implements ControllerContract<[id: string], GetImageByIdResponse>
 {
     constructor(private imageRepository: ImagePostgresRepository) {}
     @Get('one/:id')
-    @ApiHeader({
-        name: 'auth',
-    })
     @UseGuards(UserGuard)
     async execute(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<GetImageByIdResponse> {
         const nestLogger = new NestLogger('Find image logger')
-        const service = await new ErrorDecorator(
+        const service = new ErrorDecorator(
             new LoggerDecorator(
                 new GetImageByIdQuery(this.imageRepository),
                 nestLogger,

@@ -11,10 +11,7 @@ import { RecoveryCodeEmailSender } from '../../sender/recovery.code.sender'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { RecoveryCodePushSender } from '../../sender/recovery.code.push'
-import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
-import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
-import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 @Controller({
     path: 'auth',
     docTitle: 'Auth',
@@ -30,32 +27,17 @@ export class ForgetPasswordController
 {
     constructor(private userRepository: UserPostgresRepository) {}
     @Post('forget/password')
-    async execute(
-        @Body() body: ForgetPasswordDTO,
-        @UserDecorator() user: CurrentUserResponse,
-    ): Promise<{
+    async execute(@Body() body: ForgetPasswordDTO): Promise<{
         date: Date
     }> {
-        const audit = {
-            user: user.id,
-            operation: 'Forget Password',
-            succes: true,
-            ocurredOn: new Date(Date.now()),
-            data: JSON.stringify(body),
-        }
-
         let service = new RecoveryPasswordSenderDecorator(
-            new AuditDecorator(
-                new LoggerDecorator(
-                    new RecoveryPasswordCommand(
-                        this.userRepository,
-                        new CryptoRandomCodeGenerator(),
-                        new ConcreteDateProvider(),
-                    ),
-                    new NestLogger('ForgetPassword'),
+            new LoggerDecorator(
+                new RecoveryPasswordCommand(
+                    this.userRepository,
+                    new CryptoRandomCodeGenerator(),
+                    new ConcreteDateProvider(),
                 ),
-                new AuditingTxtRepository(),
-                audit,
+                new NestLogger('ForgetPassword'),
             ),
             this.userRepository,
             new RecoveryCodeEmailSender(),

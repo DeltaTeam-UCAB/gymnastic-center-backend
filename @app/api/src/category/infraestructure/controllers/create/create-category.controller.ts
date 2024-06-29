@@ -19,7 +19,6 @@ import { CATEGORY_NAME_EXIST } from 'src/category/application/errors/category.na
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { ApiHeader } from '@nestjs/swagger'
 import { ImagePostgresByCategoryRepository } from '../../repositories/postgres/image.postgres.repository'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
@@ -28,13 +27,13 @@ import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 
-
 @Controller({
     path: 'category',
     docTitle: 'Category',
+    bearerAuth: true,
 })
 export class CreateCategoryController
-    implements
+implements
         ControllerContract<
             [body: CreateCategoryDTO, user: CurrentUserResponse],
             CreateCategoryResponse
@@ -45,9 +44,6 @@ export class CreateCategoryController
         private imageRepository: ImagePostgresByCategoryRepository,
         private categoryRepository: CategoryPostgresRepository,
     ) {}
-    @ApiHeader({
-        name: 'auth',
-    })
     @Post('create')
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)

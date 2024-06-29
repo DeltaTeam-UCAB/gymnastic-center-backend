@@ -4,15 +4,15 @@ import { GetPopularTagsResponse } from 'src/search/application/queries/popular-t
 import { TagPostgresRepository } from '../../repositories/postgres/tag.repository'
 import { GetPopularTagsQuery } from 'src/search/application/queries/popular-tags/popular.tags.query'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { ApiHeader } from '@nestjs/swagger'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 
 @Controller({
     path: 'search',
     docTitle: 'Search',
+    bearerAuth: true,
 })
 export class GetPopularTagsControllers
-    implements
+implements
         ControllerContract<
             [page: number, perPage: number],
             GetPopularTagsResponse
@@ -20,9 +20,6 @@ export class GetPopularTagsControllers
 {
     constructor(private tagProvider: TagPostgresRepository) {}
     @Get('popular/tags')
-    @ApiHeader({
-        name: 'auth',
-    })
     @UseGuards(UserGuard)
     async execute(
         @Query('page', ParseIntPipe) page: number,

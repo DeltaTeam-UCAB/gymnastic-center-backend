@@ -8,16 +8,16 @@ import { CoursePostgresBySearchRepository } from '../../repositories/postgres/co
 import { BlogPostgresBySearchRepository } from '../../repositories/postgres/blog.repository'
 import { ImagePostgresBySearchRepository } from '../../repositories/postgres/image.repository'
 import { SearchBlogsQuery } from 'src/search/application/queries/search-blogs/search.blog.query'
-import { ApiHeader } from '@nestjs/swagger'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 
 @Controller({
     path: 'search',
     docTitle: 'Search',
+    bearerAuth: true,
 })
 export class SearchController
-    implements
+implements
         ControllerContract<
             [data: SearchDTO],
             {
@@ -32,9 +32,6 @@ export class SearchController
         private imageRepository: ImagePostgresBySearchRepository,
     ) {}
     @Get('all')
-    @ApiHeader({
-        name: 'auth',
-    })
     @UseGuards(UserGuard)
     async execute(@Query() data: SearchDTO): Promise<{
         blogs: GetAllBlogResponse[]

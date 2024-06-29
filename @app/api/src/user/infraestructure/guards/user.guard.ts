@@ -18,7 +18,7 @@ export class UserGuard implements CanActivate {
     ) {}
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest()
-        const token = request.headers.auth
+        const token = request.headers.authorization?.replace('Bearer ', '')
         const result = await new CurrentUserQuery(
             this.userRepo,
             this.jwtProvider.create(),

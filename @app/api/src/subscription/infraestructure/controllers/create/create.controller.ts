@@ -25,15 +25,15 @@ import { TransactionHandlerDecorator } from 'src/core/application/decorators/tra
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { ApiHeader } from '@nestjs/swagger'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 
 @Controller({
     path: 'progress',
     docTitle: 'Subscription',
+    bearerAuth: true,
 })
 export class CreateSubscriptionController
-implements
+    implements
         ControllerContract<
             [user: CurrentUserResponse, course: string],
             CreateSubscriptionResponse
@@ -45,10 +45,7 @@ implements
         private transactionProvider: PostgresTransactionProvider,
         private eventPublisher: RabbitMQEventHandler,
     ) {}
-    @Post('create/:course')
-    @ApiHeader({
-        name: 'auth',
-    })
+    @Post('start/:course')
     @Roles('CLIENT')
     @UseGuards(UserGuard, RolesGuard)
     async execute(

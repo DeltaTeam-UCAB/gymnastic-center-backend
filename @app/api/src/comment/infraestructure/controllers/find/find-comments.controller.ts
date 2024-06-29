@@ -10,16 +10,16 @@ import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
-import { ApiHeader } from '@nestjs/swagger'
 import { Optional } from '@mono/types-utils'
 import { TargetType } from 'src/comment/application/types/target-type'
 
 @Controller({
     path: 'comment',
     docTitle: 'Comment',
+    bearerAuth: true,
 })
 export class FindCommentsController
-implements
+    implements
         ControllerContract<
             [query: FindCommentsDTO, user: User],
             FindCommentsResponse[]
@@ -29,9 +29,6 @@ implements
 
     @Get('many')
     @UseGuards(UserGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @Query() query: FindCommentsDTO,
         @UserDecorator() user: User,

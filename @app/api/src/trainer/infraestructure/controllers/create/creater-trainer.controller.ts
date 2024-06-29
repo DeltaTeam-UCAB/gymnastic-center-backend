@@ -8,7 +8,6 @@ import { CreateTrainerCommand } from 'src/trainer/application/commands/create/cr
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { TrainerPostgresRepository } from '../../repositories/postgres/trainer.repository'
-import { ApiHeader } from '@nestjs/swagger'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
@@ -21,6 +20,7 @@ import { CurrentUserResponse } from '../../../../../src/user/application/queries
 @Controller({
     path: 'trainer',
     docTitle: 'Trainer',
+    bearerAuth: true,
 })
 export class CreateTrainerController
     implements
@@ -37,9 +37,6 @@ export class CreateTrainerController
     @Post()
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @Body() body: CreateTrainerDTO,
         @UserDecorator() user: CurrentUserResponse,

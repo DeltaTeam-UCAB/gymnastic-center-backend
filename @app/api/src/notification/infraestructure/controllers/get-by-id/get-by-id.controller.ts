@@ -8,18 +8,18 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
 import { MarkNotificationAsReadedCommand } from 'src/notification/application/commands/mark-readed/mark.notification.readed.command'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { ApiHeader } from '@nestjs/swagger'
 import { GetNotificationByIdResponse } from 'src/notification/application/queries/get-id/types/response'
 import { GetNotificationByIdQuery } from 'src/notification/application/queries/get-id/get.notification.id.query'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 
 @Controller({
-    path: 'notification',
+    path: 'notifications',
     docTitle: 'Notification',
+    bearerAuth: true,
 })
 export class GetNotificationByIdController
-    implements
+implements
         ControllerContract<
             [id: string, user: CurrentUserResponse],
             GetNotificationByIdResponse
@@ -31,9 +31,6 @@ export class GetNotificationByIdController
     @Get('one/:id')
     @Roles('CLIENT')
     @UseGuards(UserGuard, RolesGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @Param('id') id: string,
         @User() user: CurrentUserResponse,

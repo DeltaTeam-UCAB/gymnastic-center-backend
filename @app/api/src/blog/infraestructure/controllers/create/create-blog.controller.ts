@@ -5,7 +5,6 @@ import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { ApiHeader } from '@nestjs/swagger'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { BLOG_ROUTE_PREFIX, BLOG_DOC_PREFIX } from '../prefix'
 import { CreateBlogDTO } from './dto/create.blog.dto'
@@ -29,9 +28,10 @@ import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/reposit
 @Controller({
     path: BLOG_ROUTE_PREFIX,
     docTitle: BLOG_DOC_PREFIX,
+    bearerAuth: true,
 })
 export class CreateBlogController
-implements
+    implements
         ControllerContract<
             [body: CreateBlogDTO, user: CurrentUserResponse],
             { id: string }
@@ -51,9 +51,6 @@ implements
     @Post('create')
     @Roles('ADMIN')
     @UseGuards(UserGuard, RolesGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @Body() body: CreateBlogDTO,
         @UserDecorator() user: CurrentUserResponse,

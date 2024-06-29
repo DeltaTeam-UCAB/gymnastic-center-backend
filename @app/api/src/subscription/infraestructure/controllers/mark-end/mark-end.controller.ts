@@ -13,7 +13,6 @@ import { TransactionHandlerDecorator } from 'src/core/application/decorators/tra
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { ApiHeader } from '@nestjs/swagger'
 import { MarkEndDTO } from './dto/dto'
 import { UpdateSubscriptionCommand } from 'src/subscription/application/commands/update/update.command'
 import { UpdateSubscriptionResponse } from 'src/subscription/application/commands/update/types/response'
@@ -22,9 +21,10 @@ import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rab
 @Controller({
     path: 'progress',
     docTitle: 'Subscription',
+    bearerAuth: true,
 })
 export class MarkEndLessonController
-    implements
+implements
         ControllerContract<
             [user: CurrentUserResponse, body: MarkEndDTO],
             UpdateSubscriptionResponse
@@ -35,9 +35,6 @@ export class MarkEndLessonController
         private eventPublisher: RabbitMQEventHandler,
     ) {}
     @Post('mark/end')
-    @ApiHeader({
-        name: 'auth',
-    })
     @Roles('CLIENT')
     @UseGuards(UserGuard, RolesGuard)
     async execute(

@@ -1,5 +1,4 @@
 import { Get, ParseIntPipe, Query, UseGuards } from '@nestjs/common'
-import { ApiHeader } from '@nestjs/swagger'
 import { GetCategoriesManyResponse } from 'src/category/application/queries/many/types/response'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
@@ -11,9 +10,10 @@ import { GetCategoriesManyQuery } from 'src/category/application/queries/many/ca
 @Controller({
     path: 'category',
     docTitle: 'Category',
+    bearerAuth: true,
 })
 export class GetCategoriesManyController
-    implements
+implements
         ControllerContract<
             [page: number, perPage: number],
             GetCategoriesManyResponse
@@ -26,9 +26,6 @@ export class GetCategoriesManyController
 
     @Get('many')
     @UseGuards(UserGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @Query('page', ParseIntPipe) page: number,
         @Query('perPage', ParseIntPipe) perPage: number,

@@ -10,7 +10,7 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common'
-import { ApiConsumes, ApiHeader } from '@nestjs/swagger'
+import { ApiConsumes } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { configImageMulter } from '../../helpers/multer.helper'
@@ -31,10 +31,10 @@ import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 
-
 @Controller({
     path: IMAGE_ROUTE_PREFIX,
     docTitle: IMAGE_DOC_PREFIX,
+    bearerAuth: true,
 })
 export class UploadImageController
 implements
@@ -56,9 +56,6 @@ implements
     ) {}
     @Post('upload')
     @Roles('ADMIN')
-    @ApiHeader({
-        name: 'auth',
-    })
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image', configImageMulter))
     @UseGuards(UserGuard, RolesGuard)
