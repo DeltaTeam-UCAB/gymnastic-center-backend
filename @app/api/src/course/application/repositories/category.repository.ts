@@ -1,7 +1,8 @@
 import { Optional } from '@mono/types-utils'
-import { Category } from '../models/category'
+import { Category } from 'src/course/domain/entities/category'
+import { CategoryID } from 'src/course/domain/value-objects/category.id'
 
 export interface CategoryRepository {
-    existById(id: string): Promise<boolean>
-    getById(id: string): Promise<Optional<Category>>
+    existById(id: CategoryID): Promise<boolean>
+    getById(id: CategoryID): Promise<Optional<Category>>
 }
