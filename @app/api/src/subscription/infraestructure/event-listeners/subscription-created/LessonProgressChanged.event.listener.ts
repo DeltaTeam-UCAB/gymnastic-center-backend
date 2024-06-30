@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { DomainEventStorage } from 'src/core/application/event-storage/event.storage'
-import { lessonProgressChanged,
+import {
+    lessonProgressChanged,
     LESSON_PROGRESS_CHANGED,
- } from 'src/subscription/domain/events/lesson.progress.changed'
+} from 'src/subscription/domain/events/lesson.progress.changed'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { SubscriptionID } from 'src/subscription/domain/value-objects/subscription.id'
 import { MONGO_EVENT_STORAGE } from 'src/core/infraestructure/event-storage/mongo/mongo.event.storage.module'
@@ -22,9 +23,9 @@ export class LessonProgressChangedEventListener {
             LESSON_PROGRESS_CHANGED,
             (json) =>
                 lessonProgressChanged({
-                id: new SubscriptionID(json.id._id),
-                lessonId: new LessonID(json.lessonId._id),
-                progress: new LessonProgress(json.progress._percent)
+                    id: new SubscriptionID(json.id._id),
+                    lessonId: new LessonID(json.lessonId._id),
+                    progress: new LessonProgress(json.progress._percent),
                 }),
             async (event) => {
                 await this.eventStorage.save(event)

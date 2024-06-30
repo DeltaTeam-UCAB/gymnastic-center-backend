@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { DomainEventStorage } from 'src/core/application/event-storage/event.storage'
-import { lessonLastTimeChanged,
+import {
+    lessonLastTimeChanged,
     LESSON_LAST_TIME_CHANGED,
- } from 'src/subscription/domain/events/lesson.last.time.changed'
+} from 'src/subscription/domain/events/lesson.last.time.changed'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { SubscriptionID } from 'src/subscription/domain/value-objects/subscription.id'
 import { MONGO_EVENT_STORAGE } from 'src/core/infraestructure/event-storage/mongo/mongo.event.storage.module'
@@ -22,9 +23,9 @@ export class LessonLastTimeChangedEventListener {
             LESSON_LAST_TIME_CHANGED,
             (json) =>
                 lessonLastTimeChanged({
-                id: new SubscriptionID(json.id._id),
-                lessonId: new LessonID(json.lessonId._id),
-                lastTime: new LessonLastTime(json.lastTime._seconds)
+                    id: new SubscriptionID(json.id._id),
+                    lessonId: new LessonID(json.lessonId._id),
+                    lastTime: new LessonLastTime(json.lastTime._seconds),
                 }),
             async (event) => {
                 await this.eventStorage.save(event)
