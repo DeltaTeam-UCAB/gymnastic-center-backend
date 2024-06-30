@@ -111,4 +111,14 @@ export class SubscriptionPostgresRepository implements SubscriptionRepository {
                 ),
         })
     }
+
+    async delete(subscription: Subscription): Promise<Result<Subscription>> {
+        await this.subscriptionLessonProvider.delete({
+            subscription: subscription.id.id,
+        })
+        await this.subscriptionProvider.delete({
+            id: subscription.id.id,
+        })
+        return Result.success(subscription)
+    }
 }
