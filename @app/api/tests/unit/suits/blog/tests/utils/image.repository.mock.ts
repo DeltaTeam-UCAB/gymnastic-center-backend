@@ -6,9 +6,9 @@ export class ImageRepositoryMock implements ImageRepository {
     constructor(private trainers: Image[] = []) {}
 
     async existById(id: string): Promise<boolean> {
-        return this.trainers.some((c) => c.id === id)
+        return this.trainers.some((c) => c.id == id)
     }
     async getById(id: string): Promise<Optional<Image>> {
-        return this.trainers.find((c) => c.id === id)
+        return this.trainers.find((c) => c.id == id)
     }
 }

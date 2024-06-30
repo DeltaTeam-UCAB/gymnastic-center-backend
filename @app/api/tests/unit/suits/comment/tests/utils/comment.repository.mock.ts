@@ -35,4 +35,9 @@ export class CommentRepositoryMock implements CommentRepository {
             .slice(start, end)
         return comments
     }
+
+    async delete(comment: Comment): Promise<Result<Comment>> {
+        this.comments = this.comments.filter((e) => e.id != comment.id)
+        return Result.success(comment)
+    }
 }

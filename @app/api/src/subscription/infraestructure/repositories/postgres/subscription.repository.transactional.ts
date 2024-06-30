@@ -15,7 +15,7 @@ import { LessonLastTime } from 'src/subscription/domain/value-objects/lesson.las
 import { LessonProgress } from 'src/subscription/domain/value-objects/lesson.progress'
 
 export class SubscriptionPostgresRepositoryTransactional
-    implements SubscriptionRepository
+implements SubscriptionRepository
 {
     constructor(private queryRunner: QueryRunner) {}
     async save(subscription: Subscription): Promise<Result<Subscription>> {
@@ -114,5 +114,15 @@ export class SubscriptionPostgresRepositoryTransactional
                         }),
                 ),
         })
+    }
+
+    async delete(subscription: Subscription): Promise<Result<Subscription>> {
+        await this.queryRunner.manager.delete(SubscriptionLesson, {
+            subscription: subscription.id.id,
+        })
+        await this.queryRunner.manager.delete(SubscriptionORM, {
+            id: subscription.id.id,
+        })
+        return Result.success(subscription)
     }
 }

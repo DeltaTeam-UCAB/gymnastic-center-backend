@@ -8,7 +8,7 @@ import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { BLOG_ROUTE_PREFIX, BLOG_DOC_PREFIX } from '../prefix'
 import { CreateBlogDTO } from './dto/create.blog.dto'
-import { CreateBlogResponse } from '../../../../../src/blog/application/commands/create/types/response'
+import { CreateBlogResponse } from 'src/blog/application/commands/create/types/response'
 import { CreateBlogCommand } from 'src/blog/application/commands/create/create.blog.command'
 import { TrainerByBlogPostgresRepository } from '../../repositories/postgres/trainer.repository'
 import { BlogTitleNotExistDecorator } from 'src/blog/application/commands/create/decorators/title.exist.decorator'
@@ -24,6 +24,7 @@ import { CurrentUserResponse } from 'src/user/application/queries/current/types/
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
+import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -40,11 +41,8 @@ export class CreateBlogController
     constructor(
         @Inject(UUID_GEN_NATIVE)
         private idGen: IDGenerator<string>,
-
         private trainerRepository: TrainerByBlogPostgresRepository,
-
         private categoryRepository: CategoryByBlogPostgresRepository,
-
         private transactionProvider: PostgresTransactionProvider,
     ) {}
 
@@ -66,10 +64,16 @@ export class CreateBlogController
         const blogRepository = new BlogPostgresTransactionalRepository(
             manager.queryRunner,
         )
-        const nestLogger = new NestLogger('Create Blog logger')
+        const nestLogger = new NestLogger('Create Blog Logger')
 
         const commandWithTitleValidator = new BlogTitleNotExistDecorator(
-            new CreateBlogCommand(this.idGen, blogRepository),
+            new CreateBlogCommand(
+                this.idGen,
+                blogRepository,
+                this.trainerRepository,
+                this.categoryRepository,
+                new ConcreteDateProvider(),
+            ),
             blogRepository,
         )
         const commandWithTrainerValidator = new TrainerExistDecorator(

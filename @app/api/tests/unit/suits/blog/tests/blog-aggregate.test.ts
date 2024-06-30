@@ -33,7 +33,7 @@ export const body = () => {
                 name: new CategoryName('category name'),
             },
         ),
-        date: new BlogDate(date.current)
-    })  
+        date: new BlogDate(date.current),
+    })
     lookFor(blog).toBeDefined()
 }
