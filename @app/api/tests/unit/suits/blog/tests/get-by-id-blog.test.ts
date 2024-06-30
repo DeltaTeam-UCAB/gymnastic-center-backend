@@ -9,16 +9,36 @@ import { createImage } from './utils/image.factory'
 import { CategoryRepositoryMock } from './utils/category.repository.mock'
 import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
 import { ImageRepositoryMock } from './utils/image.repository.mock'
+import { DateProviderMock } from '../../course/tests/utils/date.provider.mock'
 
 export const name = 'Should get blog by ID'
 export const body = async () => {
-    const trainer = createTrainer()
-    const category = createCategory()
-    const image = createImage()
+    const date = new DateProviderMock(new Date())
+    const blogId = '84821c3f-0e66-4bf4-a3a8-520e42e50753'
+    const trainerId = '84821c3f-0e84-4bf4-a3a8-520e42e54121'
+    const categoryId = '84821c3f-0e66-4bf4-a3a8-520e42e54125'
+    const imageId = '84821c3f-0e66-4bf4-a3a8-520e42e54147'
+    const trainer = createTrainer({
+        id: trainerId,
+        name: 'trainer name test',
+    })
+    const category = createCategory({
+        id: categoryId,
+        name: 'category name test',
+    })
+    const image = createImage({
+        id: imageId,
+        src: 'image source test',
+    })
     const blog = createBlog({
-        category: category.id,
-        trainer: trainer.id,
-        images: [image.id],
+        id: blogId,
+        title: 'title test',
+        body: 'body test',
+        images: [imageId],
+        tags: ['tag1', 'tag2'],
+        category: categoryId,
+        trainer: trainerId,
+        date: date.current,
     })
     const categoryRepository = new CategoryRepositoryMock([category])
     const trainerRepository = new TrainerRepositoryMock([trainer])
@@ -30,16 +50,19 @@ export const body = async () => {
         trainerRepository,
         imageRepository,
     ).execute({
-        id: blog.id,
+        id: blogId,
     })
     lookFor(result.unwrap()).toDeepEqual({
-        id: blog.id,
-        title: blog.title,
-        description: blog.body,
-        category: category.name,
-        tags: blog.tags,
+        id: blogId,
+        title: blog.title.title,
+        description: blog.body.body,
+        category: category.name.name,
+        tags: blog.tags.map((tag) => tag.tag),
         images: [image.src],
-        trainer: trainer,
-        date: blog.date,
+        trainer: {
+            id: trainerId,
+            name: trainer.name.name,
+        },
+        date: blog.date.date,
     })
 }

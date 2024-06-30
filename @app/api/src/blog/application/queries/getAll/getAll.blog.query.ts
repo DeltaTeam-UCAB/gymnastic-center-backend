@@ -20,20 +20,21 @@ export class GetAllBlogQuery
         const blogs = await this.blogRepository.getAll(data)
         return Result.success(
             await blogs.asyncMap(async (blog) => ({
-                id: blog.id,
-                description: blog.body,
+                id: blog.id.id,
+                title: blog.title.title,
+                description: blog.body.body,
                 category: (await this.categoryRepository.getById(
-                    blog.category,
-                ))!.name,
-                date: blog.date,
+                    blog.category.id,
+                ))!.name.name,
+                date: blog.date.date,
                 images: await blog.images.asyncMap(
                     async (img) =>
-                        (await this.imageRepository.getById(img))!.src,
+                        (await this.imageRepository.getById(img.image))!.src,
                 ),
-                tags: blog.tags,
-                title: blog.title,
-                trainer: (await this.trainerRepository.getById(blog.trainer))!
-                    .name,
+                tags: blog.tags.map((tag) => tag.tag),
+                trainer: (await this.trainerRepository.getById(
+                    blog.trainer.id,
+                ))!.name.name,
             })),
         )
     }
