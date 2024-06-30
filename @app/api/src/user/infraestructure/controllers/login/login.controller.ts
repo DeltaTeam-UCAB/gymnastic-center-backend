@@ -1,6 +1,6 @@
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { LoginDTO } from './dto/login.dto'
-import { Body, HttpException, Inject, Post } from '@nestjs/common'
+import { Body, HttpCode, HttpException, Inject, Post } from '@nestjs/common'
 import { SHA256_CRYPTO } from 'src/core/infraestructure/crypto/sha256/sha256.module'
 import { Crypto } from 'src/core/application/crypto/crypto'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
@@ -21,7 +21,7 @@ import { TokenPayload } from 'src/user/application/commads/login/types/token.pay
     docTitle: 'Auth',
 })
 export class LoginController
-    implements
+implements
         ControllerContract<
             [body: LoginDTO],
             LoginResponse & {
@@ -35,6 +35,7 @@ export class LoginController
         @Inject(JWT_PROVIDER_TOKEN) private jwtProvider: JwtProviderService,
     ) {}
     @Post('login')
+    @HttpCode(200)
     async execute(@Body() body: LoginDTO): Promise<
         LoginResponse & {
             user: CurrentUserResponse
