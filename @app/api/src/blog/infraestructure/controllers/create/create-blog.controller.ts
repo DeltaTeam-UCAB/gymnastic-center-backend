@@ -24,6 +24,7 @@ import { CurrentUserResponse } from 'src/user/application/queries/current/types/
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
+import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -71,6 +72,7 @@ export class CreateBlogController
                 blogRepository,
                 this.trainerRepository,
                 this.categoryRepository,
+                new ConcreteDateProvider(),
             ),
             blogRepository,
         )

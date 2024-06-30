@@ -27,13 +27,8 @@ export const body = async () => {
         id: categoryId,
         name: 'category name test',
     })
-    // const image = createImage({
-    //     id: imageId,
-    //     src: 'image source test',
-    // })
     const categoryRepository = new CategoryRepositoryMock([category])
     const trainerRepository = new TrainerRepositoryMock([trainer])
-    //const imageRepository = new ImageRepositoryMock([image])
     const blogBaseData = {
         title: 'test blog',
         body: 'test made for blog body',
@@ -48,11 +43,13 @@ export const body = async () => {
             title: 'test blog',
         }),
     ])
+    const dateProvider = new DateProviderMock()
     const decoratedCommand = decorateCreateCommand(
         new IdGeneratorMock(blogId),
         blogRepository,
         trainerRepository,
         categoryRepository,
+        dateProvider,
     )
     const result: Result<CreateBlogResponse> = await decoratedCommand.execute(
         blogBaseData,

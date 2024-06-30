@@ -34,11 +34,13 @@ export const body = async () => {
         date: date.current,
     } satisfies CreateBlogDTO
     const blogRepository = new BlogRepositoryMock()
+    const dateProvider = new DateProviderMock()
     const decoratedCommand = decorateCreateCommand(
         new IdGeneratorMock(blogId),
         blogRepository,
         trainerRepository,
         categoryRepository,
+        dateProvider,
     )
     const result: Result<CreateBlogResponse> = await decoratedCommand.execute(
         blogBaseData,

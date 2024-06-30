@@ -45,11 +45,13 @@ export const body = async () => {
     const blogRepository = new BlogRepositoryMock([blog])
     const trainerRepository = new TrainerRepositoryMock([trainer])
     const categoryRepository = new CategoryRepositoryMock([category])
+    const dateProvider = new DateProviderMock()
     const result = await new CreateBlogCommand(
         new IdGeneratorMock(blogId),
         blogRepository,
         trainerRepository,
         categoryRepository,
+        dateProvider,
     ).execute(blogBaseData)
     lookFor(result.isError()).equals(false)
 }
