@@ -77,14 +77,14 @@ export class CommentPostgresRepository implements CommentRepository {
         await this.likeRespository.delete({
             commentId: comment.id.id,
         })
-        comment.whoLiked.forEach(async (l) =>
+        await comment.whoLiked.asyncForEach(async (l) =>
             this.likeRespository.save({
                 commentId: comment.id.id,
                 userId: l.id,
                 like: true,
             }),
         )
-        comment.whoDisliked.forEach(async (d) =>
+        await comment.whoDisliked.asyncForEach(async (d) =>
             this.likeRespository.save({
                 commentId: comment.id.id,
                 userId: d.id,
@@ -163,5 +163,15 @@ export class CommentPostgresRepository implements CommentRepository {
             id: id.id,
         })
         return exists
+    }
+
+    async delete(comment: Comment): Promise<Result<Comment>> {
+        await this.likeRespository.delete({
+            commentId: comment.id.id,
+        })
+        await this.commentRespository.delete({
+            id: comment.id.id,
+        })
+        return Result.success(comment)
     }
 }
