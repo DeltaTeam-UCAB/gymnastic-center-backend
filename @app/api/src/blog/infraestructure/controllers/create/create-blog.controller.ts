@@ -25,6 +25,7 @@ import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
+import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -44,6 +45,7 @@ export class CreateBlogController
         private trainerRepository: TrainerByBlogPostgresRepository,
         private categoryRepository: CategoryByBlogPostgresRepository,
         private transactionProvider: PostgresTransactionProvider,
+        private eventPublisher: RabbitMQEventHandler,
     ) {}
 
     @Post('create')
@@ -73,6 +75,7 @@ export class CreateBlogController
                 this.trainerRepository,
                 this.categoryRepository,
                 new ConcreteDateProvider(),
+                this.eventPublisher,
             ),
             blogRepository,
         )

@@ -7,6 +7,7 @@ import { TrainerRepository } from '../../../../../../src/blog/application/reposi
 import { CategoryRepository } from '../../../../../../src/blog/application/repositories/category.repository'
 import { IDGenerator } from '../../../../../../src/core/application/ID/ID.generator'
 import { DateProviderMock } from '../../../course/tests/utils/date.provider.mock'
+import { eventPublisherStub } from './event.publisher.stup'
 
 export const decorateCreateCommand = (
     idGen: IDGenerator<string>,
@@ -21,6 +22,7 @@ export const decorateCreateCommand = (
         trainerRepository,
         categoryRepository,
         dateProvider,
+        eventPublisherStub,
     )
     const commandWithTitleValidator = new BlogTitleNotExistDecorator(
         commandBase,

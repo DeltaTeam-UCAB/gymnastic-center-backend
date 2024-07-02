@@ -177,4 +177,10 @@ export class BlogPostgresTransactionalRepository implements BlogRepository {
         )
         return blogResult
     }
+
+    async countByTrainer(id: TrainerId): Promise<number> {
+        return this.queryRunner.manager.countBy(BlogORM, {
+            trainer: id.id,
+        })
+    }
 }

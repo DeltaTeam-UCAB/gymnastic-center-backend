@@ -4,6 +4,7 @@ import { Result } from '../../../../../../src/core/application/result-handler/re
 import { Optional } from '@mono/types-utils'
 import { CourseID } from '../../../../../../src/course/domain/value-objects/course.id'
 import { CourseTitle } from '../../../../../../src/course/domain/value-objects/course.title'
+import { TrainerID } from '../../../../../../src/course/domain/value-objects/trainer.id'
 
 export class CourseRepositoryMock implements CourseRepository {
     constructor(private courses: Course[] = []) {}
@@ -24,5 +25,13 @@ export class CourseRepositoryMock implements CourseRepository {
 
     async many(): Promise<Course[]> {
         return this.courses
+    }
+
+    async countByTrainer(id: TrainerID): Promise<number> {
+        let count = 0
+        this.courses.forEach((c) => {
+            if (c.trainer.id == id) count++
+        })
+        return count
     }
 }

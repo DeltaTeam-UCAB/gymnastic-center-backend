@@ -213,4 +213,10 @@ export class CoursePostgresRepository implements CourseRepository {
                 }),
         )
     }
+    async countByTrainer(id: TrainerID): Promise<number> {
+        const courses = this.courseProvider.countBy({
+            trainer: id.id,
+        })
+        return courses
+    }
 }
