@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsString, IsUUID } from 'class-validator'
+import { IsArray, IsIn, IsInt, IsString, IsUUID, Min } from 'class-validator'
 import { CreateLessonDTO } from './create-lesson'
+import { LEVELS } from 'src/course/domain/value-objects/course.level'
 
 export class CreateCourseDTO {
     @ApiProperty()
@@ -23,7 +24,16 @@ export class CreateCourseDTO {
     tags: string[]
     @ApiProperty()
     @IsString()
-    level: string
+    @IsIn(['EASY', 'MEDIUM', 'HARD'])
+    level: LEVELS
+    @ApiProperty()
+    @IsInt()
+    @Min(0)
+    weeks: number
+    @ApiProperty()
+    @IsInt()
+    @Min(0)
+    hours: number
     @ApiProperty({
         type: [CreateLessonDTO],
     })

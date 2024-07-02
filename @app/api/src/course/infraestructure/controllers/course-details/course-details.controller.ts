@@ -14,8 +14,6 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
 import { COURSE_DOC_PREFIX, COURSE_ROUTE_PREFIX } from '../prefix'
 import { ImagePostgresByCourseRepository } from '../../repositories/postgres/image.repository'
 import { VideoPostgresByCourseRepository } from '../../repositories/postgres/video.repository'
-import { TrainerPostgresByCourseRepository } from '../../repositories/postgres/trainer.repository'
-import { CategoryPostgresByCourseRepository } from '../../repositories/postgres/category.repository'
 import { GetCourseDetailsResponse } from 'src/course/application/queries/courseDetails/types/response'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
@@ -26,14 +24,12 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
     bearerAuth: true,
 })
 export class CourseDetailsController
-implements ControllerContract<[id: string], GetCourseDetailsResponse>
+    implements ControllerContract<[id: string], GetCourseDetailsResponse>
 {
     constructor(
         private courseRepo: CoursePostgresRepository,
         private imageRepo: ImagePostgresByCourseRepository,
         private videoRepository: VideoPostgresByCourseRepository,
-        private trainerRepository: TrainerPostgresByCourseRepository,
-        private categoryRepository: CategoryPostgresByCourseRepository,
     ) {}
     @Get('one/:id')
     @UseGuards(UserGuard)
@@ -47,8 +43,6 @@ implements ControllerContract<[id: string], GetCourseDetailsResponse>
                     this.courseRepo,
                     this.imageRepo,
                     this.videoRepository,
-                    this.trainerRepository,
-                    this.categoryRepository,
                 ),
                 nestLogger,
             ),
