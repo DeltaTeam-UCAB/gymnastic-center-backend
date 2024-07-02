@@ -14,9 +14,8 @@ export class CreateLessonDTO {
     image?: string
     @ApiProperty()
     @IsUUID()
-    @IsOptional()
-    video?: string
+    video: string
     @ApiProperty()
     @IsInt()
-        order: number
+    order: number
 }

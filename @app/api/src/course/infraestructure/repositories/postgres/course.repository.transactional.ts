@@ -9,7 +9,6 @@ import { QueryRunner } from 'typeorm'
 import { Lesson as LessonORM } from '../../models/postgres/lesson.entity'
 import { Tag } from '../../models/postgres/tag.entity'
 import { randomUUID } from 'crypto'
-import { CourseTag as CourseTagORM } from '../../models/postgres/course-tag.entity'
 import { Course } from 'src/course/domain/course'
 import { CourseID } from 'src/course/domain/value-objects/course.id'
 import { Category } from 'src/course/domain/entities/category'
@@ -30,6 +29,7 @@ import { TrainerName } from 'src/course/domain/value-objects/trainer.name'
 import { Trainer as TrainerORM } from 'src/course/infraestructure/models/postgres/trainer.entity'
 import { CourseDuration } from 'src/course/domain/value-objects/course.duration'
 import { CourseTag } from 'src/course/domain/value-objects/course.tag'
+import { CourseTag as CourseTagORM } from 'src/course/infraestructure/models/postgres/course-tag.entity'
 import { Lesson } from 'src/course/domain/entities/lesson'
 import { LessonID } from 'src/course/domain/value-objects/lesson.id'
 import { LessonContent } from 'src/course/domain/value-objects/lesson.content'
@@ -49,12 +49,15 @@ export class CoursePostgresTransactionalRepository implements CourseRepository {
             category: course.category.id.id,
             image: course.image.image,
             level: course.level.level,
+            weeks: course.duration.weeks,
+            hours: course.duration.hours,
         }
         await this.queryRunner.manager.upsert(
             CourseORM,
             this.queryRunner.manager.create(CourseORM, courseORM),
             ['id'],
         )
+
         await course.lessons.asyncMap((e) =>
             this.queryRunner.manager.upsert(
                 LessonORM,
@@ -82,12 +85,12 @@ export class CoursePostgresTransactionalRepository implements CourseRepository {
             return tagId
         })
         await this.queryRunner.manager
-            .delete(CourseTag, {
+            .delete(CourseTagORM, {
                 courseId: course.id.id,
             })
             .catch(() => console.log('no tags'))
         await this.queryRunner.manager.insert(
-            CourseTag,
+            CourseTagORM,
             tagIds.map((e) => ({
                 courseId: course.id.id,
                 tagId: e,

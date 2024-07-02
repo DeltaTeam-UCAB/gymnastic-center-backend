@@ -4,9 +4,10 @@ import { CreateCourseResponse } from '../types/response'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { CourseRepository } from 'src/course/application/repositories/course.repository'
 import { courseTitleExistError } from 'src/course/application/errors/course.title.exist'
+import { CourseTitle } from 'src/course/domain/value-objects/course.title'
 
 export class CourseTitleNotExistDecorator
-implements ApplicationService<CreateCourseDTO, CreateCourseResponse>
+    implements ApplicationService<CreateCourseDTO, CreateCourseResponse>
 {
     constructor(
         private service: ApplicationService<
@@ -19,7 +20,7 @@ implements ApplicationService<CreateCourseDTO, CreateCourseResponse>
         data: CreateCourseDTO,
     ): Promise<Result<CreateCourseResponse>> {
         const isTitleExist = await this.courseRepository.existByTitle(
-            data.title,
+            new CourseTitle(data.title),
         )
         if (
             isTitleExist ||

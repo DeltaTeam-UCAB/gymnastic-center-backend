@@ -2,7 +2,7 @@ import { ApplicationService } from 'src/core/application/service/application.ser
 import { CreateBlogDTO } from '../types/dto'
 import { CreateBlogResponse } from '../types/response'
 import { Result } from 'src/core/application/result-handler/result.handler'
-import { CategoryRepository } from 'src/course/application/repositories/category.repository'
+import { CategoryRepository } from 'src/blog/application/repositories/category.repository'
 import { categoryNotFoundError } from 'src/blog/application/errors/category.not.found'
 
 export class CategoryExistDecorator
