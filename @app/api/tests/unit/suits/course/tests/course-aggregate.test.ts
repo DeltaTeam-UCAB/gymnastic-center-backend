@@ -4,6 +4,7 @@ import { Lesson } from '../../../../../src/course/domain/entities/lesson'
 import { Trainer } from '../../../../../src/course/domain/entities/trainer'
 import { CategoryID } from '../../../../../src/course/domain/value-objects/category.id'
 import { CategoryName } from '../../../../../src/course/domain/value-objects/category.name'
+import { CourseDate } from '../../../../../src/course/domain/value-objects/course.date'
 import { CourseDescription } from '../../../../../src/course/domain/value-objects/course.description'
 import { CourseDuration } from '../../../../../src/course/domain/value-objects/course.duration'
 import { CourseID } from '../../../../../src/course/domain/value-objects/course.id'
@@ -53,6 +54,7 @@ export const body = () => {
                     },
                 ),
             ],
+            creationDate: new CourseDate(new Date()),
         },
     )
     lookFor(course).toBeDefined()
