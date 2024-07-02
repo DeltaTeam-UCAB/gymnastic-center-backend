@@ -9,16 +9,42 @@ import { GetAllBlogQuery } from '../../../../../src/blog/application/queries/get
 import { createTrainer } from './utils/trainer.factory'
 import { createCategory } from './utils/category.factory'
 import { createImage } from './utils/image.factory'
+import { DateProviderMock } from '../../course/tests/utils/date.provider.mock'
+import { GetAllBlogsDTO } from '../../../../../src/blog/application/queries/getAll/types/dto'
 
 export const name = 'Should get all blogs'
 export const body = async () => {
-    const trainer = createTrainer()
-    const category = createCategory()
-    const image = createImage()
+    const date = new DateProviderMock(new Date())
+    const dataBlogs = {
+        perPage: 5,
+        page: 0,
+        filter: 'RECENT',
+    } satisfies GetAllBlogsDTO
+    const blogId = '84821c3f-0e66-4bf4-a3a8-520e42e50752'
+    const trainerId = '84821c3f-0e84-4bf4-a3a8-520e42e54121'
+    const categoryId = '84821c3f-0e66-4bf4-a3a8-520e42e54125'
+    const imageId = '84821c3f-0e66-4bf4-a3a8-520e42e54147'
+    const trainer = createTrainer({
+        id: trainerId,
+        name: 'name test trainer',
+    })
+    const category = createCategory({
+        id: categoryId,
+        name: 'category name',
+    })
+    const image = createImage({
+        id: imageId,
+        src: 'image source test',
+    })
     const blog = createBlog({
-        category: category.id,
-        trainer: trainer.id,
-        images: [image.id],
+        id: blogId,
+        title: 'title test',
+        body: 'body test',
+        images: [imageId],
+        tags: ['tag1', 'tag2'],
+        category: categoryId,
+        trainer: trainerId,
+        date: date.current,
     })
     const categoryRepository = new CategoryRepositoryMock([category])
     const trainerRepository = new TrainerRepositoryMock([trainer])
@@ -29,21 +55,18 @@ export const body = async () => {
         categoryRepository,
         trainerRepository,
         imageRepository,
-    ).execute({
-        filter: 'RECENT',
-        page: 0,
-        perPage: 5,
-    })
+    ).execute(dataBlogs)
+
     lookFor(result.unwrap()).toDeepEqual([
         {
-            id: blog.id,
-            title: blog.title,
-            description: blog.body,
-            category: category.name,
-            tags: blog.tags,
+            id: blogId,
+            title: blog.title.title,
+            description: blog.body.body,
+            category: category.name.name,
+            tags: blog.tags.map((tag) => tag.tag),
             images: [image.src],
-            trainer: trainer.name,
-            date: blog.date,
+            trainer: trainer.name.name,
+            date: blog.date.date,
         },
     ])
 }
