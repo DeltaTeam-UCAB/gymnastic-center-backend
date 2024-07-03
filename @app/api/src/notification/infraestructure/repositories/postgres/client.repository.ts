@@ -6,7 +6,7 @@ import { User } from '../../models/postgres/user.entity'
 import { Repository } from 'typeorm'
 
 export class ClientPostgresByNotificationRepository
-    implements ClientRepository
+implements ClientRepository
 {
     constructor(
         @InjectRepository(User) private userProvider: Repository<User>,
@@ -14,6 +14,12 @@ export class ClientPostgresByNotificationRepository
     getById(id: string): Promise<Optional<Client>> {
         return this.userProvider.findOneBy({
             id,
+        })
+    }
+
+    getAll(): Promise<Client[]> {
+        return this.userProvider.findBy({
+            type: 'CLIENT',
         })
     }
 }

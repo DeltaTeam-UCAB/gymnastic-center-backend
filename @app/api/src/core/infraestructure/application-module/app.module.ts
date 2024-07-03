@@ -6,6 +6,7 @@ import { GatewayModule } from '../gateway/gateway.module'
 import { RateLimitModule } from '../rate-limit/rate.limit.module'
 import { ResolversModule } from '../resolvers/resolvers.module'
 import { ApplicationModule } from '../decorators/ApplicationModule'
+import { SchedulesModule } from '../schedules/schedules.module'
 
 @ApplicationModule([
     RateLimitModule,
@@ -15,5 +16,6 @@ import { ApplicationModule } from '../decorators/ApplicationModule'
     EventListenerModule,
     GatewayModule,
     ResolversModule,
+    SchedulesModule,
 ])
 export class AppModule {}
