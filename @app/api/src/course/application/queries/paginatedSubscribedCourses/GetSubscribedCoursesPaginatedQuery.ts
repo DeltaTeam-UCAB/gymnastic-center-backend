@@ -43,9 +43,8 @@ export class GetSubscribedCoursesPaginatedQuery
                 category: course!.category.name.name,
                 trainer: course!.trainer.name.name,
                 image: (await this.imageRepository.getById(course!.image))!.src,
-                progress: (await this.suscriptionRepo.getByCourseID(
-                    course!.id,
-                ))!.progress.progress,
+                progress: subscriptions.find((e) => e.course == course!.id)!
+                    .progress.progress,
             })),
         )
     }
