@@ -3,4 +3,5 @@ import { Client } from '../models/client'
 
 export interface ClientRepository {
     getById(id: string): Promise<Optional<Client>>
+    getAll(): Promise<Client[]>
 }
