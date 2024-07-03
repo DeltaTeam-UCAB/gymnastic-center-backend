@@ -7,8 +7,6 @@ import { CoursePostgresRepository } from '../../repositories/postgres/course.rep
 import { GetCoursesManyQuery } from 'src/course/application/queries/many/course.many.query'
 import { ImagePostgresByCourseRepository } from '../../repositories/postgres/image.repository'
 import { GetCoursesManyResponse } from 'src/course/application/queries/many/types/response'
-import { TrainerPostgresByCourseRepository } from '../../repositories/postgres/trainer.repository'
-import { CategoryPostgresByCourseRepository } from '../../repositories/postgres/category.repository'
 import { GetAllCoursesDTO } from './dto/getAll.blogs.dto'
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -22,8 +20,6 @@ export class CoursesManyController
     constructor(
         private courseRepository: CoursePostgresRepository,
         private imageRepository: ImagePostgresByCourseRepository,
-        private trainerRepository: TrainerPostgresByCourseRepository,
-        private categoryRepository: CategoryPostgresByCourseRepository,
     ) {}
 
     @Get('many')
@@ -33,8 +29,6 @@ export class CoursesManyController
     ): Promise<GetCoursesManyResponse> {
         const result = await new GetCoursesManyQuery(
             this.courseRepository,
-            this.categoryRepository,
-            this.trainerRepository,
             this.imageRepository,
         ).execute(data)
 

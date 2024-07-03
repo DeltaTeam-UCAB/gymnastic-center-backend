@@ -4,9 +4,10 @@ import { CreateCourseResponse } from '../types/response'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { VideoRepository } from 'src/course/application/repositories/video.repository'
 import { videoNotExistError } from 'src/course/application/errors/video.not.exist'
+import { LessonVideo } from 'src/course/domain/value-objects/lesson.video'
 
 export class VideosExistDecorator
-implements ApplicationService<CreateCourseDTO, CreateCourseResponse>
+    implements ApplicationService<CreateCourseDTO, CreateCourseResponse>
 {
     constructor(
         private service: ApplicationService<
@@ -20,7 +21,9 @@ implements ApplicationService<CreateCourseDTO, CreateCourseResponse>
     ): Promise<Result<CreateCourseResponse>> {
         const videosExist = await data.lessons
             .filter((e) => e.video)
-            .asyncMap((e) => this.videoRepository.existById(e.video!))
+            .asyncMap((e) =>
+                this.videoRepository.existById(new LessonVideo(e.video!)),
+            )
         if (videosExist.some((e) => !e))
             return Result.error(videoNotExistError())
         return this.service.execute(data)

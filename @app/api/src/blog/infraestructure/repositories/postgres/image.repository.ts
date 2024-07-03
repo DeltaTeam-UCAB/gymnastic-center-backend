@@ -1,8 +1,8 @@
 import { Optional } from '@mono/types-utils'
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Image } from 'src/course/application/models/image'
-import { ImageRepository } from 'src/course/application/repositories/image.repository'
+import { Image } from 'src/blog/application/models/image'
+import { ImageRepository } from 'src/blog/application/repositories/image.repository'
 import { Image as ImageORM } from '../../models/postgres/image.entity'
 import { Repository } from 'typeorm'
 

@@ -80,6 +80,8 @@ export class CreateCourseController
             new CreateCourseCommand(
                 this.idGen,
                 courseRepository,
+                this.categoryRepository,
+                this.trainerRepository,
                 new ConcreteDateProvider(),
             ),
             courseRepository,

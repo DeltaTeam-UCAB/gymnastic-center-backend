@@ -21,23 +21,24 @@ import { CreateCourseResponse } from '../../../../../src/course/application/comm
 
 export const name = 'Should not create course with unvalid category'
 export const body = async () => {
-    const imageId = 'test-image-id'
+    const imageId = '9fd3da36-e884-4ceb-a6da-cc3e52c35a47'
     const image = createImage({
         id: imageId,
     })
     const imageRepository = new ImageRepositoryMock([image])
-    const videoId = 'test-video-id'
+    const videoId = 'beff57fd-48d1-4a1b-a441-28d947a3b189'
     const video = createVideo({
         id: videoId,
     })
     const videoRepository = new VideoRepositoryMock([video])
-    const categoryId = 'test-category-id'
-    const trainerId = 'test-trainer-id'
+    const categoryId = 'f568e490-2996-41d9-ac71-154b664866a4'
+    const categoryRepository = new CategoryRepositoryMock([])
+    const trainerId = '44a61cf2-e1c8-4c7e-92f6-f3120dea5167'
     const trainer = createTrainer({
         id: trainerId,
     })
     const trainerRepository = new TrainerRepositoryMock([trainer])
-    const courseId = '1234567890'
+    const courseId = '01fc70fa-d328-479c-a0c2-117aec3ebb2b'
     const dateProvider = new DateProviderMock(new Date())
     const courseBaseData = {
         title: 'test course',
@@ -46,7 +47,7 @@ export const body = async () => {
         category: categoryId,
         image: imageId,
         tags: [],
-        level: '1',
+        level: 'EASY',
         lessons: [
             {
                 title: 'lesson1',
@@ -55,11 +56,15 @@ export const body = async () => {
                 video: videoId,
             },
         ],
+        weeks: 4,
+        hours: 40,
     } satisfies CreateCourseDTO
     const courseRepo = new CourseRepositoryMock()
     const commandBase = new CreateCourseCommand(
         new IDGeneratorMock(courseId),
         courseRepo,
+        categoryRepository,
+        trainerRepository,
         dateProvider,
     )
     const commandTitleValidation = new CourseTitleNotExistDecorator(
@@ -68,7 +73,7 @@ export const body = async () => {
     )
     const commandWithCategoryValidator = new CategoryExistDecorator(
         commandTitleValidation,
-        new CategoryRepositoryMock(),
+        categoryRepository,
     )
     const commandWithTrainerValidation = new TrainerExistDecorator(
         commandWithCategoryValidator,

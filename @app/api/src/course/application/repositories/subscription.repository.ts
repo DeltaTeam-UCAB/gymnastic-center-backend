@@ -1,17 +1,19 @@
 import { Optional } from '@mono/types-utils'
-import { Subscription } from '../models/subscription'
+import { Subscription } from 'src/course/domain/entities/subscription'
+import { ClientID } from 'src/course/domain/value-objects/client.id'
+import { CourseID } from 'src/course/domain/value-objects/course.id'
 
 export type GetManySuscriptionsData = {
     page: number
     perPage: number
-    client: string
+    client: ClientID
 }
 export interface SubscriptionRepository {
     getById(id: string): Promise<Optional<Subscription>>
     getByCourseAndClient(
-        courseId: string,
-        clientId: string,
+        courseId: CourseID,
+        clientId: ClientID,
     ): Promise<Optional<Subscription>>
     getManyByClientID(data: GetManySuscriptionsData): Promise<Subscription[]>
-    getByCourseID(courseID: string): Promise<Optional<Subscription>>
+    getByCourseID(courseID: CourseID): Promise<Optional<Subscription>>
 }
