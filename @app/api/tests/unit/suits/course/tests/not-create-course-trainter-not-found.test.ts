@@ -18,6 +18,7 @@ import { createVideo } from './utils/video.factory'
 import { VideoRepositoryMock } from './utils/video.repository.mock'
 import { Result } from '../../../../../src/core/application/result-handler/result.handler'
 import { CreateCourseResponse } from '../../../../../src/course/application/commands/createCourse/types/response'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 
 export const name = 'Should not create course with unvalid trainer'
 export const body = async () => {
@@ -66,6 +67,7 @@ export const body = async () => {
         categoryRepository,
         trainerRepository,
         dateProvider,
+        eventPublisherStub,
     )
     const commandTitleValidation = new CourseTitleNotExistDecorator(
         commandBase,

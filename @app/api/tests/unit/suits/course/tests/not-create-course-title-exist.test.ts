@@ -20,6 +20,7 @@ import { VideoRepositoryMock } from './utils/video.repository.mock'
 import { Result } from '../../../../../src/core/application/result-handler/result.handler'
 import { CreateCourseResponse } from '../../../../../src/course/application/commands/createCourse/types/response'
 import { createCourse } from './utils/course.factory'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 
 export const name = 'Should not create course with title duplicated'
 export const body = async () => {
@@ -85,6 +86,7 @@ export const body = async () => {
         categoryRepository,
         trainerRepository,
         dateProvider,
+        eventPublisherStub,
     )
     const commandTitleValidation = new CourseTitleNotExistDecorator(
         commandBase,

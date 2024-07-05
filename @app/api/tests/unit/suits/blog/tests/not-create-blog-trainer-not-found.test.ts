@@ -8,7 +8,6 @@ import { TRAINER_NOT_FOUND } from '../../../../../src/blog/application/errors/tr
 import { CategoryRepositoryMock } from './utils/category.repository.mock'
 import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
 import { decorateCreateCommand } from './utils/decorate.create.command.factory'
-//import { createTrainer } from './utils/trainer.factory'
 import { createCategory } from './utils/category.factory'
 
 export const name = 'Should not create blog if trainer not found'

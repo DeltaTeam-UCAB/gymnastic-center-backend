@@ -18,4 +18,6 @@ export interface CourseRepository {
     getById(id: CourseID): Promise<Optional<Course>>
     existByTitle(title: CourseTitle): Promise<boolean>
     many(data: GetManyCoursesData): Promise<Course[]>
+    countByTrainer(id: TrainerID): Promise<number>
+    countByCategory(id: CategoryID): Promise<number>
 }
