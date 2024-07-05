@@ -5,6 +5,7 @@ import { Optional } from '@mono/types-utils'
 import { CourseID } from '../../../../../../src/course/domain/value-objects/course.id'
 import { CourseTitle } from '../../../../../../src/course/domain/value-objects/course.title'
 import { TrainerID } from '../../../../../../src/course/domain/value-objects/trainer.id'
+import { CategoryID } from '../../../../../../src/course/domain/value-objects/category.id'
 
 export class CourseRepositoryMock implements CourseRepository {
     constructor(private courses: Course[] = []) {}
@@ -31,6 +32,14 @@ export class CourseRepositoryMock implements CourseRepository {
         let count = 0
         this.courses.forEach((c) => {
             if (c.trainer.id == id) count++
+        })
+        return count
+    }
+
+    async countByCategory(id: CategoryID): Promise<number> {
+        let count = 0
+        this.courses.forEach((c) => {
+            if (c.category.id == id) count++
         })
         return count
     }

@@ -5,6 +5,7 @@ import { Blog } from '../../../../../../src/blog/domain/blog'
 import { BlogTitle } from '../../../../../../src/blog/domain/value-objects/blog.title'
 import { BlogId } from '../../../../../../src/blog/domain/value-objects/blog.id'
 import { TrainerId } from '../../../../../../src/blog/domain/value-objects/trainer.id'
+import { CategoryId } from '../../../../../../src/blog/domain/value-objects/category.id'
 
 export class BlogRepositoryMock implements BlogRepository {
     constructor(private blogs: Blog[] = []) {}
@@ -42,6 +43,14 @@ export class BlogRepositoryMock implements BlogRepository {
         let count = 0
         this.blogs.forEach((b) => {
             if (b.trainer.id == id) count++
+        })
+        return count
+    }
+
+    async countByCategory(id: CategoryId): Promise<number> {
+        let count = 0
+        this.blogs.forEach((b) => {
+            if (b.category.id == id) count++
         })
         return count
     }
