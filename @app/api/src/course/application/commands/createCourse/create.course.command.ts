@@ -25,6 +25,7 @@ import { LessonID } from 'src/course/domain/value-objects/lesson.id'
 import { LessonContent } from 'src/course/domain/value-objects/lesson.content'
 import { LessonTitle } from 'src/course/domain/value-objects/lesson.title'
 import { LessonVideo } from 'src/course/domain/value-objects/lesson.video'
+import { EventPublisher } from 'src/core/application/event-handler/event.handler'
 
 export class CreateCourseCommand
     implements ApplicationService<CreateCourseDTO, CreateCourseResponse>
@@ -35,6 +36,7 @@ export class CreateCourseCommand
         private categoryRepository: CategoryRepository,
         private trainerRepository: TrainerRepository,
         private dateProvider: DateProvider,
+        private eventPublisher: EventPublisher,
     ) {}
     async execute(
         data: CreateCourseDTO,
@@ -67,6 +69,7 @@ export class CreateCourseCommand
         })
         const result = await this.courseRepository.save(course)
         if (result.isError()) return result.convertToOther()
+        this.eventPublisher.publish(course.pullEvents())
         return Result.success({
             id: courseId,
         })

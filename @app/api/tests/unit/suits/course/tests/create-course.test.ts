@@ -17,6 +17,7 @@ import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
 import { createVideo } from './utils/video.factory'
 import { VideoRepositoryMock } from './utils/video.repository.mock'
 import { CourseID } from '../../../../../src/course/domain/value-objects/course.id'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 
 export const name = 'Should create course with valid data'
 export const body = async () => {
@@ -68,6 +69,7 @@ export const body = async () => {
         categoryRepository,
         trainerRepository,
         dateProvider,
+        eventPublisherStub,
     )
     const commandTitleValidation = new CourseTitleNotExistDecorator(
         commandBase,

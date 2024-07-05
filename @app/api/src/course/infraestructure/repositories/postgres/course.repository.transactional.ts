@@ -216,4 +216,16 @@ export class CoursePostgresTransactionalRepository implements CourseRepository {
                 }),
         )
     }
+    async countByTrainer(id: TrainerID): Promise<number> {
+        const courses = this.queryRunner.manager.countBy(CourseORM, {
+            trainer: id.id,
+        })
+        return courses
+    }
+    async countByCategory(id: CategoryID): Promise<number> {
+        const courses = this.queryRunner.manager.countBy(CourseORM, {
+            category: id.id,
+        })
+        return courses
+    }
 }

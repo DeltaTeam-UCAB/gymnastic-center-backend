@@ -8,6 +8,7 @@ import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
 import { createBlog } from './utils/blog.factory'
 import { createTrainer } from './utils/trainer.factory'
 import { createCategory } from './utils/category.factory'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 
 export const name = 'Should create blog whit valid data'
 export const body = async () => {
@@ -52,6 +53,7 @@ export const body = async () => {
         trainerRepository,
         categoryRepository,
         dateProvider,
+        eventPublisherStub,
     ).execute(blogBaseData)
     lookFor(result.isError()).equals(false)
 }

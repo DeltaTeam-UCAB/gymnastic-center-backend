@@ -19,6 +19,7 @@ import { CategoryId } from 'src/blog/domain/value-objects/category.id'
 import { trainerNotFoundError } from '../../errors/trainer.not.found'
 import { categoryNotFoundError } from '../../errors/category.not.found'
 import { DateProvider } from 'src/core/application/date/date.provider'
+import { EventPublisher } from 'src/core/application/event-handler/event.handler'
 
 export class CreateBlogCommand
     implements ApplicationService<CreateBlogDTO, CreateBlogResponse>
@@ -29,6 +30,7 @@ export class CreateBlogCommand
         private trainerRepository: TrainerRepository,
         private categoryRepository: CategoryRepository,
         private dateProvider: DateProvider,
+        private eventPublisher: EventPublisher,
     ) {}
     async execute(data: CreateBlogDTO): Promise<Result<CreateBlogResponse>> {
         const isBlogTitle = await this.blogRepository.existByTitle(
@@ -56,6 +58,7 @@ export class CreateBlogCommand
         })
         const result = await this.blogRepository.save(blog)
         if (result.isError()) return result.convertToOther()
+        this.eventPublisher.publish(blog.pullEvents())
         return Result.success({
             id: blogId,
         })
