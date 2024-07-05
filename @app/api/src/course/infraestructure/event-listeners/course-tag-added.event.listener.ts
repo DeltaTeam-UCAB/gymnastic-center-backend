@@ -23,7 +23,7 @@ export class courseTagAddedEventListener {
             (json) =>
                 courseTagAdded({
                     id: new CourseID(json.id._id),
-                    tag: new CourseTag(json._tag),
+                    tag: new CourseTag(json.tag._tag),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {

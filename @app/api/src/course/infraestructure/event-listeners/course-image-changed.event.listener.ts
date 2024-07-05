@@ -23,7 +23,7 @@ export class courseImageChangedEventListener {
             (json) =>
                 courseImageChanged({
                     id: new CourseID(json.id._id),
-                    image: new CourseImage(json.image),
+                    image: new CourseImage(json.image._image),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {

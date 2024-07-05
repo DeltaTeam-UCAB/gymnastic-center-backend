@@ -25,8 +25,8 @@ export class courseTrainerChangedEventListener {
             (json) =>
                 courseTrainerChanged({
                     id: new CourseID(json.id._id),
-                    trainer: new Trainer(new TrainerID(json.trainer.id), {
-                        name: new TrainerName(json.trainer.data.name),
+                    trainer: new Trainer(new TrainerID(json.trainer._id._id), {
+                        name: new TrainerName(json.trainer.data.name._name),
                     }),
                     timestamp: new Date(json.timestamp),
                 }),

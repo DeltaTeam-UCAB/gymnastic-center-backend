@@ -23,7 +23,7 @@ export class courseLevelChangedEventListener {
             (json) =>
                 courseLevelChanged({
                     id: new CourseID(json.id._id),
-                    level: new CourseLevel(json.level),
+                    level: new CourseLevel(json.level._level),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {

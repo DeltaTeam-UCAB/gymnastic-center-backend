@@ -25,9 +25,14 @@ export class courseCategoryChangedEventListener {
             (json) =>
                 courseCategoryChanged({
                     id: new CourseID(json.id._id),
-                    category: new Category(new CategoryID(json.category.id), {
-                        name: new CategoryName(json.category.data.name),
-                    }),
+                    category: new Category(
+                        new CategoryID(json.category._id._id),
+                        {
+                            name: new CategoryName(
+                                json.category.data.name._name,
+                            ),
+                        },
+                    ),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {

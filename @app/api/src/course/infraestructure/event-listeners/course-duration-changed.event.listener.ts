@@ -24,8 +24,8 @@ export class courseDurationChangedEventListener {
                 courseDurationChanged({
                     id: new CourseID(json.id._id),
                     duration: new CourseDuration(
-                        json.duration.weeksDuration,
-                        json.duration.hoursDuration,
+                        json.duration._weeks,
+                        json.duration._hours,
                     ),
                     timestamp: new Date(json.timestamp),
                 }),

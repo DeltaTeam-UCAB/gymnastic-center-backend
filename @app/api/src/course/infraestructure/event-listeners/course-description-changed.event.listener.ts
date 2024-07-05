@@ -23,7 +23,9 @@ export class courseDescriptionChangedEventListener {
             (json) =>
                 courseDescriptionChanged({
                     id: new CourseID(json.id._id),
-                    description: new CourseDescription(json.description),
+                    description: new CourseDescription(
+                        json.description._description,
+                    ),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {

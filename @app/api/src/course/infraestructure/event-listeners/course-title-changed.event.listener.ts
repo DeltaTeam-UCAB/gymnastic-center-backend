@@ -23,7 +23,7 @@ export class courseTitleChangedEventListener {
             (json) =>
                 courseTitleChanged({
                     id: new CourseID(json.id._id),
-                    title: new CourseTitle(json._tag),
+                    title: new CourseTitle(json.title._title),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {
