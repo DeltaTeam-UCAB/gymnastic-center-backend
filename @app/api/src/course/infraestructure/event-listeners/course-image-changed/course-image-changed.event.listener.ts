@@ -3,16 +3,14 @@ import { DomainEventStorage } from 'src/core/application/event-storage/event.sto
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { MONGO_EVENT_STORAGE } from 'src/core/infraestructure/event-storage/mongo/mongo.event.storage.module'
 import {
-    COURSE_CATEGORY_CHANGED,
-    courseCategoryChanged,
-} from '../../domain/events/course.category.changed'
-import { CourseID } from '../../domain/value-objects/course.id'
-import { CategoryID } from '../../domain/value-objects/category.id'
-import { Category } from 'src/course/domain/entities/category'
-import { CategoryName } from 'src/course/domain/value-objects/category.name'
+    COURSE_IMAGE_CHANGED,
+    courseImageChanged,
+} from '../../../domain/events/course.image.changed'
+import { CourseID } from '../../../domain/value-objects/course.id'
+import { CourseImage } from 'src/course/domain/value-objects/course.image'
 
 @Injectable()
-export class courseCategoryChangedEventListener {
+export class courseImageChangedEventListener {
     constructor(
         private eventHandle: RabbitMQEventHandler,
         @Inject(MONGO_EVENT_STORAGE) private eventStorage: DomainEventStorage,
@@ -21,18 +19,11 @@ export class courseCategoryChangedEventListener {
     }
     load() {
         this.eventHandle.listen(
-            COURSE_CATEGORY_CHANGED,
+            COURSE_IMAGE_CHANGED,
             (json) =>
-                courseCategoryChanged({
+                courseImageChanged({
                     id: new CourseID(json.id._id),
-                    category: new Category(
-                        new CategoryID(json.category._id._id),
-                        {
-                            name: new CategoryName(
-                                json.category.data.name._name,
-                            ),
-                        },
-                    ),
+                    image: new CourseImage(json.image._image),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {

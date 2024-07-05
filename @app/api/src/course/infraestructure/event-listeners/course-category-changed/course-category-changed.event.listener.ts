@@ -3,14 +3,16 @@ import { DomainEventStorage } from 'src/core/application/event-storage/event.sto
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { MONGO_EVENT_STORAGE } from 'src/core/infraestructure/event-storage/mongo/mongo.event.storage.module'
 import {
-    courseTagRemoved,
-    COURSE_TAG_REMOVED,
-} from '../../domain/events/course.tag.removed'
-import { CourseID } from '../../domain/value-objects/course.id'
-import { CourseTag } from 'src/course/domain/value-objects/course.tag'
+    COURSE_CATEGORY_CHANGED,
+    courseCategoryChanged,
+} from '../../../domain/events/course.category.changed'
+import { CourseID } from '../../../domain/value-objects/course.id'
+import { CategoryID } from '../../../domain/value-objects/category.id'
+import { Category } from 'src/course/domain/entities/category'
+import { CategoryName } from 'src/course/domain/value-objects/category.name'
 
 @Injectable()
-export class courseTagRemovedEventListener {
+export class courseCategoryChangedEventListener {
     constructor(
         private eventHandle: RabbitMQEventHandler,
         @Inject(MONGO_EVENT_STORAGE) private eventStorage: DomainEventStorage,
@@ -19,11 +21,18 @@ export class courseTagRemovedEventListener {
     }
     load() {
         this.eventHandle.listen(
-            COURSE_TAG_REMOVED,
+            COURSE_CATEGORY_CHANGED,
             (json) =>
-                courseTagRemoved({
+                courseCategoryChanged({
                     id: new CourseID(json.id._id),
-                    tag: new CourseTag(json.tag._tag),
+                    category: new Category(
+                        new CategoryID(json.category._id._id),
+                        {
+                            name: new CategoryName(
+                                json.category.data.name._name,
+                            ),
+                        },
+                    ),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {

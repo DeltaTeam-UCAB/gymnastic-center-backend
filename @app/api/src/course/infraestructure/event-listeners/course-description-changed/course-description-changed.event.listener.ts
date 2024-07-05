@@ -3,16 +3,14 @@ import { DomainEventStorage } from 'src/core/application/event-storage/event.sto
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { MONGO_EVENT_STORAGE } from 'src/core/infraestructure/event-storage/mongo/mongo.event.storage.module'
 import {
-    courseTrainerChanged,
-    COURSE_TRAINER_CHANGED,
-} from '../../domain/events/course.trainer.changed'
-import { CourseID } from '../../domain/value-objects/course.id'
-import { Trainer } from 'src/course/domain/entities/trainer'
-import { TrainerID } from 'src/course/domain/value-objects/trainer.id'
-import { TrainerName } from 'src/course/domain/value-objects/trainer.name'
+    COURSE_DESCRIPTION_CHANGED,
+    courseDescriptionChanged,
+} from '../../../domain/events/course.description.changed'
+import { CourseID } from '../../../domain/value-objects/course.id'
+import { CourseDescription } from 'src/course/domain/value-objects/course.description'
 
 @Injectable()
-export class courseTrainerChangedEventListener {
+export class courseDescriptionChangedEventListener {
     constructor(
         private eventHandle: RabbitMQEventHandler,
         @Inject(MONGO_EVENT_STORAGE) private eventStorage: DomainEventStorage,
@@ -21,13 +19,13 @@ export class courseTrainerChangedEventListener {
     }
     load() {
         this.eventHandle.listen(
-            COURSE_TRAINER_CHANGED,
+            COURSE_DESCRIPTION_CHANGED,
             (json) =>
-                courseTrainerChanged({
+                courseDescriptionChanged({
                     id: new CourseID(json.id._id),
-                    trainer: new Trainer(new TrainerID(json.trainer._id._id), {
-                        name: new TrainerName(json.trainer.data.name._name),
-                    }),
+                    description: new CourseDescription(
+                        json.description._description,
+                    ),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {

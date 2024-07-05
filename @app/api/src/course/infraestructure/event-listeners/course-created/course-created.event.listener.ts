@@ -5,7 +5,7 @@ import { MONGO_EVENT_STORAGE } from 'src/core/infraestructure/event-storage/mong
 import {
     COURSE_CREATED,
     courseCreated,
-} from '../../domain/events/course.created'
+} from '../../../domain/events/course.created'
 import { CourseID } from 'src/course/domain/value-objects/course.id'
 import { CourseTitle } from 'src/course/domain/value-objects/course.title'
 import { CourseDescription } from 'src/course/domain/value-objects/course.description'

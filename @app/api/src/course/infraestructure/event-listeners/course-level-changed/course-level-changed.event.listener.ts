@@ -5,8 +5,8 @@ import { MONGO_EVENT_STORAGE } from 'src/core/infraestructure/event-storage/mong
 import {
     COURSE_LEVEL_CHANGED,
     courseLevelChanged,
-} from '../../domain/events/course.level.changed'
-import { CourseID } from '../../domain/value-objects/course.id'
+} from '../../../domain/events/course.level.changed'
+import { CourseID } from '../../../domain/value-objects/course.id'
 import { CourseLevel } from 'src/course/domain/value-objects/course.level'
 
 @Injectable()
