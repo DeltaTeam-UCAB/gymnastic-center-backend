@@ -1,7 +1,8 @@
 import { Optional } from '@mono/types-utils'
-import { Image } from '../models/image'
+import { CourseImage } from 'src/course/domain/value-objects/course.image'
+import { Image } from 'src/course/application/models/image'
 
 export interface ImageRepository {
-    getById(id: string): Promise<Optional<Image>>
-    existById(id: string): Promise<boolean>
+    getById(id: CourseImage): Promise<Optional<Image>>
+    existById(id: CourseImage): Promise<boolean>
 }

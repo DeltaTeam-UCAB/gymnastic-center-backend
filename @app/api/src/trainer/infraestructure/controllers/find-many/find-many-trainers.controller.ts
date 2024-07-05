@@ -19,7 +19,7 @@ import { FindManyTrainersDTO } from './dto/dto'
     bearerAuth: true,
 })
 export class FindTrainerController
-implements
+    implements
         ControllerContract<
             [data: FindManyTrainersDTO, user: User],
             FindManyTrainersResponse[]
@@ -44,7 +44,7 @@ implements
             userId: user.id,
             page: data.page,
             perPage: data.perPage,
-            filterByFollowed: data.filterByFollowed === 'true',
+            filterByFollowed: data.filterByFollowed,
         })
         return result.unwrap()
     }

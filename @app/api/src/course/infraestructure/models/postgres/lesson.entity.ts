@@ -39,12 +39,12 @@ export class Lesson {
     @JoinColumn({
         name: 'video',
     })
-    videoEntity?: Video
+    videoEntity: Video
     @Column({
         type: 'uuid',
-        nullable: true,
+        nullable: false,
     })
-    video?: string
+    video: string
     @Column({
         type: 'numeric',
     })

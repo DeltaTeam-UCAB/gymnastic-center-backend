@@ -4,9 +4,12 @@ import { Result } from '../../../../../../src/core/application/result-handler/re
 import { Blog } from '../../../../../../src/blog/domain/blog'
 import { BlogTitle } from '../../../../../../src/blog/domain/value-objects/blog.title'
 import { BlogId } from '../../../../../../src/blog/domain/value-objects/blog.id'
+import { TrainerId } from '../../../../../../src/blog/domain/value-objects/trainer.id'
+import { CategoryId } from '../../../../../../src/blog/domain/value-objects/category.id'
 
 export class BlogRepositoryMock implements BlogRepository {
     constructor(private blogs: Blog[] = []) {}
+
     async save(blog: Blog): Promise<Result<Blog>> {
         this.blogs = this.blogs.filter((b) => b.id == blog.id)
         this.blogs.push(blog)
@@ -34,5 +37,21 @@ export class BlogRepositoryMock implements BlogRepository {
                     date: blog.date,
                 }),
         )
+    }
+
+    async countByTrainer(id: TrainerId): Promise<number> {
+        let count = 0
+        this.blogs.forEach((b) => {
+            if (b.trainer.id == id) count++
+        })
+        return count
+    }
+
+    async countByCategory(id: CategoryId): Promise<number> {
+        let count = 0
+        this.blogs.forEach((b) => {
+            if (b.category.id == id) count++
+        })
+        return count
     }
 }

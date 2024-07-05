@@ -9,6 +9,7 @@ import { Lesson } from './entities/lesson'
 import { Trainer } from './entities/trainer'
 import { Category } from './entities/category'
 import { CourseImage } from './value-objects/course.image'
+import { CourseDate } from './value-objects/course.date'
 import { unvalidCourse } from './exceptions/unvalid.course'
 import { courseCreated } from './events/course.created'
 import { courseTitleChanged } from './events/course.title.changed'
@@ -35,6 +36,7 @@ export class Course extends AggregateRoot<CourseID> {
             trainer: Trainer
             category: Category
             image: CourseImage
+            creationDate: CourseDate
         },
     ) {
         if (!data.lessons) data.lessons = []
@@ -84,6 +86,10 @@ export class Course extends AggregateRoot<CourseID> {
 
     get trainer() {
         return this.data.trainer
+    }
+
+    get creationDate() {
+        return this.data.creationDate
     }
 
     changeTitle(title: CourseTitle) {
@@ -194,7 +200,8 @@ export class Course extends AggregateRoot<CourseID> {
             !this.level ||
             !this.duration ||
             !this.category ||
-            !this.trainer
+            !this.trainer ||
+            !this.creationDate
         )
             throw unvalidCourse()
     }

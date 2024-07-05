@@ -174,4 +174,22 @@ export class BlogPostgresRepository implements BlogRepository {
         )
         return blogResult
     }
+
+    async countByTrainer(id: TrainerId): Promise<number> {
+        const blogs = await this.blogRepository.count({
+            where: {
+                trainer: id.id,
+            },
+        })
+        return blogs
+    }
+
+    async countByCategory(id: CategoryId): Promise<number> {
+        const blogs = await this.blogRepository.count({
+            where: {
+                category: id.id,
+            },
+        })
+        return blogs
+    }
 }

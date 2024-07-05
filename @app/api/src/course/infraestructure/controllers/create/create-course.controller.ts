@@ -31,6 +31,7 @@ import { CurrentUserResponse } from 'src/user/application/queries/current/types/
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
+import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -53,6 +54,7 @@ export class CreateCourseController
         private imageRepository: ImagePostgresByCourseRepository,
         private videoRepository: VideoPostgresByCourseRepository,
         private transactionProvider: PostgresTransactionProvider,
+        private eventPublisher: RabbitMQEventHandler,
     ) {}
 
     @Post('create')
@@ -80,7 +82,10 @@ export class CreateCourseController
             new CreateCourseCommand(
                 this.idGen,
                 courseRepository,
+                this.categoryRepository,
+                this.trainerRepository,
                 new ConcreteDateProvider(),
+                this.eventPublisher,
             ),
             courseRepository,
         )

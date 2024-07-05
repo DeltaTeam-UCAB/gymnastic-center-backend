@@ -6,7 +6,7 @@ import { FindManyTrainerDTO } from './types/dto'
 import { ClientID } from 'src/trainer/domain/value-objects/client.id'
 
 export class FindManyTrainersQuery
-    implements
+implements
         ApplicationService<FindManyTrainerDTO, FindManyTrainersResponse[]>
 {
     constructor(private trainerRepo: TrainerRepository) {}

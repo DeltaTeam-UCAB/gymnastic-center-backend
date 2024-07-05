@@ -5,20 +5,21 @@ import { Video } from 'src/course/application/models/video'
 import { VideoRepository } from 'src/course/application/repositories/video.repository'
 import { Video as VideoORM } from '../../models/postgres/video.entity'
 import { Repository } from 'typeorm'
+import { LessonVideo } from 'src/course/domain/value-objects/lesson.video'
 
 @Injectable()
 export class VideoPostgresByCourseRepository implements VideoRepository {
     constructor(
         @InjectRepository(VideoORM) private videoProvider: Repository<VideoORM>,
     ) {}
-    getById(id: string): Promise<Optional<Video>> {
+    getById(id: LessonVideo): Promise<Optional<Video>> {
         return this.videoProvider.findOneBy({
-            id,
+            id: id.video,
         })
     }
-    existById(id: string): Promise<boolean> {
+    existById(id: LessonVideo): Promise<boolean> {
         return this.videoProvider.existsBy({
-            id,
+            id: id.video,
         })
     }
 }

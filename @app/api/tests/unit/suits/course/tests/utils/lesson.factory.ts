@@ -12,6 +12,6 @@ export const createLesson = (data?: {
     title: data?.title ?? 'test lesson',
     content: data?.content ?? 'test content',
     order: data?.order ?? 1,
-    video: data?.video,
+    video: data?.video ?? '48efda30-7829-4632-8d81-14968ceafc27',
     image: data?.image,
 })
