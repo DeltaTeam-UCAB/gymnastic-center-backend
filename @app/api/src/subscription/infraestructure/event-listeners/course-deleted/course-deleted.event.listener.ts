@@ -12,7 +12,9 @@ export class CourseDeletedEventListener {
     constructor(
         private eventHandler: RabbitMQEventHandler,
         private subscriptionRepository: SubscriptionPostgresRepository,
-    ) {}
+    ) {
+        this.load()
+    }
     load() {
         this.eventHandler.listen(
             COURSE_DELETED,

@@ -15,7 +15,9 @@ export class CourseDeletedEventListener {
         private eventHandler: RabbitMQEventHandler,
         private commentRepository: CommentPostgresRepository,
         private courseRepository: CoursePostgreByCommentRepositry,
-    ) {}
+    ) {
+        this.load()
+    }
     load() {
         this.eventHandler.listen(
             COURSE_DELETED,

@@ -10,7 +10,7 @@ import { LessonID } from 'src/subscription/domain/value-objects/lesson.id'
 import { CourseTitle } from 'src/subscription/domain/value-objects/course.title'
 
 export class CoursePostgresBySubscriptionRepository
-implements CourseRepository
+    implements CourseRepository
 {
     constructor(
         @InjectRepository(CourseORM)
@@ -20,7 +20,7 @@ implements CourseRepository
     async getById(id: CourseID): Promise<Optional<Course>> {
         const course = await this.courseProvider.findOneBy({
             id: id.id,
-            active: true,
+            available: true,
         })
         if (!course) return null
         return new Course(id, {

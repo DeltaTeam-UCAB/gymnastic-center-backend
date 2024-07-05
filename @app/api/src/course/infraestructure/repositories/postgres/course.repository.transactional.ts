@@ -102,7 +102,7 @@ export class CoursePostgresTransactionalRepository implements CourseRepository {
     async getById(id: CourseID): Promise<Optional<Course>> {
         const course = await this.queryRunner.manager.findOneBy(CourseORM, {
             id: id.id,
-            active: true,
+            available: true,
         })
         if (!course) return undefined
         return new Course(id, {
@@ -173,7 +173,7 @@ export class CoursePostgresTransactionalRepository implements CourseRepository {
     existByTitle(title: CourseTitle): Promise<boolean> {
         return this.queryRunner.manager.existsBy(CourseORM, {
             title: title.title,
-            active: true,
+            available: true,
         })
     }
 
@@ -182,7 +182,7 @@ export class CoursePostgresTransactionalRepository implements CourseRepository {
             skip: data.perPage * (data.page - 1),
             take: data.perPage,
             where: {
-                active: true,
+                available: true,
             },
         })
         return courses.asyncMap(
@@ -224,14 +224,14 @@ export class CoursePostgresTransactionalRepository implements CourseRepository {
     async countByTrainer(id: TrainerID): Promise<number> {
         const courses = this.queryRunner.manager.countBy(CourseORM, {
             trainer: id.id,
-            active: true,
+            available: true,
         })
         return courses
     }
     async countByCategory(id: CategoryID): Promise<number> {
         const courses = this.queryRunner.manager.countBy(CourseORM, {
             category: id.id,
-            active: true,
+            available: true,
         })
         return courses
     }
@@ -243,7 +243,7 @@ export class CoursePostgresTransactionalRepository implements CourseRepository {
                 id: course.id.id,
             },
             {
-                active: false,
+                available: false,
             },
         )
         return Result.success(course)

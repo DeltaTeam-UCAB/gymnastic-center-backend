@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { EventPublisher } from 'src/core/application/event-handler/event.handler'
 import { DomainEventBase } from 'src/core/domain/events/event'
-import amqp from 'amqplib'
+import amqp, { Channel } from 'amqplib'
 
 const connection = await amqp.connect(process.env.QUEUE_URL ?? '')
+const callbacks: Record<string, ((e: DomainEventBase) => Promise<void>)[]> = {}
+const channels: Record<string, Channel> = {}
 
 @Injectable()
 export class RabbitMQEventHandler implements EventPublisher {
@@ -22,19 +24,26 @@ export class RabbitMQEventHandler implements EventPublisher {
         mapper: (json: Record<any, any>) => T,
         callback: (e: T) => Promise<void>,
     ) {
-        const channel = await connection.createChannel()
-        await channel.assertQueue(name, {
-            durable: false,
-        })
-        await channel.consume(
-            name,
-            (data) => {
-                if (!data) return
-                callback(mapper(JSON.parse(data.content.toString())))
-            },
-            {
-                noAck: true,
-            },
-        )
+        if (!callbacks[name]) callbacks[name] = []
+        callbacks[name].push(callback)
+        if (!channels[name]) {
+            const channel = await connection.createChannel()
+            await channel.assertQueue(name, {
+                durable: false,
+            })
+            channels[name] = channel
+            await channel.consume(
+                name,
+                (data) => {
+                    if (!data) return
+                    Object.values(callbacks[name]).forEach((callback) =>
+                        callback(mapper(JSON.parse(data.content.toString()))),
+                    )
+                },
+                {
+                    noAck: true,
+                },
+            )
+        }
     }
 }

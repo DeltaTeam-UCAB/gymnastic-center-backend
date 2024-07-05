@@ -111,7 +111,7 @@ export class CoursePostgresRepository implements CourseRepository {
     async getById(id: CourseID): Promise<Optional<Course>> {
         const course = await this.courseProvider.findOneBy({
             id: id.id,
-            active: true,
+            available: true,
         })
         if (!course) return undefined
         return new Course(id, {
@@ -173,7 +173,7 @@ export class CoursePostgresRepository implements CourseRepository {
     existByTitle(title: CourseTitle): Promise<boolean> {
         return this.courseProvider.existsBy({
             title: title.title,
-            active: true,
+            available: true,
         })
     }
 
@@ -184,7 +184,7 @@ export class CoursePostgresRepository implements CourseRepository {
             where: {
                 category: data.category?.id,
                 trainer: data.trainer?.id,
-                active: true,
+                available: true,
             },
         })
         return courses.asyncMap(
@@ -220,14 +220,14 @@ export class CoursePostgresRepository implements CourseRepository {
     async countByTrainer(id: TrainerID): Promise<number> {
         const courses = this.courseProvider.countBy({
             trainer: id.id,
-            active: true,
+            available: true,
         })
         return courses
     }
     async countByCategory(id: CategoryID): Promise<number> {
         const courses = this.courseProvider.countBy({
             category: id.id,
-            active: true,
+            available: true,
         })
         return courses
     }
@@ -238,7 +238,7 @@ export class CoursePostgresRepository implements CourseRepository {
                 id: course.id.id,
             },
             {
-                active: false,
+                available: false,
             },
         )
         return Result.success(course)
