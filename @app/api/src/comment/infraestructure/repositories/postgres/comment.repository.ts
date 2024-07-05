@@ -174,4 +174,55 @@ export class CommentPostgresRepository implements CommentRepository {
         })
         return Result.success(comment)
     }
+
+    async deleteAllByTarget(target: Target): Promise<Comment[]> {
+        let commentsORM: CommentORM[]
+        if (target.lessonTarget()) {
+            commentsORM = await this.commentRespository.find({
+                where: {
+                    lessonId: target.lesson.id,
+                },
+            })
+        } else {
+            commentsORM = await this.commentRespository.find({
+                where: {
+                    blogId: target.blog.id,
+                },
+            })
+        }
+        const comments = commentsORM.asyncMap(async (c) => {
+            const likesORM = await this.likeRespository
+                .findBy({
+                    commentId: c.id,
+                })
+                .filter((l) => l.like === true)
+            const likes: string[] = likesORM.map((l) => {
+                return l.userId
+            })
+            const dislikesORM = await this.likeRespository
+                .findBy({
+                    commentId: c.id,
+                })
+                .filter((l) => l.like === false)
+            const dislikes: string[] = dislikesORM.map((l) => {
+                return l.userId
+            })
+            const user = (await this.userRespository.findOneBy({
+                id: c.userId,
+            })) as User
+            const comment = new Comment(new CommentID(c.id), {
+                client: new Client(new ClientID(c.userId), {
+                    name: new ClientName(user.name),
+                }),
+                content: new CommentContent(c.description),
+                target,
+                whoLiked: likes.map((l) => new ClientID(l)),
+                whoDisliked: dislikes.map((l) => new ClientID(l)),
+                creationDate: new CommentDate(c.creationDate),
+            })
+            return comment
+        })
+        await this.commentRespository.remove(commentsORM)
+        return comments
+    }
 }

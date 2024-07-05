@@ -46,4 +46,10 @@ export class Blog {
         default: () => 'CURRENT_TIMESTAMP',
     })
     date: Date
+
+    @Column({
+        type: 'boolean',
+        default: true,
+    })
+    active: boolean
 }

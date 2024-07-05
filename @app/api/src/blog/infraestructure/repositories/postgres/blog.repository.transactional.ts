@@ -189,4 +189,16 @@ export class BlogPostgresTransactionalRepository implements BlogRepository {
             category: id.id,
         })
     }
+
+    async delete(blog: Blog): Promise<Result<Blog>> {
+        const blogORM = await this.queryRunner.manager.findOneByOrFail(
+            BlogORM,
+            {
+                id: blog.id.id,
+            },
+        )
+        blogORM.active = false
+        await this.queryRunner.manager.save(blogORM)
+        return Result.success(blog)
+    }
 }

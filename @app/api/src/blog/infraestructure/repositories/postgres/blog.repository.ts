@@ -192,4 +192,13 @@ export class BlogPostgresRepository implements BlogRepository {
         })
         return blogs
     }
+
+    async delete(blog: Blog): Promise<Result<Blog>> {
+        const blogORM = await this.blogRepository.findOneByOrFail({
+            id: blog.id.id,
+        })
+        blogORM.active = false
+        await this.blogRepository.save(blogORM)
+        return Result.success(blog)
+    }
 }
