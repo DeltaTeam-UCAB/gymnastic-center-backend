@@ -39,9 +39,8 @@ export class BolgCreatedTrainerRecomendationEventListener {
     load() {
         this.eventHandler.listen(
             BLOG_CREATED,
-            (json) => {
-                console.log(json)
-                return blogCreated({
+            (json) =>
+                blogCreated({
                     id: new BlogId(json.id._id),
                     tags: (json.tags as any[]).map((e) => new BlogTag(e._tag)),
                     images: (json.images as any[]).map(
@@ -61,8 +60,7 @@ export class BolgCreatedTrainerRecomendationEventListener {
                         },
                     ),
                     timestamp: new Date(json.timestamp),
-                })
-            },
+                }),
             async (event) => {
                 await new TrainerBlogRecomendationPolicy(
                     new LoggerDecorator(
