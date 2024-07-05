@@ -175,7 +175,7 @@ export class CommentPostgresRepository implements CommentRepository {
         return Result.success(comment)
     }
 
-    async deleteAllByTarget(target: Target): Promise<Comment[]> {
+    async getAllCommentsByTarget(target: Target): Promise<Comment[]> {
         let commentsORM: CommentORM[]
         if (target.lessonTarget()) {
             commentsORM = await this.commentRespository.find({
@@ -222,7 +222,6 @@ export class CommentPostgresRepository implements CommentRepository {
             })
             return comment
         })
-        await this.commentRespository.remove(commentsORM)
         return comments
     }
 }

@@ -14,5 +14,5 @@ export interface CommentRepository {
     getCommentById(id: CommentID): Promise<Optional<Comment>>
     existsById(id: CommentID): Promise<boolean>
     delete(comment: Comment): Promise<Result<Comment>>
-    deleteAllByTarget(target: Target): Promise<Comment[]>
+    getAllCommentsByTarget(target: Target): Promise<Comment[]>
 }

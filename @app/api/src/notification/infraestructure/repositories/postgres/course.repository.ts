@@ -15,6 +15,7 @@ implements CourseRepository
     async getById(id: string): Promise<Optional<Course>> {
         return this.courseProvider.findOneBy({
             id,
+            available: true,
         })
     }
 }

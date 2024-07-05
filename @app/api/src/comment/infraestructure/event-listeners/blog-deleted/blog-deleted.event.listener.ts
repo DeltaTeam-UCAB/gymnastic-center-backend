@@ -3,9 +3,11 @@ import { CommentPostgresRepository } from '../../repositories/postgres/comment.r
 import { BLOG_DELETED, blogDeleted } from './event/blog.deleted'
 import { BlogId } from './event/value-objects/blog.id'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
-import { DeleteByTargetCommand } from 'src/comment/application/commands/delete-by-target/delete-by-target.comment.command'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { DeleteCommentsByTargetCommand } from 'src/comment/application/commands/delete-by-target/delete.by.target'
+import { Injectable } from '@nestjs/common'
 
+@Injectable()
 export class BlogDeletedCommentEventListener {
     constructor(
         private eventHandler: RabbitMQEventHandler,
@@ -15,6 +17,7 @@ export class BlogDeletedCommentEventListener {
     }
 
     load() {
+        console.log('aaa')
         this.eventHandler.listen(
             BLOG_DELETED,
             (json) =>
@@ -24,10 +27,13 @@ export class BlogDeletedCommentEventListener {
                 }),
             async (event) => {
                 await new LoggerDecorator(
-                    new DeleteByTargetCommand(this.commentRepository),
+                    new DeleteCommentsByTargetCommand(
+                        this.commentRepository,
+                        this.eventHandler,
+                    ),
                     new NestLogger('Delete All Comments By Target'),
                 ).execute({
-                    targetType: 'BLOG',
+                    type: 'BLOG',
                     targetId: event.id.id,
                 })
             },

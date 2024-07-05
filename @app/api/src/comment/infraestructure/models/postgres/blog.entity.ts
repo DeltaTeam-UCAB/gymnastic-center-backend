@@ -50,6 +50,7 @@ export class Blog {
     @Column({
         type: 'boolean',
         default: true,
+        nullable: true,
     })
     active: boolean
 }

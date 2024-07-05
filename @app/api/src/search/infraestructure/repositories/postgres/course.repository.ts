@@ -33,7 +33,7 @@ export class CoursePostgresBySearchRepository implements CourseRepository {
         const data = await this.courseProvider.query(`
 (SELECT c.*, count(s.id)
 	FROM public.course c, subscription s 
-	where c.id = s.course and lower(c.title) like '%${
+	where c.available = true and c.id = s.course and lower(c.title) like '%${
         criteria.term?.toLowerCase() ?? ''
     }%' ${
     tags && tags.isNotEmpty()
@@ -47,7 +47,7 @@ export class CoursePostgresBySearchRepository implements CourseRepository {
 UNION
 (select *, 0 
 	from course c 
-	where c.id not in (select course from subscription) and lower(c.title) like '%${
+	where c.available = true and c.id not in (select course from subscription) and lower(c.title) like '%${
         criteria.term?.toLowerCase() ?? ''
     }%'${
     tags && tags.isNotEmpty()

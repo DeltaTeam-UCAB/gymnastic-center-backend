@@ -1,6 +1,4 @@
-import { TargetType } from 'src/comment/application/types/target-type'
-
-export type DeleteByTargetDTO = {
+export type DeleteCommentsByTargetDTO = {
     targetId: string
-    targetType: TargetType
+    type: 'LESSON' | 'BLOG'
 }

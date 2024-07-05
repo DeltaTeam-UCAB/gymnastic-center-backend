@@ -20,6 +20,7 @@ export class CoursePostgresBySubscriptionRepository
     async getById(id: CourseID): Promise<Optional<Course>> {
         const course = await this.courseProvider.findOneBy({
             id: id.id,
+            available: true,
         })
         if (!course) return null
         return new Course(id, {

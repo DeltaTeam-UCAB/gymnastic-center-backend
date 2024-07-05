@@ -40,4 +40,8 @@ export class CommentRepositoryMock implements CommentRepository {
         this.comments = this.comments.filter((e) => e.id != comment.id)
         return Result.success(comment)
     }
+
+    async getAllCommentsByTarget(target: Target): Promise<Comment[]> {
+        return this.comments.filter((c) => c.target == target)
+    }
 }
