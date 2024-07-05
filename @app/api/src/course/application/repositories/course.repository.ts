@@ -20,4 +20,5 @@ export interface CourseRepository {
     many(data: GetManyCoursesData): Promise<Course[]>
     countByTrainer(id: TrainerID): Promise<number>
     countByCategory(id: CategoryID): Promise<number>
+    delete(course: Course): Promise<Result<Course>>
 }

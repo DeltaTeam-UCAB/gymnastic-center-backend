@@ -121,4 +121,34 @@ export class SubscriptionPostgresRepository implements SubscriptionRepository {
         })
         return Result.success(subscription)
     }
+
+    async getAllByCourse(course: CourseID): Promise<Subscription[]> {
+        const subscriptions = await this.subscriptionProvider.findBy({
+            course: course.id,
+        })
+        return subscriptions.asyncMap(
+            async (subscription) =>
+                new Subscription(new SubscriptionID(subscription.id), {
+                    client: new ClientID(subscription.client),
+                    course: new CourseID(subscription.course),
+                    startTime: new Time(subscription.startDate),
+                    lastTime: new Time(subscription.endDate),
+                    lessons: await this.subscriptionLessonProvider
+                        .findBy({
+                            subscription: subscription.id,
+                        })
+                        .map(
+                            (lesson) =>
+                                new Lesson(new LessonID(lesson.lesson), {
+                                    lastTime: lesson.lastTime
+                                        ? new LessonLastTime(lesson.lastTime)
+                                        : undefined,
+                                    progress: new LessonProgress(
+                                        lesson.progress,
+                                    ),
+                                }),
+                        ),
+                }),
+        )
+    }
 }

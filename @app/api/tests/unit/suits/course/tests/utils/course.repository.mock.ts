@@ -43,4 +43,9 @@ export class CourseRepositoryMock implements CourseRepository {
         })
         return count
     }
+
+    async delete(course: Course): Promise<Result<Course>> {
+        this.courses = this.courses.filter((e) => e.id != course.id)
+        return Result.success(course)
+    }
 }

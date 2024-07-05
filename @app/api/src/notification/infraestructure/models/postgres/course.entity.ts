@@ -18,7 +18,6 @@ export class Course {
     id: string
     @Column({
         type: 'varchar',
-        unique: true,
     })
     title: string
     @Column({
@@ -70,4 +69,9 @@ export class Course {
         nullable: true,
     })
     hours: number
+    @Column({
+        type: 'boolean',
+        default: true,
+    })
+    available: boolean
 }

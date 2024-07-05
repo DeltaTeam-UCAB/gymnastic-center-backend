@@ -36,4 +36,8 @@ export class SubscriptionRepositoryMock implements SubscriptionRepository {
         )
         return Result.success(subscription)
     }
+
+    async getAllByCourse(course: CourseID): Promise<Subscription[]> {
+        return this.subscriptions.filter((e) => e.course == course)
+    }
 }
