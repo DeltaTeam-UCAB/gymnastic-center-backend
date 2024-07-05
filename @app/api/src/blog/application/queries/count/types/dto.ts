@@ -1,4 +1,4 @@
-export type CountCoursesDTO = {
+export type CountBlogsDTO = {
     trainer?: string
     category?: string
 }

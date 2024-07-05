@@ -1,3 +1,3 @@
-export type CountByTrainerCourseResponse = {
-    courses: number
+export type CountCoursesResponse = {
+    count: number
 }

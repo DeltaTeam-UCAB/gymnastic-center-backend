@@ -183,4 +183,13 @@ export class BlogPostgresRepository implements BlogRepository {
         })
         return blogs
     }
+
+    async countByCategory(id: CategoryId): Promise<number> {
+        const blogs = await this.blogRepository.count({
+            where: {
+                category: id.id,
+            },
+        })
+        return blogs
+    }
 }
