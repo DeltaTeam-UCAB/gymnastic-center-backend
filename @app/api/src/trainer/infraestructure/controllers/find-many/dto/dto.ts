@@ -6,16 +6,16 @@ export class FindManyTrainersDTO {
     @ApiProperty()
     @Min(0)
     @Type(() => Number)
-    page: number
+        page: number
     @ApiProperty()
     @IsPositive()
     @Type(() => Number)
-    perPage: number
+        perPage: number
     @ApiProperty({
         required: false,
     })
     @IsOptional()
     @IsBoolean()
     @Type(() => Boolean)
-    filterByFollowed: string
+        filterByFollowed: boolean
 }
