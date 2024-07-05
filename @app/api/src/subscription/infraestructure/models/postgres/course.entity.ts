@@ -15,59 +15,64 @@ export class Course {
     @PrimaryColumn({
         type: 'uuid',
     })
-    id: string
-    @Column({
-        type: 'varchar',
-        unique: true,
-    })
-    title: string
+        id: string
     @Column({
         type: 'varchar',
     })
-    description: string
+        title: string
     @Column({
         type: 'varchar',
     })
-    level: string
+        description: string
+    @Column({
+        type: 'varchar',
+    })
+        level: string
     @CreateDateColumn({
         type: 'date',
     })
-    date: Date
+        date: Date
     @Column({
         type: 'varchar',
     })
-    category: string
+        category: string
     @ManyToOne(() => Category, (category) => category.id)
     @JoinColumn({
         name: 'category',
     })
-    categoryEntity: Category
+        categoryEntity: Category
     @ManyToOne(() => Image, (image) => image.id)
     @JoinColumn({
         name: 'image',
     })
-    imageEntity: Image
+        imageEntity: Image
     @ManyToOne(() => Trainer, (trainer) => trainer.id)
     @JoinColumn({
         name: 'trainer',
     })
-    trainerEnt: Trainer
+        trainerEnt: Trainer
     @Column({
         type: 'uuid',
     })
-    trainer: string
+        trainer: string
     @Column({
         type: 'uuid',
     })
-    image: string
+        image: string
     @Column({
         type: 'numeric',
         nullable: true,
     })
-    weeks: number
+        weeks: number
     @Column({
         type: 'numeric',
         nullable: true,
     })
-    hours: number
+        hours: number
+    @Column({
+        name: 'available',
+        type: 'boolean',
+        default: true,
+    })
+        active: boolean
 }

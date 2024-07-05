@@ -6,7 +6,7 @@ import { CourseRepository } from 'src/notification/application/repositories/cour
 import { Course } from 'src/notification/application/models/course'
 
 export class CoursePostgresByNotificationRepository
-implements CourseRepository
+    implements CourseRepository
 {
     constructor(
         @InjectRepository(CourseORM)
@@ -15,6 +15,7 @@ implements CourseRepository
     async getById(id: string): Promise<Optional<Course>> {
         return this.courseProvider.findOneBy({
             id,
+            active: true,
         })
     }
 }

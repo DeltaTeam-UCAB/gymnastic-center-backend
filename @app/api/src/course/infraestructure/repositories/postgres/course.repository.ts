@@ -6,7 +6,7 @@ import {
     CourseRepository,
     GetManyCoursesData,
 } from 'src/course/application/repositories/course.repository'
-import { Course as UserORM } from '../../models/postgres/course.entity'
+import { Course as CourseORM } from '../../models/postgres/course.entity'
 import { Repository } from 'typeorm'
 import { Lesson as LessonORM } from '../../models/postgres/lesson.entity'
 import { Tag } from '../../models/postgres/tag.entity'
@@ -41,7 +41,8 @@ import { LessonVideo } from 'src/course/domain/value-objects/lesson.video'
 @Injectable()
 export class CoursePostgresRepository implements CourseRepository {
     constructor(
-        @InjectRepository(UserORM) private courseProvider: Repository<UserORM>,
+        @InjectRepository(CourseORM)
+        private courseProvider: Repository<CourseORM>,
         @InjectRepository(LessonORM)
         private lessonProvider: Repository<LessonORM>,
         @InjectRepository(Tag) private tagProvider: Repository<Tag>,
@@ -110,6 +111,7 @@ export class CoursePostgresRepository implements CourseRepository {
     async getById(id: CourseID): Promise<Optional<Course>> {
         const course = await this.courseProvider.findOneBy({
             id: id.id,
+            active: true,
         })
         if (!course) return undefined
         return new Course(id, {
@@ -171,6 +173,7 @@ export class CoursePostgresRepository implements CourseRepository {
     existByTitle(title: CourseTitle): Promise<boolean> {
         return this.courseProvider.existsBy({
             title: title.title,
+            active: true,
         })
     }
 
@@ -181,6 +184,7 @@ export class CoursePostgresRepository implements CourseRepository {
             where: {
                 category: data.category?.id,
                 trainer: data.trainer?.id,
+                active: true,
             },
         })
         return courses.asyncMap(
@@ -216,13 +220,27 @@ export class CoursePostgresRepository implements CourseRepository {
     async countByTrainer(id: TrainerID): Promise<number> {
         const courses = this.courseProvider.countBy({
             trainer: id.id,
+            active: true,
         })
         return courses
     }
     async countByCategory(id: CategoryID): Promise<number> {
         const courses = this.courseProvider.countBy({
             category: id.id,
+            active: true,
         })
         return courses
+    }
+
+    async delete(course: Course): Promise<Result<Course>> {
+        await this.courseProvider.update(
+            {
+                id: course.id.id,
+            },
+            {
+                active: false,
+            },
+        )
+        return Result.success(course)
     }
 }

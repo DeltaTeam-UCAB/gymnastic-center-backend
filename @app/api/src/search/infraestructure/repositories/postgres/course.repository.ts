@@ -33,29 +33,29 @@ export class CoursePostgresBySearchRepository implements CourseRepository {
         const data = await this.courseProvider.query(`
 (SELECT c.*, count(s.id)
 	FROM public.course c, subscription s 
-	where c.id = s.course and lower(c.title) like '%${
-        criteria.term?.toLowerCase() ?? ''
-    }%' ${
-    tags && tags.isNotEmpty()
-        ? `and c.id in (select "courseId" from course_tag where ${tags
-            ?.map((e) => `"tagId" = '${e}'`)
-            .join(' or ')})`
-        : ''
-}
+	where c.active = true and c.id = s.course and lower(c.title) like '%${
+    criteria.term?.toLowerCase() ?? ''
+}%' ${
+            tags && tags.isNotEmpty()
+                ? `and c.id in (select "courseId" from course_tag where ${tags
+                      ?.map((e) => `"tagId" = '${e}'`)
+                      .join(' or ')})`
+                : ''
+        }
 	group by c.id, s.course 
 	order by count(s.id) DESC)
 UNION
 (select *, 0 
 	from course c 
-	where c.id not in (select course from subscription) and lower(c.title) like '%${
-        criteria.term?.toLowerCase() ?? ''
-    }%'${
-    tags && tags.isNotEmpty()
-        ? `and c.id in (select "courseId" from course_tag where ${tags
-            ?.map((e) => `"tagId" = '${e}'`)
-            .join(' or ')})`
-        : ''
-}
+	where c.active = true and c.id not in (select course from subscription) and lower(c.title) like '%${
+    criteria.term?.toLowerCase() ?? ''
+}%'${
+            tags && tags.isNotEmpty()
+                ? `and c.id in (select "courseId" from course_tag where ${tags
+                      ?.map((e) => `"tagId" = '${e}'`)
+                      .join(' or ')})`
+                : ''
+        }
  )
 order by count DESC
 offset ${criteria.perPage * (criteria.page - 1)}
