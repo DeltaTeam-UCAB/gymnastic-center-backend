@@ -10,7 +10,7 @@ import { TrainerID } from 'src/trainer/domain/value-objects/trainer.id'
 import { ClientID } from 'src/trainer/domain/value-objects/client.id'
 
 @Injectable()
-export class followerAddedEventListener {
+export class FollowerAddedEventListener {
     constructor(
         private eventHandle: RabbitMQEventHandler,
         @Inject(MONGO_EVENT_STORAGE) private eventStorage: DomainEventStorage,

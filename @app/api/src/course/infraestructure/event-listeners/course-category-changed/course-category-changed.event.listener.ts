@@ -12,7 +12,7 @@ import { Category } from 'src/course/domain/entities/category'
 import { CategoryName } from 'src/course/domain/value-objects/category.name'
 
 @Injectable()
-export class courseCategoryChangedEventListener {
+export class CourseCategoryChangedEventListener {
     constructor(
         private eventHandle: RabbitMQEventHandler,
         @Inject(MONGO_EVENT_STORAGE) private eventStorage: DomainEventStorage,

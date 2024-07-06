@@ -10,7 +10,7 @@ import { CourseID } from '../../../domain/value-objects/course.id'
 import { CourseImage } from 'src/course/domain/value-objects/course.image'
 
 @Injectable()
-export class courseImageChangedEventListener {
+export class CourseImageChangedEventListener {
     constructor(
         private eventHandle: RabbitMQEventHandler,
         @Inject(MONGO_EVENT_STORAGE) private eventStorage: DomainEventStorage,
