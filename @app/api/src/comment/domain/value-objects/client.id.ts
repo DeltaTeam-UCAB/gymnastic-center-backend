@@ -4,6 +4,7 @@ import { unvalidClientId } from '../exceptions/unvalid.client.id'
 
 export class ClientID implements ValueObject<ClientID> {
     constructor(private _id: string) {
+        console.log(_id, ' idclient')
         if (!regExpUUID.test(_id)) throw unvalidClientId()
     }
     get id() {
