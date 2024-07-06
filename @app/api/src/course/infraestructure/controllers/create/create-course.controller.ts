@@ -21,7 +21,6 @@ import { CategoryExistDecorator } from 'src/course/application/commands/createCo
 import { TrainerExistDecorator } from 'src/course/application/commands/createCourse/decorators/trainer.exist.decorator'
 import { ImagesExistDecorator } from 'src/course/application/commands/createCourse/decorators/images.exist.decorator'
 import { VideosExistDecorator } from 'src/course/application/commands/createCourse/decorators/videos.exist.decorator'
-import { COURSE_TITLE_EXIST } from 'src/course/application/errors/course.title.exist'
 import { PostgresTransactionProvider } from 'src/core/infraestructure/repositories/transaction/postgres.transaction'
 import { CoursePostgresTransactionalRepository } from '../../repositories/postgres/course.repository.transactional'
 import { TransactionHandlerDecorator } from 'src/core/application/decorators/transaction.handler.decorator'
@@ -32,6 +31,7 @@ import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
+import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -107,18 +107,26 @@ export class CreateCourseController
         )
 
         const result = await new ErrorDecorator(
-            new TransactionHandlerDecorator(
-                new AuditDecorator(
-                    new LoggerDecorator(commandWithVideoValidator, nestLogger),
-                    new AuditingTxtRepository(),
-                    audit,
+            new DomainErrorParserDecorator(
+                new TransactionHandlerDecorator(
+                    new AuditDecorator(
+                        new LoggerDecorator(
+                            commandWithVideoValidator,
+                            nestLogger,
+                        ),
+                        new AuditingTxtRepository(),
+                        audit,
+                    ),
+                    manager.transactionHandler,
                 ),
-                manager.transactionHandler,
             ),
             (e) => {
-                if (e.name === COURSE_TITLE_EXIST)
-                    return new HttpException(e.message, 400)
-                return new HttpException(e.message, 404)
+                if (
+                    e.name.includes('NOT_EXIST') ||
+                    e.name.includes('NOT_FOUND')
+                )
+                    return new HttpException(e.message, 404)
+                return new HttpException(e.message, 400)
             },
         ).execute(body)
         return result.unwrap()
