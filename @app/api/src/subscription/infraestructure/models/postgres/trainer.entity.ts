@@ -14,4 +14,10 @@ export class Trainer {
         type: 'varchar',
     })
     location: string
+    @Column({
+        type: 'boolean',
+        default: true,
+        nullable: true,
+    })
+    active: boolean
 }

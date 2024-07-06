@@ -15,12 +15,14 @@ export class TrainerPostgresByCourseRepository implements TrainerRepository {
     existById(id: TrainerID): Promise<boolean> {
         return this.trainerProvider.existsBy({
             id: id.id,
+            active: true,
         })
     }
 
     async getById(id: TrainerID): Promise<Optional<Trainer>> {
         const trainer = await this.trainerProvider.findOneBy({
             id: id.id,
+            active: true,
         })
         if (!trainer) return null
         return new Trainer(id, {

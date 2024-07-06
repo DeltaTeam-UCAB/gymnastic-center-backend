@@ -44,6 +44,7 @@ export class TrainerPostgresRepository implements TrainerRepository {
     async getById(id: TrainerID): Promise<Optional<Trainer>> {
         const trainer = await this.trainerRepository.findOneBy({
             id: id.id,
+            active: true,
         })
         if (!isNotNull(trainer)) {
             return null
@@ -68,6 +69,9 @@ export class TrainerPostgresRepository implements TrainerRepository {
         const trainersORM = await this.trainerRepository.find({
             take: perPage,
             skip: perPage * (page - 1),
+            where: {
+                active: true,
+            },
         })
         const trainers = trainersORM.asyncMap(
             async (t) =>
@@ -95,8 +99,6 @@ export class TrainerPostgresRepository implements TrainerRepository {
         clientId: ClientID,
     ): Promise<Trainer[]> {
         const trainersFollowed = await this.followRepository.find({
-            take: perPage,
-            skip: perPage * (page - 1),
             where: {
                 userId: clientId.id,
             },
@@ -110,7 +112,15 @@ export class TrainerPostgresRepository implements TrainerRepository {
                     id: t.trainerId,
                 }) as unknown as TrainerORM,
         )
-        const trainers = trainersORM.asyncMap(
+        const trainersORMFiltered = (
+            await trainersORM.asyncFilter(async (t) =>
+                this.trainerRepository.existsBy({
+                    id: t.id,
+                    active: true,
+                }),
+            )
+        ).slice(perPage * (page - 1), perPage * (page - 1) + perPage)
+        const trainers = trainersORMFiltered.asyncMap(
             async (t) =>
                 new Trainer(new TrainerID(t.id), {
                     name: new TrainerName(t.name),
@@ -133,15 +143,33 @@ export class TrainerPostgresRepository implements TrainerRepository {
     async existByName(name: TrainerName): Promise<boolean> {
         const exists = await this.trainerRepository.existsBy({
             name: name.name,
+            active: true,
         })
         return exists
     }
 
-    countFollowsByClient(client: ClientID): Promise<number> {
-        return this.followRepository.count({
+    async countFollowsByClient(client: ClientID): Promise<number> {
+        const trainersFollowed = await this.followRepository.find({
             where: {
                 userId: client.id,
             },
         })
+        const trainersFollowedFiltered = await trainersFollowed.asyncFilter(
+            async (t) =>
+                this.trainerRepository.existsBy({
+                    id: t.trainerId,
+                    active: true,
+                }),
+        )
+        return trainersFollowedFiltered.length
+    }
+
+    async delete(trainer: Trainer): Promise<Result<Trainer>> {
+        const trainerORM = await this.trainerRepository.findOneByOrFail({
+            id: trainer.id.id,
+        })
+        trainerORM.active = false
+        await this.trainerRepository.save(trainerORM)
+        return Result.success(trainer)
     }
 }

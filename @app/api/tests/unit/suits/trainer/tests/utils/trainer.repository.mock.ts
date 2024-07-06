@@ -34,4 +34,8 @@ export class TrainerRepositoryMock implements TrainerRepository {
     async countFollowsByClient(client: ClientID): Promise<number> {
         return this.trainers.filter((e) => e.isFollowedBy(client)).length
     }
+    async delete(trainer: Trainer): Promise<Result<Trainer>> {
+        this.trainers = this.trainers.filter((t) => t.id != trainer.id)
+        return Result.success(trainer)
+    }
 }

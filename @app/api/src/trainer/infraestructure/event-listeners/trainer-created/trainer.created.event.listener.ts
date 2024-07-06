@@ -28,7 +28,7 @@ export class TrainerCreatedEventListener {
                     _name: new TrainerName(json._name._name),
                     location: new TrainerLocation(json.location._location),
                     followers: (json.followers as Record<any, any>[]).map(
-                        (follower) => new ClientID(follower._id._id),
+                        (follower) => new ClientID(follower._id),
                     ),
                     timestamp: new Date(json.timestamp),
                 }),
