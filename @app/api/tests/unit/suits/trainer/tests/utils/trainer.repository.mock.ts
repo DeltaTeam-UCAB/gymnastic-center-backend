@@ -31,20 +31,7 @@ export class TrainerRepositoryMock implements TrainerRepository {
     async existByName(name: TrainerName): Promise<boolean> {
         return !!this.trainers.findMap((e) => e.name == name)
     }
-    async followTrainer(
-        userId: ClientID,
-        trainerId: TrainerID,
-    ): Promise<Result<boolean>> {
-        const trainer = this.trainers.find((e) => e.id == trainerId)
-        trainer?.addFollower(userId)
-        return Result.success(true)
-    }
-    async unfollowTrainer(
-        userId: ClientID,
-        trainerId: TrainerID,
-    ): Promise<Result<boolean>> {
-        const trainer = this.trainers.find((e) => e.id == trainerId) as Trainer
-        trainer.removeFollower(userId)
-        return Result.success(false)
+    async countFollowsByClient(client: ClientID): Promise<number> {
+        return this.trainers.filter((e) => e.isFollowedBy(client)).length
     }
 }

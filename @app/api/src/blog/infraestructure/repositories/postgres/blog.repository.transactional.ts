@@ -82,6 +82,7 @@ export class BlogPostgresTransactionalRepository implements BlogRepository {
     async getById(id: BlogId): Promise<Optional<Blog>> {
         const blog = await this.queryRunner.manager.findOneBy(BlogORM, {
             id: id.id,
+            active: true,
         })
         if (!blog) return undefined
 
@@ -131,6 +132,7 @@ export class BlogPostgresTransactionalRepository implements BlogRepository {
     async existByTitle(title: BlogTitle): Promise<boolean> {
         const blog = await this.queryRunner.manager.existsBy(BlogORM, {
             title: title.title,
+            active: true,
         })
         return blog
     }
@@ -142,6 +144,7 @@ export class BlogPostgresTransactionalRepository implements BlogRepository {
             where: {
                 trainer: filters.trainer,
                 category: filters.category,
+                active: true,
             },
         })
         const blogResult = await Promise.all(
@@ -181,12 +184,26 @@ export class BlogPostgresTransactionalRepository implements BlogRepository {
     async countByTrainer(id: TrainerId): Promise<number> {
         return this.queryRunner.manager.countBy(BlogORM, {
             trainer: id.id,
+            active: true,
         })
     }
 
     async countByCategory(id: CategoryId): Promise<number> {
         return this.queryRunner.manager.countBy(BlogORM, {
             category: id.id,
+            active: true,
         })
+    }
+
+    async delete(blog: Blog): Promise<Result<Blog>> {
+        const blogORM = await this.queryRunner.manager.findOneByOrFail(
+            BlogORM,
+            {
+                id: blog.id.id,
+            },
+        )
+        blogORM.active = false
+        await this.queryRunner.manager.save(blogORM)
+        return Result.success(blog)
     }
 }

@@ -7,7 +7,7 @@ import { Repository } from 'typeorm'
 import { SubscriptionLesson } from '../../models/postgres/subscription-lesson.entity'
 
 export class SubscriptionPostgresByNotificationRepository
-    implements SubscriptionRepository
+implements SubscriptionRepository
 {
     constructor(
         @InjectRepository(SubscriptionORM)
@@ -37,7 +37,7 @@ export class SubscriptionPostgresByNotificationRepository
     async getManyByCategory(category: string): Promise<Subscription[]> {
         const subscriptions = await this.subscriptionProvider
             .createQueryBuilder('s')
-            .innerJoinAndSelect('c.courseEntity', 'c')
+            .innerJoinAndSelect('s.courseEntity', 'c')
             .where('c.category = :categoryId', {
                 categoryId: category,
             })

@@ -67,6 +67,8 @@ export const body = async () => {
         category: categoryName,
         tags: [],
         date: course.creationDate.date,
+        durationWeeks: 4,
+        durationMinutes: 40,
         lessons: [
             {
                 id: lesson.id,

@@ -3,6 +3,7 @@ import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
 import { CreateTrainerCommand } from '../../../../../src/trainer/application/commands/create/create.trainer.command'
 import { IDGeneratorMock } from './utils/id.generator.mock'
 import { TrainerID } from '../../../../../src/trainer/domain/value-objects/trainer.id'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 
 export const name = 'Should create trainer with valid data'
 export const body = async () => {
@@ -15,6 +16,7 @@ export const body = async () => {
     const result = await new CreateTrainerCommand(
         new IDGeneratorMock(trainerId),
         trainerRepo,
+        eventPublisherStub,
     ).execute(trainerData)
     lookFor(result.isError()).equals(false)
     const trainer = await trainerRepo.getById(new TrainerID(trainerId))

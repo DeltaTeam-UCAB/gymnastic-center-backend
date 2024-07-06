@@ -82,12 +82,16 @@ export class BlogPostgresRepository implements BlogRepository {
     async existByTitle(title: BlogTitle): Promise<boolean> {
         const blog = await this.blogRepository.existsBy({
             title: title.title,
+            active: true,
         })
         return blog
     }
 
     async getById(id: BlogId): Promise<Optional<Blog>> {
-        const blog = await this.blogRepository.findOneBy({ id: id.id })
+        const blog = await this.blogRepository.findOneBy({
+            id: id.id,
+            active: true,
+        })
         if (!blog) {
             return null
         }
@@ -141,37 +145,40 @@ export class BlogPostgresRepository implements BlogRepository {
             where: {
                 trainer: filters.trainer,
                 category: filters.category,
+                active: true,
             },
         })
-        const blogResult = await Promise.all(
-            blogs.map(async (blog) => {
-                const trainer = await this.trainerRepository.findOneBy({
-                    id: blog.trainer,
-                })
-                if (!trainer) throw new Error('Trainer not found')
-                const trainerId = new TrainerId(trainer.id)
+        const blogResult = await blogs.asyncMap(async (blog) => {
+            const trainer = await this.trainerRepository.findOneBy({
+                id: blog.trainer,
+            })
+            if (!trainer) throw new Error('Trainer not found')
+            const trainerId = new TrainerId(trainer.id)
 
-                const category = await this.categoryRepository.findOneBy({
-                    id: blog.category,
-                })
-                if (!category) throw new Error('Category not found')
-                const categoryId = new CategoryId(category!.id)
+            const category = await this.categoryRepository.findOneBy({
+                id: blog.category,
+            })
+            if (!category) throw new Error('Category not found')
+            const categoryId = new CategoryId(category!.id)
 
-                return new Blog(new BlogId(blog.id), {
-                    title: new BlogTitle(blog.title),
-                    body: new BlogBody(blog.body),
-                    trainer: new Trainer(trainerId, {
-                        name: new TrainerName(trainer.name),
-                    }),
-                    category: new Category(categoryId, {
-                        name: new CategoryName(category!.name),
-                    }),
-                    date: new BlogDate(blog.date),
-                    images: [],
-                    tags: [],
-                })
-            }),
-        )
+            return new Blog(new BlogId(blog.id), {
+                title: new BlogTitle(blog.title),
+                body: new BlogBody(blog.body),
+                trainer: new Trainer(trainerId, {
+                    name: new TrainerName(trainer.name),
+                }),
+                category: new Category(categoryId, {
+                    name: new CategoryName(category!.name),
+                }),
+                date: new BlogDate(blog.date),
+                images: await this.blogImagesRepository
+                    .findBy({
+                        blogId: blog.id,
+                    })
+                    .map((e) => new BlogImageID(e.imageId)),
+                tags: [],
+            })
+        })
         return blogResult
     }
 
@@ -179,6 +186,7 @@ export class BlogPostgresRepository implements BlogRepository {
         const blogs = await this.blogRepository.count({
             where: {
                 trainer: id.id,
+                active: true,
             },
         })
         return blogs
@@ -188,8 +196,18 @@ export class BlogPostgresRepository implements BlogRepository {
         const blogs = await this.blogRepository.count({
             where: {
                 category: id.id,
+                active: true,
             },
         })
         return blogs
+    }
+
+    async delete(blog: Blog): Promise<Result<Blog>> {
+        const blogORM = await this.blogRepository.findOneByOrFail({
+            id: blog.id.id,
+        })
+        blogORM.active = false
+        await this.blogRepository.save(blogORM)
+        return Result.success(blog)
     }
 }

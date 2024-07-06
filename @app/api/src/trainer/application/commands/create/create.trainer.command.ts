@@ -9,6 +9,7 @@ import { trainerNameInvalidError } from '../../errors/trainer.name.invalid'
 import { TrainerID } from 'src/trainer/domain/value-objects/trainer.id'
 import { TrainerName } from 'src/trainer/domain/value-objects/trainer.name'
 import { TrainerLocation } from 'src/trainer/domain/value-objects/trainer.location'
+import { EventPublisher } from 'src/core/application/event-handler/event.handler'
 
 export class CreateTrainerCommand
     implements ApplicationService<CreateTrainerDto, CreateTrainerResponse>
@@ -16,6 +17,7 @@ export class CreateTrainerCommand
     constructor(
         private idGenerator: IDGenerator<string>,
         private trainerRepository: TrainerRepository,
+        private eventPublisher: EventPublisher,
     ) {}
     async execute(
         data: CreateTrainerDto,
@@ -31,6 +33,7 @@ export class CreateTrainerCommand
         })
         const result = await this.trainerRepository.save(trainer)
         if (result.isError()) return result.convertToOther()
+        this.eventPublisher.publish(trainer.pullEvents())
         return Result.success({
             id: trainerId,
         })

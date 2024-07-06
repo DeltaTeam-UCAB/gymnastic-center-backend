@@ -22,6 +22,11 @@ import { courseTrainerChanged } from './events/course.trainer.changed'
 import { courseTagAdded } from './events/course.tag.added'
 import { courseTagRemoved } from './events/course.tag.removed'
 import { courseDeleted } from './events/course.deleted'
+import { lessonExist } from './exceptions/lesson.exist'
+import { courseLessonAdded } from './events/course.lesson.added'
+import { LessonID } from './value-objects/lesson.id'
+import { lessonNotExist } from './exceptions/lesson.not.exist'
+import { courseLessonRemoved } from './events/course.lesson.removed'
 
 export class Course extends AggregateRoot<CourseID> {
     constructor(
@@ -178,6 +183,28 @@ export class Course extends AggregateRoot<CourseID> {
             courseTagRemoved({
                 id: this.id,
                 tag,
+            }),
+        )
+    }
+
+    addLesson(lesson: Lesson) {
+        if (this.lessons.some((e) => e.id == lesson.id)) throw lessonExist()
+        this.data.lessons?.push(lesson)
+        this.publish(
+            courseLessonAdded({
+                id: this.id,
+                lesson,
+            }),
+        )
+    }
+
+    removeLesson(lessonId: LessonID) {
+        if (!this.lessons.some((e) => e.id == lessonId)) throw lessonNotExist()
+        this.data.lessons = this.lessons.filter((e) => e.id != lessonId)
+        this.publish(
+            courseLessonRemoved({
+                id: this.id,
+                lesson: lessonId,
             }),
         )
     }
