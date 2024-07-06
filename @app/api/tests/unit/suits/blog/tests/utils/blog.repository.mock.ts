@@ -54,4 +54,9 @@ export class BlogRepositoryMock implements BlogRepository {
         })
         return count
     }
+
+    async delete(blog: Blog): Promise<Result<Blog>> {
+        this.blogs.filter((b) => b.id != blog.id)
+        return Result.success(blog)
+    }
 }

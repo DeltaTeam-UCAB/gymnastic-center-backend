@@ -14,4 +14,5 @@ export interface BlogRepository {
     getAll(filters: GetAllBlogsDTO): Promise<Blog[]>
     countByTrainer(id: TrainerId): Promise<number>
     countByCategory(id: CategoryId): Promise<number>
+    delete(blog: Blog): Promise<Result<Blog>>
 }

@@ -14,6 +14,7 @@ export class BlogPostgresByNotificationRepository implements BlogRepository {
     getById(id: string): Promise<Optional<Blog>> {
         return this.blogProvider.findOneBy({
             id,
+            active: true,
         })
     }
 }

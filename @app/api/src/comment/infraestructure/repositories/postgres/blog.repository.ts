@@ -12,6 +12,7 @@ export class BlogPostgresByCommentRepository implements BlogRepository {
     async existsById(id: BlogID): Promise<boolean> {
         const exists = await this.postRepository.existsBy({
             id: id.id,
+            active: true,
         })
         return exists
     }

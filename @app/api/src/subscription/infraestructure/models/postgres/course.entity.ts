@@ -72,6 +72,7 @@ export class Course {
     @Column({
         type: 'boolean',
         default: true,
+        nullable: true,
     })
     available: boolean
 }

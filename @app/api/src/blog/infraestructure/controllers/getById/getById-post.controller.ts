@@ -1,6 +1,12 @@
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { Get, Param, ParseUUIDPipe, UseGuards } from '@nestjs/common'
+import {
+    Get,
+    HttpException,
+    Param,
+    ParseUUIDPipe,
+    UseGuards,
+} from '@nestjs/common'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { BLOG_DOC_PREFIX, BLOG_ROUTE_PREFIX } from '../prefix'
 import { BlogPostgresRepository } from '../../repositories/postgres/blog.repository'
@@ -11,6 +17,7 @@ import { TrainerByBlogPostgresRepository } from '../../repositories/postgres/tra
 import { ImageByBlogPostgresRepository } from '../../repositories/postgres/image.repository'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -18,7 +25,7 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
     bearerAuth: true,
 })
 export class GetPostByIdController
-implements ControllerContract<[id: string], GetBlogByIdResponse>
+    implements ControllerContract<[id: string], GetBlogByIdResponse>
 {
     constructor(
         private blogRepository: BlogPostgresRepository,
@@ -33,14 +40,17 @@ implements ControllerContract<[id: string], GetBlogByIdResponse>
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<GetBlogByIdResponse> {
         const nestLogger = new NestLogger('Get by ID Blog logger')
-        const result = await new LoggerDecorator(
-            new GetBlogByIdQuery(
-                this.blogRepository,
-                this.categoryRepository,
-                this.trainerRepository,
-                this.imageRepository,
+        const result = await new ErrorDecorator(
+            new LoggerDecorator(
+                new GetBlogByIdQuery(
+                    this.blogRepository,
+                    this.categoryRepository,
+                    this.trainerRepository,
+                    this.imageRepository,
+                ),
+                nestLogger,
             ),
-            nestLogger,
+            (e) => new HttpException(e.message, 400),
         ).execute({
             id,
         })

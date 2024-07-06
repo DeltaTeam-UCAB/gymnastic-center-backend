@@ -38,7 +38,7 @@ export class BlogPostgresBySearchRepository implements BlogRepository {
             .where(
                 `lower(b.title) like :term ${
                     tags && tags.isNotEmpty()
-                        ? `and b.id in (select "blogId" from blog_tag where ${tags
+                        ? `and b.active = true and b.id in (select "blogId" from blog_tag where ${tags
                               ?.map((e) => `"tagId" = '${e}'`)
                               .join(' or ')})`
                         : ''

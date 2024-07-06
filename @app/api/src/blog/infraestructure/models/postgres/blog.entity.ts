@@ -11,7 +11,6 @@ export class Blog {
 
     @Column({
         type: 'varchar',
-        unique: true,
     })
     title: string
 
@@ -47,4 +46,11 @@ export class Blog {
         default: () => 'CURRENT_TIMESTAMP',
     })
     date: Date
+
+    @Column({
+        type: 'boolean',
+        default: true,
+        nullable: true,
+    })
+    active: boolean
 }
