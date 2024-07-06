@@ -13,7 +13,7 @@ import { LessonVideo } from 'src/course/domain/value-objects/lesson.video'
 import { Video } from 'src/course/application/models/video'
 
 export class GetCourseDetailsQuery
-    implements
+implements
         ApplicationService<GetCourseDetailsDTO, GetCourseDetailsResponse>
 {
     constructor(
@@ -44,6 +44,8 @@ export class GetCourseDetailsQuery
             category: course.category.name.name,
             date: course.creationDate.date,
             image: image.src,
+            durationWeeks: course.duration.weeks,
+            durationMinutes: course.duration.hours,
             lessons: await course.lessons.asyncMap(async (lesson) => ({
                 id: lesson.id.id,
                 title: lesson.title.title,

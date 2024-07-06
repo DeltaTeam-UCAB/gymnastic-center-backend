@@ -15,48 +15,54 @@ export class Lesson {
     @PrimaryColumn({
         type: 'uuid',
     })
-    id: string
+        id: string
     @Column({
         type: 'varchar',
     })
-    title: string
+        title: string
     @Column({
         type: 'varchar',
     })
-    content: string
+        content: string
     @ManyToOne(() => Course, (course) => course.id)
     @JoinColumn({
         name: 'courseId',
     })
-    course: Course
+        course: Course
 
     @Column({
         type: 'uuid',
     })
-    courseId: string
+        courseId: string
 
     @OneToMany(() => Video, (video) => video.id)
     @JoinColumn({
         name: 'video',
     })
-    videoEntity?: Video
+        videoEntity: Video
     @Column({
         type: 'uuid',
-        nullable: true,
+        nullable: false,
     })
-    video?: string
+        video: string
     @Column({
         type: 'numeric',
     })
-    order: number
+        order: number
     @ManyToOne(() => Image, (image) => image.id)
     @JoinColumn({
         name: 'image',
     })
-    imageEntity?: Image
+        imageEntity?: Image
     @Column({
         type: 'uuid',
         nullable: true,
     })
-    image?: string
+        image?: string
+    @Column({
+        type: 'boolean',
+        nullable: true,
+        default: true,
+    })
+        active: boolean
 }

@@ -11,6 +11,8 @@ export type GetCourseDetailsResponse = {
     image: string
     level: string
     date: Date
+    durationWeeks: number
+    durationMinutes: number
     lessons: Lesson[]
     tags: string[]
 }

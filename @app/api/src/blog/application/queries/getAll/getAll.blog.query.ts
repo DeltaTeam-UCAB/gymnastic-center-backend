@@ -8,7 +8,7 @@ import { TrainerRepository } from '../../repositories/trainer.repository'
 import { ImageRepository } from '../../repositories/image.repository'
 
 export class GetAllBlogQuery
-    implements ApplicationService<GetAllBlogsDTO, GetAllBlogResponse[]>
+implements ApplicationService<GetAllBlogsDTO, GetAllBlogResponse[]>
 {
     constructor(
         private blogRepository: BlogRepository,
@@ -27,10 +27,13 @@ export class GetAllBlogQuery
                     blog.category.id,
                 ))!.name.name,
                 date: blog.date.date,
-                images: await blog.images.asyncMap(
-                    async (img) =>
-                        (await this.imageRepository.getById(img.image))!.src,
-                ),
+                image: (
+                    await blog.images.asyncMap(
+                        async (img) =>
+                            (await this.imageRepository.getById(img.image))!
+                                .src,
+                    )
+                )[0],
                 tags: blog.tags.map((tag) => tag.tag),
                 trainer: (await this.trainerRepository.getById(
                     blog.trainer.id,

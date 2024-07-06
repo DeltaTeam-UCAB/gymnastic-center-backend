@@ -58,6 +58,16 @@ export class CoursePostgresTransactionalRepository implements CourseRepository {
             ['id'],
         )
 
+        await this.queryRunner.manager.update(
+            LessonORM,
+            {
+                courseId: course.id.id,
+            },
+            {
+                active: false,
+            },
+        )
+
         await course.lessons.asyncMap((e) =>
             this.queryRunner.manager.upsert(
                 LessonORM,
@@ -68,6 +78,7 @@ export class CoursePostgresTransactionalRepository implements CourseRepository {
                     title: e.title.title || '',
                     courseId: course.id.id,
                     order: course.lessons.indexOf(e),
+                    active: true,
                 }),
                 ['id'],
             ),
@@ -156,6 +167,7 @@ export class CoursePostgresTransactionalRepository implements CourseRepository {
             lessons: (
                 await this.queryRunner.manager.findBy(LessonORM, {
                     courseId: course.id,
+                    active: true,
                 })
             )
                 .sort((a, b) => a.order - b.order)
