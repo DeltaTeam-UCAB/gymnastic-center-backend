@@ -15,6 +15,7 @@ export class Target implements ValueObject<Target> {
     ) {
         if (isNotNull(_blogId) && !regExpUUID.test(_blogId.id))
             throw unvalidTargetBlogId()
+
         if (isNotNull(_lessonId) && !regExpUUID.test(_lessonId.id))
             throw unvalidTargetLessonId()
     }

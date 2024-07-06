@@ -18,7 +18,7 @@ import { userNotFoundError } from '../../errors/user.not.found'
 import { EventPublisher } from 'src/core/application/event-handler/event.handler'
 
 export class CreateCommentCommand
-implements ApplicationService<CreateCommentDTO, CreateCommentResponse>
+    implements ApplicationService<CreateCommentDTO, CreateCommentResponse>
 {
     constructor(
         private commentRepository: CommentRepository,
