@@ -3,14 +3,14 @@ import { DomainEventStorage } from 'src/core/application/event-storage/event.sto
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { MONGO_EVENT_STORAGE } from 'src/core/infraestructure/event-storage/mongo/mongo.event.storage.module'
 import {
-    COURSE_IMAGE_CHANGED,
-    courseImageChanged,
-} from '../../../domain/events/course.image.changed'
-import { CourseID } from '../../../domain/value-objects/course.id'
-import { CourseImage } from 'src/course/domain/value-objects/course.image'
+    TRAINER_LOCATION_CHANGED,
+    trainerLocationChanged,
+} from '../../../domain/events/trainer.location.changed'
+import { TrainerID } from 'src/trainer/domain/value-objects/trainer.id'
+import { TrainerLocation } from 'src/trainer/domain/value-objects/trainer.location'
 
 @Injectable()
-export class CourseImageChangedEventListener {
+export class TrainerLocationChangedEventListener {
     constructor(
         private eventHandle: RabbitMQEventHandler,
         @Inject(MONGO_EVENT_STORAGE) private eventStorage: DomainEventStorage,
@@ -19,11 +19,11 @@ export class CourseImageChangedEventListener {
     }
     load() {
         this.eventHandle.listen(
-            COURSE_IMAGE_CHANGED,
+            TRAINER_LOCATION_CHANGED,
             (json) =>
-                courseImageChanged({
-                    id: new CourseID(json.id._id),
-                    image: new CourseImage(json.image._image),
+                trainerLocationChanged({
+                    id: new TrainerID(json.id._id),
+                    location: new TrainerLocation(json.location._location),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {

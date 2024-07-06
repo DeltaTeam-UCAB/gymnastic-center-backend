@@ -6,5 +6,5 @@ export const TRAINER_NAME_CHANGED = 'TRAINER_NAME_CHANGED'
 
 export const trainerNameChanged = domainEventFactory<{
     id: TrainerID
-    name: TrainerName
+    _name: TrainerName
 }>(TRAINER_NAME_CHANGED)

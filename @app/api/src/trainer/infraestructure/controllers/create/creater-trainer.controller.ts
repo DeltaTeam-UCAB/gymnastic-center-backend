@@ -16,6 +16,7 @@ import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { CurrentUserResponse } from '../../../../../src/user/application/queries/current/types/response'
+import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 
 @Controller({
     path: 'trainer',
@@ -32,6 +33,7 @@ export class CreateTrainerController
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
         private trainerRepo: TrainerPostgresRepository,
+        private eventPublisher: RabbitMQEventHandler,
     ) {}
 
     @Post()
@@ -51,7 +53,11 @@ export class CreateTrainerController
         const result = await new ErrorDecorator(
             new AuditDecorator(
                 new LoggerDecorator(
-                    new CreateTrainerCommand(this.idGen, this.trainerRepo),
+                    new CreateTrainerCommand(
+                        this.idGen,
+                        this.trainerRepo,
+                        this.eventPublisher,
+                    ),
                     new NestLogger('CreateTrainer'),
                 ),
                 new AuditingTxtRepository(),

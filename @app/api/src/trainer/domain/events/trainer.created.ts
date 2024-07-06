@@ -8,7 +8,7 @@ export const TRAINER_CREATED = 'TRAINER_CREATED'
 
 export const trainerCreated = domainEventFactory<{
     id: TrainerID
-    name: TrainerName
+    _name: TrainerName
     location: TrainerLocation
     followers: ClientID[]
 }>(TRAINER_CREATED)

@@ -25,7 +25,8 @@ export class Trainer extends AggregateRoot<TrainerID> {
         this.publish(
             trainerCreated({
                 id,
-                ...data,
+                location: data.location,
+                _name: data.name,
                 followers: data.followers!,
             }),
         )
@@ -52,7 +53,7 @@ export class Trainer extends AggregateRoot<TrainerID> {
         this.publish(
             trainerNameChanged({
                 id: this.id,
-                name,
+                _name: name,
             }),
         )
     }

@@ -9,7 +9,7 @@ import {
 import { CourseID } from '../../../domain/value-objects/course.id'
 
 @Injectable()
-export class courseDeletedEventListener {
+export class CourseDeletedEventListener {
     constructor(
         private eventHandle: RabbitMQEventHandler,
         @Inject(MONGO_EVENT_STORAGE) private eventStorage: DomainEventStorage,

@@ -3,14 +3,14 @@ import { DomainEventStorage } from 'src/core/application/event-storage/event.sto
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { MONGO_EVENT_STORAGE } from 'src/core/infraestructure/event-storage/mongo/mongo.event.storage.module'
 import {
-    COURSE_IMAGE_CHANGED,
-    courseImageChanged,
-} from '../../../domain/events/course.image.changed'
-import { CourseID } from '../../../domain/value-objects/course.id'
-import { CourseImage } from 'src/course/domain/value-objects/course.image'
+    COURSE_LESSON_REMOVED,
+    courseLessonRemoved,
+} from '../../../domain/events/course.lesson.removed'
+import { CourseID } from 'src/course/domain/value-objects/course.id'
+import { LessonID } from 'src/course/domain/value-objects/lesson.id'
 
 @Injectable()
-export class CourseImageChangedEventListener {
+export class CourseLessonRemovedEventListener {
     constructor(
         private eventHandle: RabbitMQEventHandler,
         @Inject(MONGO_EVENT_STORAGE) private eventStorage: DomainEventStorage,
@@ -19,11 +19,11 @@ export class CourseImageChangedEventListener {
     }
     load() {
         this.eventHandle.listen(
-            COURSE_IMAGE_CHANGED,
+            COURSE_LESSON_REMOVED,
             (json) =>
-                courseImageChanged({
+                courseLessonRemoved({
                     id: new CourseID(json.id._id),
-                    image: new CourseImage(json.image._image),
+                    lesson: new LessonID(json.lesson._id._id),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {

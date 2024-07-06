@@ -4,6 +4,7 @@ import { IDGeneratorMock } from './utils/id.generator.mock'
 import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
 import { TRAINER_NAME_INVALID } from '../../../../../src/trainer/application/errors/trainer.name.invalid'
 import { createTrainer } from './utils/trainer.factory'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 
 export const name = 'Should not create trainer with an existing name'
 
@@ -20,6 +21,7 @@ export const body = async () => {
     const result = await new CreateTrainerCommand(
         new IDGeneratorMock(),
         trainerRepo,
+        eventPublisherStub,
     ).execute(trainerData)
     result.handleError((e) => {
         lookFor(e.name).equals(TRAINER_NAME_INVALID)
