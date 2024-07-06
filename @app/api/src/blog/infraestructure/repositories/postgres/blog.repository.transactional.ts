@@ -132,6 +132,7 @@ export class BlogPostgresTransactionalRepository implements BlogRepository {
     async existByTitle(title: BlogTitle): Promise<boolean> {
         const blog = await this.queryRunner.manager.existsBy(BlogORM, {
             title: title.title,
+            active: true,
         })
         return blog
     }

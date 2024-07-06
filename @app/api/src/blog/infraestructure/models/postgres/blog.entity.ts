@@ -11,7 +11,6 @@ export class Blog {
 
     @Column({
         type: 'varchar',
-        unique: true,
     })
     title: string
 
