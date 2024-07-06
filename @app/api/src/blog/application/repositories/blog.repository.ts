@@ -15,4 +15,5 @@ export interface BlogRepository {
     countByTrainer(id: TrainerId): Promise<number>
     countByCategory(id: CategoryId): Promise<number>
     delete(blog: Blog): Promise<Result<Blog>>
+    getAllByTrainer(trainer: TrainerId): Promise<Blog[]>
 }

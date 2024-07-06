@@ -210,4 +210,45 @@ export class BlogPostgresRepository implements BlogRepository {
         await this.blogRepository.save(blogORM)
         return Result.success(blog)
     }
+
+    async getAllByTrainer(trainer: TrainerId): Promise<Blog[]> {
+        const blogs = await this.blogRepository.find({
+            where: {
+                trainer: trainer.id,
+                active: true,
+            },
+        })
+        const blogResult = await blogs.asyncMap(async (blog) => {
+            const trainer = await this.trainerRepository.findOneBy({
+                id: blog.trainer,
+            })
+            if (!trainer) throw new Error('Trainer not found')
+            const trainerId = new TrainerId(trainer.id)
+
+            const category = await this.categoryRepository.findOneBy({
+                id: blog.category,
+            })
+            if (!category) throw new Error('Category not found')
+            const categoryId = new CategoryId(category!.id)
+
+            return new Blog(new BlogId(blog.id), {
+                title: new BlogTitle(blog.title),
+                body: new BlogBody(blog.body),
+                trainer: new Trainer(trainerId, {
+                    name: new TrainerName(trainer.name),
+                }),
+                category: new Category(categoryId, {
+                    name: new CategoryName(category!.name),
+                }),
+                date: new BlogDate(blog.date),
+                images: await this.blogImagesRepository
+                    .findBy({
+                        blogId: blog.id,
+                    })
+                    .map((e) => new BlogImageID(e.imageId)),
+                tags: [],
+            })
+        })
+        return blogResult
+    }
 }
