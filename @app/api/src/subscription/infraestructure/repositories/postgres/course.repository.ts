@@ -10,7 +10,7 @@ import { LessonID } from 'src/subscription/domain/value-objects/lesson.id'
 import { CourseTitle } from 'src/subscription/domain/value-objects/course.title'
 
 export class CoursePostgresBySubscriptionRepository
-    implements CourseRepository
+implements CourseRepository
 {
     constructor(
         @InjectRepository(CourseORM)
@@ -28,6 +28,7 @@ export class CoursePostgresBySubscriptionRepository
             lessons: await this.lessonProvider
                 .findBy({
                     courseId: id.id,
+                    active: true,
                 })
                 .map((e) => new LessonID(e.id)),
         })

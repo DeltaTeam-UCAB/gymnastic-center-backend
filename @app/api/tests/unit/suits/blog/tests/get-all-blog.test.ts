@@ -64,7 +64,7 @@ export const body = async () => {
             description: blog.body.body,
             category: category.name.name,
             tags: blog.tags.map((tag) => tag.tag),
-            images: [image.src],
+            image: image.src,
             trainer: trainer.name.name,
             date: blog.date.date,
         },

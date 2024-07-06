@@ -69,6 +69,14 @@ export class CoursePostgresRepository implements CourseRepository {
             this.courseProvider.create(courseORM),
             ['id'],
         )
+        await this.lessonProvider.update(
+            {
+                courseId: course.id.id,
+            },
+            {
+                active: false,
+            },
+        )
         await course.lessons.asyncMap((e) =>
             this.lessonProvider.upsert(
                 this.lessonProvider.create({
@@ -78,6 +86,7 @@ export class CoursePostgresRepository implements CourseRepository {
                     title: e.title.title || '',
                     courseId: course.id.id,
                     order: course.lessons.indexOf(e),
+                    active: true,
                 }),
                 ['id'],
             ),
@@ -156,6 +165,7 @@ export class CoursePostgresRepository implements CourseRepository {
             lessons: (
                 await this.lessonProvider.findBy({
                     courseId: course.id,
+                    active: true,
                 })
             )
                 .sort((a, b) => a.order - b.order)
@@ -239,6 +249,14 @@ export class CoursePostgresRepository implements CourseRepository {
             },
             {
                 available: false,
+            },
+        )
+        await this.lessonProvider.update(
+            {
+                courseId: course.id.id,
+            },
+            {
+                active: false,
             },
         )
         return Result.success(course)

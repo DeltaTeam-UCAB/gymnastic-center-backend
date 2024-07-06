@@ -14,6 +14,10 @@ import { lastTimeChanged } from './events/last.time.changed'
 import { lessonLastTimeChanged } from './events/lesson.last.time.changed'
 import { lessonProgressChanged } from './events/lesson.progress.changed'
 import { subscriptionDeleted } from './events/subscription.deleted'
+import { lessonExist } from './exceptions/lesson.exist'
+import { lessonNotExist } from './exceptions/lesson.not.exist'
+import { lessonAdded } from './events/subscription.lesson.added'
+import { lessonRemoved } from './events/subscription.lesson.removed'
 
 export class Subscription extends AggregateRoot<SubscriptionID> {
     constructor(
@@ -88,6 +92,28 @@ export class Subscription extends AggregateRoot<SubscriptionID> {
                 id: this.id,
                 lessonId,
                 progress,
+            }),
+        )
+    }
+
+    addLesson(lesson: Lesson) {
+        if (this.lessons.some((e) => e.id == lesson.id)) throw lessonExist()
+        this.data.lessons?.push(lesson)
+        this.publish(
+            lessonAdded({
+                id: this.id,
+                lesson,
+            }),
+        )
+    }
+
+    removeLesson(lessonId: LessonID) {
+        if (!this.lessons.some((e) => e.id == lessonId)) throw lessonNotExist()
+        this.data.lessons = this.lessons.filter((e) => e.id != lessonId)
+        this.publish(
+            lessonRemoved({
+                id: this.id,
+                lesson: lessonId,
             }),
         )
     }
