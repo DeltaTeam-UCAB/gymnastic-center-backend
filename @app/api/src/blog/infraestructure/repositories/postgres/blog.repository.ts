@@ -82,12 +82,16 @@ export class BlogPostgresRepository implements BlogRepository {
     async existByTitle(title: BlogTitle): Promise<boolean> {
         const blog = await this.blogRepository.existsBy({
             title: title.title,
+            active: true,
         })
         return blog
     }
 
     async getById(id: BlogId): Promise<Optional<Blog>> {
-        const blog = await this.blogRepository.findOneBy({ id: id.id })
+        const blog = await this.blogRepository.findOneBy({
+            id: id.id,
+            active: true,
+        })
         if (!blog) {
             return null
         }
@@ -141,6 +145,7 @@ export class BlogPostgresRepository implements BlogRepository {
             where: {
                 trainer: filters.trainer,
                 category: filters.category,
+                active: true,
             },
         })
         const blogResult = await Promise.all(
@@ -179,6 +184,7 @@ export class BlogPostgresRepository implements BlogRepository {
         const blogs = await this.blogRepository.count({
             where: {
                 trainer: id.id,
+                active: true,
             },
         })
         return blogs
@@ -188,6 +194,7 @@ export class BlogPostgresRepository implements BlogRepository {
         const blogs = await this.blogRepository.count({
             where: {
                 category: id.id,
+                active: true,
             },
         })
         return blogs
