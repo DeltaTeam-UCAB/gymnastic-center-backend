@@ -23,7 +23,7 @@ export class CourseLessonRemovedEventListener {
             (json) =>
                 courseLessonRemoved({
                     id: new CourseID(json.id._id),
-                    lesson: new LessonID(json.lesson._id._id),
+                    lesson: new LessonID(json.lesson._id),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {
