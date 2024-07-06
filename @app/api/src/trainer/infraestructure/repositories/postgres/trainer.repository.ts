@@ -136,4 +136,12 @@ export class TrainerPostgresRepository implements TrainerRepository {
         })
         return exists
     }
+
+    countFollowsByClient(client: ClientID): Promise<number> {
+        return this.followRepository.count({
+            where: {
+                userId: client.id,
+            },
+        })
+    }
 }
