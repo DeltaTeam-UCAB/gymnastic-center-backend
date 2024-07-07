@@ -12,7 +12,6 @@ import { TrainerPostgresRepository } from '../../repositories/postgres/trainer.r
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { FindTrainerQuery } from 'src/trainer/application/queries/find/find.trainer.query'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { User } from 'src/user/application/models/user'
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
@@ -34,8 +33,7 @@ implements
     ) {}
 
     @Get('one/:id')
-    @Roles('CLIENT')
-    @UseGuards(UserGuard, RolesGuard)
+    @UseGuards(UserGuard)
     async execute(
         @Param('id', ParseUUIDPipe) param: string,
         @UserDecorator() user: User,

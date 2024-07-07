@@ -2,7 +2,7 @@ import { ControllerContract } from 'src/core/infraestructure/controllers/control
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { UpdateUserDTO } from './dto/update.user.dto'
 import { User as UserDecorator } from '../../decorators/user.decorator'
-import { Body, HttpException, Inject, Post, UseGuards } from '@nestjs/common'
+import { Body, HttpException, Inject, Put, UseGuards } from '@nestjs/common'
 import { UserGuard } from '../../guards/user.guard'
 import { SHA256_CRYPTO } from 'src/core/infraestructure/crypto/sha256/sha256.module'
 import { Crypto } from 'src/core/application/crypto/crypto'
@@ -22,7 +22,7 @@ import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/reposit
     bearerAuth: true,
 })
 export class UpdateUserController
-    implements
+implements
         ControllerContract<
             [user: CurrentUserResponse, data: UpdateUserDTO],
             UpdateUserResponse
@@ -32,7 +32,7 @@ export class UpdateUserController
         @Inject(SHA256_CRYPTO) private crypto: Crypto,
         private userRepo: UserPostgresRepository,
     ) {}
-    @Post('update')
+    @Put('update')
     @UseGuards(UserGuard)
     async execute(
         @UserDecorator() user: CurrentUserResponse,
