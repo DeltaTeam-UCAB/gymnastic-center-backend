@@ -17,9 +17,9 @@ export class DeleteBlogsByTrainerCommand
         const blogs = await this.blogRepository.getAllByTrainer(
             new TrainerId(data.id),
         )
-        blogs.forEach((b) => {
+        blogs.asyncForEach(async (b) => {
             b.delete()
-            this.blogRepository.delete(b)
+            await this.blogRepository.delete(b)
             this.eventPublisher.publish(b.pullEvents())
         })
         return Result.success(undefined)

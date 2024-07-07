@@ -17,9 +17,9 @@ export class DeleteCoursesByTrainerCommand
         const courses = await this.courseRepository.getAllByTrainer(
             new TrainerID(data.id),
         )
-        courses.forEach((c) => {
+        courses.asyncForEach(async (c) => {
             c.delete()
-            this.courseRepository.delete(c)
+            await this.courseRepository.delete(c)
             this.eventPublisher.publish(c.pullEvents())
         })
         return Result.success(undefined)
