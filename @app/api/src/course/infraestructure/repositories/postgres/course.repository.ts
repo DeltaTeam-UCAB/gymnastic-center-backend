@@ -261,4 +261,42 @@ export class CoursePostgresRepository implements CourseRepository {
         )
         return Result.success(course)
     }
+
+    async getAllByTrainer(id: TrainerID): Promise<Course[]> {
+        const courses = await this.courseProvider.find({
+            where: {
+                trainer: id.id,
+                available: true,
+            },
+        })
+        return courses.asyncMap(
+            async (e) =>
+                new Course(new CourseID(e.id), {
+                    category: new Category(new CategoryID(e.category), {
+                        name: new CategoryName(
+                            (
+                                await this.categoryProvider.findOneByOrFail({
+                                    id: e.category,
+                                })
+                            ).name,
+                        ),
+                    }),
+                    creationDate: new CourseDate(e.date),
+                    description: new CourseDescription(e.description),
+                    image: new CourseImage(e.image),
+                    level: new CourseLevel(e.level as LEVELS),
+                    title: new CourseTitle(e.title),
+                    trainer: new Trainer(new TrainerID(e.trainer), {
+                        name: new TrainerName(
+                            (
+                                await this.trainerProvider.findOneByOrFail({
+                                    id: e.trainer,
+                                })
+                            ).name,
+                        ),
+                    }),
+                    duration: new CourseDuration(e.weeks, e.hours),
+                }),
+        )
+    }
 }
