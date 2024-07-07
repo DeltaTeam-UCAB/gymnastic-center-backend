@@ -16,6 +16,7 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { DeleteTrainerCommand } from 'src/trainer/application/commands/delete/delete.trainer.command'
+import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
 
 @Controller({
     path: 'trainer',
@@ -38,9 +39,11 @@ export class DeleteTrainerController
     ): Promise<DeleteTrainerResponse> {
         const result = await new ErrorDecorator(
             new LoggerDecorator(
-                new DeleteTrainerCommand(
-                    this.trainerRepository,
-                    this.eventPublisher,
+                new DomainErrorParserDecorator(
+                    new DeleteTrainerCommand(
+                        this.trainerRepository,
+                        this.eventPublisher,
+                    ),
                 ),
                 new NestLogger('Delete Trainer'),
             ),

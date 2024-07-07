@@ -17,6 +17,7 @@ import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { BlogPostgresRepository } from '../../repositories/postgres/blog.repository'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { BLOG_DOC_PREFIX, BLOG_ROUTE_PREFIX } from '../prefix'
+import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -39,7 +40,12 @@ export class DeleteBlogController
     ): Promise<DeleteBlogResponse> {
         const result = await new ErrorDecorator(
             new LoggerDecorator(
-                new DeleteBlogCommand(this.blogRepository, this.eventHandler),
+                new DomainErrorParserDecorator(
+                    new DeleteBlogCommand(
+                        this.blogRepository,
+                        this.eventHandler,
+                    ),
+                ),
                 new NestLogger('Delete Blog'),
             ),
             (err) => new HttpException(err.message, 404),

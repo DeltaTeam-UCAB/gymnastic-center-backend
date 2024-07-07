@@ -23,6 +23,7 @@ import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rab
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
 
 @Controller({
     path: 'comment',
@@ -30,7 +31,7 @@ import { CurrentUserResponse } from 'src/user/application/queries/current/types/
     bearerAuth: true,
 })
 export class CreateController
-implements
+    implements
         ControllerContract<
             [body: CreateCommentDTO, user: CurrentUserResponse],
             CreateCommentResponse
@@ -64,12 +65,14 @@ implements
             new LoggerDecorator(
                 new AuditDecorator(
                     new CheckTargetExistence(
-                        new CreateCommentCommand(
-                            this.commentRepo,
-                            this.userRepo,
-                            new ConcreteDateProvider(),
-                            this.idGen,
-                            this.eventHandler,
+                        new DomainErrorParserDecorator(
+                            new CreateCommentCommand(
+                                this.commentRepo,
+                                this.userRepo,
+                                new ConcreteDateProvider(),
+                                this.idGen,
+                                this.eventHandler,
+                            ),
                         ),
                         this.lessonRepo,
                         this.blogRepo,

@@ -26,6 +26,7 @@ import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
+import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -92,7 +93,9 @@ export class CreateBlogController
             new TransactionHandlerDecorator(
                 new AuditDecorator(
                     new LoggerDecorator(
-                        commandWithCategoryValidator,
+                        new DomainErrorParserDecorator(
+                            commandWithCategoryValidator,
+                        ),
                         nestLogger,
                     ),
                     new AuditingTxtRepository(),
