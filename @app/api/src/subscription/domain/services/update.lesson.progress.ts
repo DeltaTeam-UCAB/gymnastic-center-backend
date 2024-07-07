@@ -15,7 +15,7 @@ export const updateLessonProgress: DomainService<
 > = (data) => {
     const lessonProgress = data.markAsCompleted
         ? LessonProgress.createFull()
-        : new LessonProgress((data.time * 100) / data.totalTime)
+        : new LessonProgress(Math.floor((data.time * 100) / data.totalTime))
     if (
         data.subscription.lessons.find((e) => e.id == data.lesson)!.progress <
         lessonProgress

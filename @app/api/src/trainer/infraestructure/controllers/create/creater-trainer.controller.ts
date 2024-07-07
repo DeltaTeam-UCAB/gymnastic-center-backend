@@ -18,6 +18,7 @@ import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.
 import { CurrentUserResponse } from '../../../../../src/user/application/queries/current/types/response'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
+import { ImagePostgresByTrainerRepository } from '../../repositories/postgres/image.repository'
 
 @Controller({
     path: 'trainer',
@@ -25,7 +26,7 @@ import { DomainErrorParserDecorator } from 'src/core/application/decorators/doma
     bearerAuth: true,
 })
 export class CreateTrainerController
-    implements
+implements
         ControllerContract<
             [body: CreateTrainerDTO, user: CurrentUserResponse],
             CreateTrainerResponse
@@ -34,6 +35,7 @@ export class CreateTrainerController
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
         private trainerRepo: TrainerPostgresRepository,
+        private imageRepository: ImagePostgresByTrainerRepository,
         private eventPublisher: RabbitMQEventHandler,
     ) {}
 
@@ -58,6 +60,7 @@ export class CreateTrainerController
                         new CreateTrainerCommand(
                             this.idGen,
                             this.trainerRepo,
+                            this.imageRepository,
                             this.eventPublisher,
                         ),
                     ),

@@ -10,6 +10,7 @@ import { TrainerLocation } from 'src/trainer/domain/value-objects/trainer.locati
 import { TrainerID } from 'src/trainer/domain/value-objects/trainer.id'
 import { TrainerName } from 'src/trainer/domain/value-objects/trainer.name'
 import { ClientID } from 'src/trainer/domain/value-objects/client.id'
+import { TrainerImage } from 'src/trainer/domain/value-objects/trainer.image'
 
 @Injectable()
 export class TrainerCreatedEventListener {
@@ -30,6 +31,7 @@ export class TrainerCreatedEventListener {
                     followers: (json.followers as Record<any, any>[]).map(
                         (follower) => new ClientID(follower._id),
                     ),
+                    image: new TrainerImage(json.image._image),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {

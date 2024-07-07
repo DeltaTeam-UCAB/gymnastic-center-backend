@@ -23,7 +23,7 @@ export class FollowerAddedEventListener {
             (json) =>
                 followerAdded({
                     id: new TrainerID(json.id._id),
-                    follower: new ClientID(json.follower._id._id),
+                    follower: new ClientID(json.follower._id),
                     timestamp: new Date(json.timestamp),
                 }),
             async (event) => {

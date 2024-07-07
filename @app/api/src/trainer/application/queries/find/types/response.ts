@@ -4,4 +4,5 @@ export type FindTrainerResponse = {
     location: string
     followers: number
     userFollow: boolean
+    image: string
 }

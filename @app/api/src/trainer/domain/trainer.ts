@@ -10,6 +10,7 @@ import { followerAdded } from './events/follower.added'
 import { followerRemoved } from './events/follower.removed'
 import { trainerNameChanged } from './events/trainer.name.changed'
 import { trainerDeleted } from './events/trainer.deleted'
+import { TrainerImage } from './value-objects/trainer.image'
 
 export class Trainer extends AggregateRoot<TrainerID> {
     constructor(
@@ -17,6 +18,7 @@ export class Trainer extends AggregateRoot<TrainerID> {
         private data: {
             name: TrainerName
             location: TrainerLocation
+            image: TrainerImage
             followers?: ClientID[]
         },
     ) {
@@ -27,6 +29,7 @@ export class Trainer extends AggregateRoot<TrainerID> {
                 id,
                 location: data.location,
                 _name: data.name,
+                image: data.image,
                 followers: data.followers!,
             }),
         )
@@ -42,6 +45,10 @@ export class Trainer extends AggregateRoot<TrainerID> {
 
     get followers() {
         return this.data.followers!
+    }
+
+    get image() {
+        return this.data.image
     }
 
     isFollowedBy(follower: ClientID) {

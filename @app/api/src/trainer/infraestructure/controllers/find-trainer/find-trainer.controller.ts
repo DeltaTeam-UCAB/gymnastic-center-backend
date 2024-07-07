@@ -17,6 +17,7 @@ import { User } from 'src/user/application/models/user'
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { ImagePostgresByTrainerRepository } from '../../repositories/postgres/image.repository'
 
 @Controller({
     path: 'trainer',
@@ -27,7 +28,10 @@ export class FindTrainerController
 implements
         ControllerContract<[param: string, user: User], FindTrainerResponse>
 {
-    constructor(private trainerRepo: TrainerPostgresRepository) {}
+    constructor(
+        private trainerRepo: TrainerPostgresRepository,
+        private imageRepository: ImagePostgresByTrainerRepository,
+    ) {}
 
     @Get('one/:id')
     @Roles('CLIENT')
@@ -38,7 +42,7 @@ implements
     ): Promise<FindTrainerResponse> {
         const result = await new ErrorDecorator(
             new LoggerDecorator(
-                new FindTrainerQuery(this.trainerRepo),
+                new FindTrainerQuery(this.trainerRepo, this.imageRepository),
                 new NestLogger('FindTrainer'),
             ),
             (e) => new HttpException(e.message, 400),

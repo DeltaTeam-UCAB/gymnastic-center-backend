@@ -12,6 +12,7 @@ import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { FindManyTrainersResponse } from 'src/trainer/application/queries/find-many/types/response'
 import { FindManyTrainersQuery } from 'src/trainer/application/queries/find-many/find-many-trainers-query'
 import { FindManyTrainersDTO } from './dto/dto'
+import { ImagePostgresByTrainerRepository } from '../../repositories/postgres/image.repository'
 
 @Controller({
     path: 'trainer',
@@ -25,7 +26,10 @@ export class FindTrainerController
             FindManyTrainersResponse[]
         >
 {
-    constructor(private trainerRepo: TrainerPostgresRepository) {}
+    constructor(
+        private trainerRepo: TrainerPostgresRepository,
+        private imageRepository: ImagePostgresByTrainerRepository,
+    ) {}
 
     @Get('many')
     @Roles('CLIENT')
@@ -36,7 +40,10 @@ export class FindTrainerController
     ): Promise<FindManyTrainersResponse[]> {
         const result = await new ErrorDecorator(
             new LoggerDecorator(
-                new FindManyTrainersQuery(this.trainerRepo),
+                new FindManyTrainersQuery(
+                    this.trainerRepo,
+                    this.imageRepository,
+                ),
                 new NestLogger('FindManyTrainers'),
             ),
             (e) => new HttpException(e.message, 400),
