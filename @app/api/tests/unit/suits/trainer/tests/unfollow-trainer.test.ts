@@ -3,6 +3,7 @@ import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
 import { ToggleFolowCommand } from '../../../../../src/trainer/application/commands/toggle-follow/toggle.follow.command'
 import { ToggleFollowDTO } from '../../../../../src/trainer/application/commands/toggle-follow/types/dto'
 import { TrainerID } from '../../../../../src/trainer/domain/value-objects/trainer.id'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 
 export const name = 'Should unfollow trainer'
 
@@ -21,7 +22,10 @@ export const body = async () => {
             followers: [userId],
         }),
     ])
-    const toggleFollowCommand = new ToggleFolowCommand(trainerRepo)
+    const toggleFollowCommand = new ToggleFolowCommand(
+        trainerRepo,
+        eventPublisherStub,
+    )
     await toggleFollowCommand.execute(followData)
     const trainer = await trainerRepo.getById(new TrainerID(trainerId))
     lookFor(trainer).toBeDefined()

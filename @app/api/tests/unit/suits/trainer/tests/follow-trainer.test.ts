@@ -4,6 +4,7 @@ import { ToggleFolowCommand } from '../../../../../src/trainer/application/comma
 import { ToggleFollowDTO } from '../../../../../src/trainer/application/commands/toggle-follow/types/dto'
 import { TrainerID } from '../../../../../src/trainer/domain/value-objects/trainer.id'
 import { ClientID } from '../../../../../src/trainer/domain/value-objects/client.id'
+import { eventPublisherStub } from './utils/event.publisher.stup'
 
 export const name = 'Should follow trainer'
 
@@ -21,7 +22,10 @@ export const body = async () => {
             location: 'test location',
         }),
     ])
-    const toggleFollowCommand = new ToggleFolowCommand(trainerRepo)
+    const toggleFollowCommand = new ToggleFolowCommand(
+        trainerRepo,
+        eventPublisherStub,
+    )
     await toggleFollowCommand.execute(followData)
     const trainer = await trainerRepo.getById(new TrainerID(trainerId))
     lookFor(trainer).toBeDefined()

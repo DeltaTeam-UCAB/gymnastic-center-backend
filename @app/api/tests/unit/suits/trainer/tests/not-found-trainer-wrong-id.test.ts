@@ -1,6 +1,7 @@
 import { TRAINER_NOT_FOUND } from '../../../../../src/trainer/application/errors/trainer.not.found'
 import { FindTrainerQuery } from '../../../../../src/trainer/application/queries/find/find.trainer.query'
 import { FindTrainerDTO } from '../../../../../src/trainer/application/queries/find/types/dto'
+import { ImageRepositoryMock } from './utils/image.repository.mock'
 import { createTrainer } from './utils/trainer.factory'
 import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
 
@@ -16,7 +17,10 @@ export const body = async () => {
             id: '7a884fbd-8c0e-4991-9fad-bb1c040a1515',
         }),
     ])
-    const result = await new FindTrainerQuery(trainerRepo).execute(data)
+    const result = await new FindTrainerQuery(
+        trainerRepo,
+        new ImageRepositoryMock(),
+    ).execute(data)
     lookFor(
         result.handleError((e) => {
             lookFor(e.name).equals(TRAINER_NOT_FOUND)

@@ -11,6 +11,7 @@ import { ClientID } from 'src/trainer/domain/value-objects/client.id'
 import { TrainerID } from 'src/trainer/domain/value-objects/trainer.id'
 import { TrainerName } from 'src/trainer/domain/value-objects/trainer.name'
 import { TrainerLocation } from 'src/trainer/domain/value-objects/trainer.location'
+import { TrainerImage } from 'src/trainer/domain/value-objects/trainer.image'
 
 export class TrainerPostgresRepository implements TrainerRepository {
     constructor(
@@ -26,6 +27,7 @@ export class TrainerPostgresRepository implements TrainerRepository {
                 id: trainer.id.id,
                 name: trainer.name.name,
                 location: trainer.location.location,
+                image: trainer.image.image,
             }),
             ['id'],
         )
@@ -62,6 +64,7 @@ export class TrainerPostgresRepository implements TrainerRepository {
             name: new TrainerName(trainer.name),
             location: new TrainerLocation(trainer.location),
             followers,
+            image: new TrainerImage(trainer.image),
         })
     }
 
@@ -78,6 +81,7 @@ export class TrainerPostgresRepository implements TrainerRepository {
                 new Trainer(new TrainerID(t.id), {
                     name: new TrainerName(t.name),
                     location: new TrainerLocation(t.location),
+                    image: new TrainerImage(t.image),
                     followers: await this.followRepository
                         .find({
                             where: {
@@ -125,6 +129,7 @@ export class TrainerPostgresRepository implements TrainerRepository {
                 new Trainer(new TrainerID(t.id), {
                     name: new TrainerName(t.name),
                     location: new TrainerLocation(t.location),
+                    image: new TrainerImage(t.image),
                     followers: await this.followRepository
                         .find({
                             where: {

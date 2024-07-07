@@ -7,11 +7,15 @@ import { ClientID } from 'src/trainer/domain/value-objects/client.id'
 import { TrainerID } from 'src/trainer/domain/value-objects/trainer.id'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
 import { trainerNotFoundError } from '../../errors/trainer.not.found'
+import { EventPublisher } from 'src/core/application/event-handler/event.handler'
 
 export class ToggleFolowCommand
     implements ApplicationService<ToggleFollowDTO, ToggleFollowResponse>
 {
-    constructor(private trainerRepo: TrainerRepository) {}
+    constructor(
+        private trainerRepo: TrainerRepository,
+        private eventPublisher: EventPublisher,
+    ) {}
 
     async execute(
         data: ToggleFollowDTO,
@@ -28,6 +32,7 @@ export class ToggleFolowCommand
         }
         const result = await this.trainerRepo.save(trainer)
         if (result.isError()) return result.convertToOther()
+        this.eventPublisher.publish(trainer.pullEvents())
         return Result.success({ userFollow: !userFollow })
     }
 }

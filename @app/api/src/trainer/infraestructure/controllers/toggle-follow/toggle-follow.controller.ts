@@ -18,6 +18,7 @@ import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
+import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 
 @Controller({
     path: 'trainer',
@@ -25,10 +26,13 @@ import { DomainErrorParserDecorator } from 'src/core/application/decorators/doma
     bearerAuth: true,
 })
 export class ToggleFollowController
-    implements
+implements
         ControllerContract<[param: string, user: User], ToggleFollowResponse>
 {
-    constructor(private trainerRepo: TrainerPostgresRepository) {}
+    constructor(
+        private trainerRepo: TrainerPostgresRepository,
+        private eventPublisher: RabbitMQEventHandler,
+    ) {}
 
     @Post('toggle/follow/:id')
     @Roles('CLIENT')
@@ -40,7 +44,10 @@ export class ToggleFollowController
         const result = await new ErrorDecorator(
             new LoggerDecorator(
                 new DomainErrorParserDecorator(
-                    new ToggleFolowCommand(this.trainerRepo),
+                    new ToggleFolowCommand(
+                        this.trainerRepo,
+                        this.eventPublisher,
+                    ),
                 ),
                 new NestLogger('ToggleFollow'),
             ),

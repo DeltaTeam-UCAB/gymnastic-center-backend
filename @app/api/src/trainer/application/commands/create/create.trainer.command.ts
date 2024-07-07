@@ -10,13 +10,17 @@ import { TrainerID } from 'src/trainer/domain/value-objects/trainer.id'
 import { TrainerName } from 'src/trainer/domain/value-objects/trainer.name'
 import { TrainerLocation } from 'src/trainer/domain/value-objects/trainer.location'
 import { EventPublisher } from 'src/core/application/event-handler/event.handler'
+import { TrainerImage } from 'src/trainer/domain/value-objects/trainer.image'
+import { ImageRepository } from '../../repositories/image.repository'
+import { imageNotExistError } from '../../errors/image.not.exist'
 
 export class CreateTrainerCommand
-    implements ApplicationService<CreateTrainerDto, CreateTrainerResponse>
+implements ApplicationService<CreateTrainerDto, CreateTrainerResponse>
 {
     constructor(
         private idGenerator: IDGenerator<string>,
         private trainerRepository: TrainerRepository,
+        private imageRepository: ImageRepository,
         private eventPublisher: EventPublisher,
     ) {}
     async execute(
@@ -27,9 +31,16 @@ export class CreateTrainerCommand
         )
         if (isTrainerName) return Result.error(trainerNameInvalidError())
         const trainerId = this.idGenerator.generate()
+        if (
+            !(await this.imageRepository.existById(
+                new TrainerImage(data.image),
+            ))
+        )
+            return Result.error(imageNotExistError())
         const trainer = new Trainer(new TrainerID(trainerId), {
             name: new TrainerName(data.name),
             location: new TrainerLocation(data.location),
+            image: new TrainerImage(data.image),
         })
         const result = await this.trainerRepository.save(trainer)
         if (result.isError()) return result.convertToOther()
