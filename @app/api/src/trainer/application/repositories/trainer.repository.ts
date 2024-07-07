@@ -16,4 +16,5 @@ export interface TrainerRepository {
     getAll(perPage: number, page: number): Promise<Trainer[]>
     existByName(name: TrainerName): Promise<boolean>
     countFollowsByClient(client: ClientID): Promise<number>
+    delete(trainer: Trainer): Promise<Result<Trainer>>
 }

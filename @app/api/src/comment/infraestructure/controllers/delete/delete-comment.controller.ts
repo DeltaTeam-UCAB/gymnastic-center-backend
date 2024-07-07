@@ -18,6 +18,7 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { DeleteCommentCommand } from 'src/comment/application/commands/delete/delete.comment.command'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
 
 @Controller({
     path: 'comment',
@@ -44,7 +45,12 @@ export class DeleteCommentController
     ): Promise<DeleteCommentResponse> {
         const result = await new ErrorDecorator(
             new LoggerDecorator(
-                new DeleteCommentCommand(this.commentRepo, this.eventHandler),
+                new DomainErrorParserDecorator(
+                    new DeleteCommentCommand(
+                        this.commentRepo,
+                        this.eventHandler,
+                    ),
+                ),
                 new NestLogger('Delete Comment'),
             ),
             (err) => new HttpException(err.message, 404),

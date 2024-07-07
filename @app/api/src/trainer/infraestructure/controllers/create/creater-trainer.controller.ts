@@ -17,6 +17,7 @@ import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/reposit
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { CurrentUserResponse } from '../../../../../src/user/application/queries/current/types/response'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
+import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
 
 @Controller({
     path: 'trainer',
@@ -53,10 +54,12 @@ export class CreateTrainerController
         const result = await new ErrorDecorator(
             new AuditDecorator(
                 new LoggerDecorator(
-                    new CreateTrainerCommand(
-                        this.idGen,
-                        this.trainerRepo,
-                        this.eventPublisher,
+                    new DomainErrorParserDecorator(
+                        new CreateTrainerCommand(
+                            this.idGen,
+                            this.trainerRepo,
+                            this.eventPublisher,
+                        ),
                     ),
                     new NestLogger('CreateTrainer'),
                 ),

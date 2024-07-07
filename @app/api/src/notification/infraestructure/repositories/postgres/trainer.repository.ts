@@ -8,7 +8,7 @@ import { Optional } from '@mono/types-utils'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
 
 export class TrainerPostgresByNotificationRepository
-implements TrainerRepository
+    implements TrainerRepository
 {
     constructor(
         @InjectRepository(TrainerORM)
@@ -20,6 +20,7 @@ implements TrainerRepository
     async getById(id: string): Promise<Optional<Trainer>> {
         const trainer = await this.trainerRepository.findOneBy({
             id: id,
+            active: true,
         })
         if (!isNotNull(trainer)) {
             return null

@@ -206,4 +206,43 @@ export class BlogPostgresTransactionalRepository implements BlogRepository {
         await this.queryRunner.manager.save(blogORM)
         return Result.success(blog)
     }
+
+    async getAllByTrainer(trainer: TrainerId): Promise<Blog[]> {
+        const blogs = await this.queryRunner.manager.find(BlogORM, {
+            where: {
+                trainer: trainer.id,
+                active: true,
+            },
+        })
+        const blogResult = blogs.asyncMap(async (blog) => {
+            const trainer = await this.queryRunner.manager.findOneBy(Trainer, {
+                id: new TrainerId(blog.trainer),
+            })
+            if (!trainer) throw new Error('Trainer not found')
+            const trainerId = new TrainerId(trainer.id.id)
+
+            const category = await this.queryRunner.manager.findOneBy(
+                Category,
+                { id: new CategoryId(blog.category) },
+            )
+            if (!category) throw new Error('Category not found')
+            const categoryId = new CategoryId(category.id.id)
+
+            return new Blog(new BlogId(blog.id), {
+                title: new BlogTitle(blog.title),
+                body: new BlogBody(blog.body),
+                trainer: new Trainer(trainerId, {
+                    name: new TrainerName(trainer.name.name),
+                }),
+                category: new Category(categoryId, {
+                    name: new CategoryName(category.name.name),
+                }),
+                date: new BlogDate(blog.date),
+                images: [],
+                tags: [],
+            })
+        })
+
+        return blogResult
+    }
 }

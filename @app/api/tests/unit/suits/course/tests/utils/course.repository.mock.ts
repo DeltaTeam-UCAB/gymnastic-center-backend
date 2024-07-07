@@ -48,4 +48,8 @@ export class CourseRepositoryMock implements CourseRepository {
         this.courses = this.courses.filter((e) => e.id != course.id)
         return Result.success(course)
     }
+
+    async getAllByTrainer(id: TrainerID): Promise<Course[]> {
+        return this.courses.filter((c) => c.trainer.id == id)
+    }
 }

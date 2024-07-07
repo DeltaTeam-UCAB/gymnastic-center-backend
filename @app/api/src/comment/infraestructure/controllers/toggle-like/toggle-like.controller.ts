@@ -19,6 +19,7 @@ import { CheckCommentExistence } from 'src/comment/application/decorators/check-
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
+import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
 
 @Controller({
     path: 'comment',
@@ -26,7 +27,7 @@ import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rab
     bearerAuth: true,
 })
 export class ToggleLikeController
-implements
+    implements
         ControllerContract<[param: string, user: User], ToggleLikeResponse>
 {
     constructor(
@@ -44,9 +45,11 @@ implements
         const result = await new ErrorDecorator(
             new LoggerDecorator(
                 new CheckCommentExistence(
-                    new ToggleLikeCommand(
-                        this.commentRepository,
-                        this.eventHandler,
+                    new DomainErrorParserDecorator(
+                        new ToggleLikeCommand(
+                            this.commentRepository,
+                            this.eventHandler,
+                        ),
                     ),
                     this.commentRepository,
                 ),

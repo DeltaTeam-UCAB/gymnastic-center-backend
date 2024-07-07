@@ -21,4 +21,5 @@ export interface CourseRepository {
     countByTrainer(id: TrainerID): Promise<number>
     countByCategory(id: CategoryID): Promise<number>
     delete(course: Course): Promise<Result<Course>>
+    getAllByTrainer(id: TrainerID): Promise<Course[]>
 }

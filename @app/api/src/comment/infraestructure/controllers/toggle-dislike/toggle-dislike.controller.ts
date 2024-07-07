@@ -19,6 +19,7 @@ import { CheckCommentExistence } from 'src/comment/application/decorators/check-
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
+import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
 
 @Controller({
     path: 'comment',
@@ -44,9 +45,11 @@ export class ToggleDislikeController
         const result = await new ErrorDecorator(
             new LoggerDecorator(
                 new CheckCommentExistence(
-                    new ToggleDislikeCommand(
-                        this.commentRepository,
-                        this.eventHandler,
+                    new DomainErrorParserDecorator(
+                        new ToggleDislikeCommand(
+                            this.commentRepository,
+                            this.eventHandler,
+                        ),
                     ),
                     this.commentRepository,
                 ),

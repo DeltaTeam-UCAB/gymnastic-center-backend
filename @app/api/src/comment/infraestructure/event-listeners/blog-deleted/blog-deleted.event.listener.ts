@@ -17,7 +17,6 @@ export class BlogDeletedCommentEventListener {
     }
 
     load() {
-        console.log('aaa')
         this.eventHandler.listen(
             BLOG_DELETED,
             (json) =>

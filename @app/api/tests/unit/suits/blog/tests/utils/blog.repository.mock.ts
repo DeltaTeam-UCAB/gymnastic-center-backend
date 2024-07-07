@@ -59,4 +59,8 @@ export class BlogRepositoryMock implements BlogRepository {
         this.blogs.filter((b) => b.id != blog.id)
         return Result.success(blog)
     }
+
+    async getAllByTrainer(trainer: TrainerId): Promise<Blog[]> {
+        return this.blogs.filter((b) => b.trainer.id == trainer)
+    }
 }
