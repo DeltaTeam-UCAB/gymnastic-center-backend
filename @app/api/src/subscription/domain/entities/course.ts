@@ -16,7 +16,9 @@ export class Course extends Entity<CourseID> implements Clonable<Course> {
     }
 
     clone(): Course {
-        return new Course(this.id, this.data)
+        return new Course(this.id, {
+            ...this.data,
+        })
     }
 
     get title() {

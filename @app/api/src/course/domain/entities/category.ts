@@ -14,7 +14,9 @@ export class Category extends Entity<CategoryID> implements Clonable<Category> {
     }
 
     clone(): Category {
-        return new Category(this.id, this.data)
+        return new Category(this.id, {
+            ...this.data,
+        })
     }
 
     get name() {

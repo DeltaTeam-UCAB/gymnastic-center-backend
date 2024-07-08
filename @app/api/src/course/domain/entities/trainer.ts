@@ -14,7 +14,9 @@ export class Trainer extends Entity<TrainerID> implements Clonable<Trainer> {
     }
 
     clone(): Trainer {
-        return new Trainer(this.id, this.data)
+        return new Trainer(this.id, {
+            ...this.data,
+        })
     }
 
     get name() {

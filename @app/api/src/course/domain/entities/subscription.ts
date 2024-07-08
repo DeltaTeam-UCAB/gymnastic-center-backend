@@ -21,7 +21,9 @@ export class Subscription
     }
 
     clone(): Subscription {
-        return new Subscription(this.id, this.data)
+        return new Subscription(this.id, {
+            ...this.data,
+        })
     }
 
     get progress() {

@@ -14,7 +14,9 @@ export class Client extends Entity<ClientID> implements Clonable<Client> {
     }
 
     clone(): Client {
-        return new Client(this.id, this.data)
+        return new Client(this.id, {
+            ...this.data,
+        })
     }
 
     get name() {
