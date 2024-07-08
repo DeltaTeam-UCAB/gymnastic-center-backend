@@ -10,6 +10,7 @@ import { CourseID } from '../../../domain/value-objects/course.id'
 import { CategoryID } from '../../../domain/value-objects/category.id'
 import { Category } from 'src/course/domain/entities/category'
 import { CategoryName } from 'src/course/domain/value-objects/category.name'
+import { COURSE_LESSON_ADDED } from 'src/course/domain/events/course.lesson.added'
 
 @Injectable()
 export class CourseCategoryChangedEventListener {
@@ -22,6 +23,7 @@ export class CourseCategoryChangedEventListener {
     load() {
         this.eventHandle.listen(
             COURSE_CATEGORY_CHANGED,
+            COURSE_LESSON_ADDED + '_STORAGE',
             (json) =>
                 courseCategoryChanged({
                     id: new CourseID(json.id._id),

@@ -20,6 +20,7 @@ export class courseTagAddedEventListener {
     load() {
         this.eventHandle.listen(
             COURSE_TAG_ADDED,
+            COURSE_TAG_ADDED + '_STORAGE',
             (json) =>
                 courseTagAdded({
                     id: new CourseID(json.id._id),

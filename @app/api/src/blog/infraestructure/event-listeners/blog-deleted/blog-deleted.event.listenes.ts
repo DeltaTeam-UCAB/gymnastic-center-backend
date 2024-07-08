@@ -19,6 +19,7 @@ export class BlogDeletedEventListener {
     load() {
         this.eventHandler.listen(
             BLOG_DELETED,
+            BLOG_DELETED + '_STORAGE',
             (json) =>
                 blogDeleted({
                     id: new BlogId(json.id._id),

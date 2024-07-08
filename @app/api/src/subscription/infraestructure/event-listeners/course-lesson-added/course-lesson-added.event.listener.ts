@@ -28,6 +28,7 @@ export class CourseLessonAddedEventListener {
     load() {
         this.eventHandler.listen(
             COURSE_LESSON_ADDED,
+            COURSE_LESSON_ADDED + '_SYNC_SUBSCRIPTIONS',
             (json) =>
                 courseLessonAdded({
                     id: new CourseID(json.id._id),

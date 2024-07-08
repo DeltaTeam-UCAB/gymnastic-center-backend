@@ -25,6 +25,7 @@ export class BlogTrainerChangedEventListener {
     load() {
         this.eventHandler.listen(
             BLOG_TRAINER_CHANGED,
+            BLOG_TRAINER_CHANGED + '_STORAGE',
             (json) =>
                 blogTrainerChanged({
                     id: new BlogId(json.id._id),

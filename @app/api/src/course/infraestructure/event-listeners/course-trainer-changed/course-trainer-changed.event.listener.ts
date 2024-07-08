@@ -22,6 +22,7 @@ export class courseTrainerChangedEventListener {
     load() {
         this.eventHandle.listen(
             COURSE_TRAINER_CHANGED,
+            COURSE_TRAINER_CHANGED + '_STORAGE',
             (json) =>
                 courseTrainerChanged({
                     id: new CourseID(json.id._id),

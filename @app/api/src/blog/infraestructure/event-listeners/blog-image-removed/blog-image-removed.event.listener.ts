@@ -23,6 +23,7 @@ export class BlogImageRemoveEventListener {
     load() {
         this.eventHandler.listen(
             BLOG_IMAGE_REMOVED,
+            BLOG_IMAGE_REMOVED + '_STORAGE',
             (json) =>
                 blogImageRemoved({
                     id: new BlogId(json.id._id),

@@ -20,6 +20,7 @@ export class SubscriptionDeletedEventListener {
     load() {
         this.eventhandle.listen(
             SUBSCRIPTION_DELETED,
+            SUBSCRIPTION_DELETED + '_STORAGE',
             (json) =>
                 subscriptionDeleted({
                     id: new SubscriptionID(json.id._id),

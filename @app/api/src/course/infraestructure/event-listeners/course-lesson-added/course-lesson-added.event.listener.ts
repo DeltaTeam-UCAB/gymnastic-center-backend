@@ -24,6 +24,7 @@ export class CourseLessonAddedEventListener {
     load() {
         this.eventHandle.listen(
             COURSE_LESSON_ADDED,
+            COURSE_LESSON_ADDED + '_STORAGE',
             (json) =>
                 courseLessonAdded({
                     id: new CourseID(json.id._id),

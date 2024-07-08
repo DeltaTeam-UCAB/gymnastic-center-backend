@@ -20,6 +20,7 @@ export class CommentContentChangedEventListener {
     load() {
         this.eventHandle.listen(
             COMMENT_CONTENT_CHANGED,
+            COMMENT_CONTENT_CHANGED + '_STORAGE',
             (json) =>
                 commentContentChanged({
                     id: new CommentID(json.id._id),

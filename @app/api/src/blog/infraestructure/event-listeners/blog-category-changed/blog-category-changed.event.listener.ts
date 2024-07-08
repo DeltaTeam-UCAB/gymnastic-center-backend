@@ -25,6 +25,7 @@ export class BlogCategoryChangedEventListener {
     load() {
         this.eventHandler.listen(
             BLOG_CATEGORY_CHANGED,
+            BLOG_CATEGORY_CHANGED + '_STORAGE',
             (json) =>
                 blogCategoryChanged({
                     id: new BlogId(json.id._id),

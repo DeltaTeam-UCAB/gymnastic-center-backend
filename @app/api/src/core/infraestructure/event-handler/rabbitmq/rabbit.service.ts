@@ -1,49 +1,48 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { EventPublisher } from 'src/core/application/event-handler/event.handler'
 import { DomainEventBase } from 'src/core/domain/events/event'
-import amqp, { Channel } from 'amqplib'
+import amqp from 'amqplib'
 
 const connection = await amqp.connect(process.env.QUEUE_URL ?? '')
-const callbacks: Record<string, ((e: DomainEventBase) => Promise<void>)[]> = {}
-const channels: Record<string, Channel> = {}
+const queues: Record<string, string[]> = {}
 
 @Injectable()
 export class RabbitMQEventHandler implements EventPublisher {
     publish(events: DomainEventBase[]): void {
         events.asyncForEach(async (event) => {
             const channel = await connection.createChannel()
-            await channel.assertQueue(event.name, {
-                durable: false,
+            const queuesToPublish = queues[event.name] ?? []
+            await queuesToPublish.asyncForEach(async (queue) => {
+                await channel.assertQueue(queue, {
+                    durable: false,
+                })
+                channel.sendToQueue(queue, Buffer.from(JSON.stringify(event)))
             })
-            channel.sendToQueue(event.name, Buffer.from(JSON.stringify(event)))
             await channel.close()
         })
     }
     async listen<T extends DomainEventBase>(
         name: string,
+        queueName: string,
         mapper: (json: Record<any, any>) => T,
         callback: (e: T) => Promise<void>,
     ) {
-        if (!callbacks[name]) callbacks[name] = []
-        callbacks[name].push(callback)
-        if (!channels[name]) {
-            const channel = await connection.createChannel()
-            await channel.assertQueue(name, {
-                durable: false,
-            })
-            channels[name] = channel
-            await channel.consume(
-                name,
-                (data) => {
-                    if (!data) return
-                    Object.values(callbacks[name]).forEach((callback) =>
-                        callback(mapper(JSON.parse(data.content.toString()))),
-                    )
-                },
-                {
-                    noAck: true,
-                },
-            )
-        }
+        if (!queues[name]) queues[name] = []
+        queues[name].push(queueName)
+        const channel = await connection.createChannel()
+        await channel.assertQueue(queueName, {
+            durable: false,
+        })
+        await channel.consume(
+            queueName,
+            (data) => {
+                if (!data) return
+                new Logger('QUEUE ENTRY').log(queueName)
+                callback(mapper(JSON.parse(data.content.toString())))
+            },
+            {
+                noAck: true,
+            },
+        )
     }
 }

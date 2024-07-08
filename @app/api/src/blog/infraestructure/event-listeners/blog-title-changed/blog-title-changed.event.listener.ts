@@ -23,6 +23,7 @@ export class BlogTitleChangedEventListener {
     load() {
         this.eventHandler.listen(
             BLOG_TITLE_CHANGED,
+            BLOG_TITLE_CHANGED + '_STORAGE',
             (json) =>
                 blogTitleChanged({
                     id: new BlogId(json.id._id),

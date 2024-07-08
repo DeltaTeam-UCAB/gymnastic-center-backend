@@ -19,6 +19,7 @@ export class CourseDeletedEventListener {
     load() {
         this.eventHandle.listen(
             COURSE_DELETED,
+            COURSE_DELETED + '_STORAGE',
             (json) =>
                 courseDeleted({
                     id: new CourseID(json.id._id),

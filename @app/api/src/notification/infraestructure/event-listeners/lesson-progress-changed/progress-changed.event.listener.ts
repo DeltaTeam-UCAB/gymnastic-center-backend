@@ -34,6 +34,7 @@ export class ProgressChangedEventListener {
     load() {
         this.eventHandler.listen(
             LESSON_PROGRESS_CHANGED,
+            LESSON_PROGRESS_CHANGED + '_NOTIFY_COURSE_COMPLETED',
             (json) =>
                 lessonProgressChanged({
                     id: new SubscriptionID(json.id._id),

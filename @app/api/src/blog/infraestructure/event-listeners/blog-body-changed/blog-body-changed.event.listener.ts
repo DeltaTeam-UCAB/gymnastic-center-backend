@@ -23,6 +23,7 @@ export class BlogBodyChangedEventListener {
     load() {
         this.eventHandler.listen(
             BLOG_BODY_CHANGED,
+            BLOG_BODY_CHANGED + '_STORAGE',
             (json) =>
                 blogBodyChanged({
                     id: new BlogId(json.id._id),

@@ -20,6 +20,7 @@ export class CommentRemovedLikeEventListener {
     load() {
         this.eventHandle.listen(
             COMMENT_REMOVED_LIKE,
+            COMMENT_REMOVED_LIKE + '_STORAGE',
             (json) =>
                 commentRemovedLike({
                     id: new CommentID(json.id._id),

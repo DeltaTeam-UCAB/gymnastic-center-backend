@@ -23,6 +23,7 @@ export class BlogImageAddedEventListener {
     load() {
         this.eventHandler.listen(
             BLOG_IMAGE_ADDED,
+            BLOG_IMAGE_ADDED + '_STORAGE',
             (json) =>
                 blogImageAdded({
                     id: new BlogId(json.id._id),

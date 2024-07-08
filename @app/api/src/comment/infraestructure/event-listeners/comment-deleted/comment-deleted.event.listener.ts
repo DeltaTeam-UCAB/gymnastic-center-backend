@@ -19,6 +19,7 @@ export class CommentDeletedEventListener {
     load() {
         this.eventHandle.listen(
             COMMENT_DELETED,
+            COMMENT_DELETED + '_STORAGE',
             (json) =>
                 commentDeleted({
                     id: new CommentID(json.id._id),

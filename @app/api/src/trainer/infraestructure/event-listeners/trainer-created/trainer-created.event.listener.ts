@@ -23,6 +23,7 @@ export class TrainerCreatedEventListener {
     load() {
         this.eventHandle.listen(
             TRAINER_CREATED,
+            TRAINER_CREATED + '_STORAGE',
             (json) =>
                 trainerCreated({
                     id: new TrainerID(json.id._id),

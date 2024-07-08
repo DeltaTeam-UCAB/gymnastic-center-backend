@@ -20,6 +20,7 @@ export class CourseLessonRemovedEventListener {
     load() {
         this.eventHandle.listen(
             COURSE_LESSON_REMOVED,
+            COURSE_LESSON_REMOVED + '_STORAGE',
             (json) =>
                 courseLessonRemoved({
                     id: new CourseID(json.id._id),
