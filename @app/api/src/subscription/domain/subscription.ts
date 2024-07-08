@@ -71,7 +71,7 @@ export class Subscription extends AggregateRoot<SubscriptionID> {
     }
 
     changeLessonLastTime(lessonId: LessonID, lastTime: LessonLastTime) {
-        const lesson = this.lessons.find((e) => e.id == lessonId)
+        const lesson = this.data.lessons.find((e) => e.id == lessonId)
         if (!lesson) throw lessonNotFound()
         lesson.changeLastTime(lastTime)
         this.publish(
@@ -84,7 +84,7 @@ export class Subscription extends AggregateRoot<SubscriptionID> {
     }
 
     changeLessonProgress(lessonId: LessonID, progress: LessonProgress) {
-        const lesson = this.lessons.find((e) => e.id == lessonId)
+        const lesson = this.data.lessons.find((e) => e.id == lessonId)
         if (!lesson) throw lessonNotFound()
         lesson.changeProgress(progress)
         this.publish(
