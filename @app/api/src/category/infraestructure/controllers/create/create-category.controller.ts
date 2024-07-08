@@ -14,7 +14,6 @@ import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { CategoryPostgresRepository } from '../../repositories/postgres/category.repository'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { CreateCategoryCommand } from 'src/category/application/commands/create/create.category.command'
-import { IMAGE_NOT_FOUND } from 'src/image/application/error/image.not.found'
 import { CATEGORY_NAME_EXIST } from 'src/category/application/errors/category.name.exist'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
@@ -26,6 +25,7 @@ import { CurrentUserResponse } from 'src/user/application/queries/current/types/
 import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
+import { IMAGE_NOT_FOUND } from 'src/category/application/errors/image.not.found'
 
 @Controller({
     path: 'category',
@@ -33,7 +33,7 @@ import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
     bearerAuth: true,
 })
 export class CreateCategoryController
-implements
+    implements
         ControllerContract<
             [body: CreateCategoryDTO, user: CurrentUserResponse],
             CreateCategoryResponse
