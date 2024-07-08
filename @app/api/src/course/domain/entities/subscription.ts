@@ -3,8 +3,12 @@ import { SubscriptionID } from '../value-objects/subscription.id'
 import { SubscriptionProgress } from '../value-objects/subscription.progress'
 import { ClientID } from '../value-objects/client.id'
 import { CourseID } from '../value-objects/course.id'
+import { Clonable } from 'src/core/domain/clonable/clonable'
 
-export class Subscription extends Entity<SubscriptionID> {
+export class Subscription
+    extends Entity<SubscriptionID>
+    implements Clonable<Subscription>
+{
     constructor(
         id: SubscriptionID,
         private data: {
@@ -14,6 +18,10 @@ export class Subscription extends Entity<SubscriptionID> {
         },
     ) {
         super(id)
+    }
+
+    clone(): Subscription {
+        return new Subscription(this.id, this.data)
     }
 
     get progress() {

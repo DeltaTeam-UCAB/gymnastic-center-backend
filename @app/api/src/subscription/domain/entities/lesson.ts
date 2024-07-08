@@ -3,8 +3,9 @@ import { LessonID } from '../value-objects/lesson.id'
 import { LessonLastTime } from '../value-objects/lesson.last.time'
 import { LessonProgress } from '../value-objects/lesson.progress'
 import { unvalidProgress } from '../exceptions/unvalid.progress'
+import { Clonable } from 'src/core/domain/clonable/clonable'
 
-export class Lesson extends Entity<LessonID> {
+export class Lesson extends Entity<LessonID> implements Clonable<Lesson> {
     constructor(
         id: LessonID,
         private data: {
@@ -13,6 +14,10 @@ export class Lesson extends Entity<LessonID> {
         },
     ) {
         super(id)
+    }
+
+    clone(): Lesson {
+        return new Lesson(this.id, this.data)
     }
 
     get lastTime() {

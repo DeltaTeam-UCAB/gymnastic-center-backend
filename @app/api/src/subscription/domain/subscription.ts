@@ -56,7 +56,7 @@ export class Subscription extends AggregateRoot<SubscriptionID> {
     }
 
     get lessons() {
-        return this.data.lessons
+        return this.data.lessons.map((e) => e.clone())
     }
 
     changeLastTime(lastTime: Time) {

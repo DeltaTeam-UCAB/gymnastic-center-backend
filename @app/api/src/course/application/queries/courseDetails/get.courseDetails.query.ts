@@ -46,7 +46,7 @@ implements
             image: image.src,
             durationWeeks: course.duration.weeks,
             durationMinutes: course.duration.hours,
-            lessons: await course.lessons.asyncMap(async (lesson) => ({
+            lessons: await course.lessons.asyncMap(async (lesson, index) => ({
                 id: lesson.id.id,
                 title: lesson.title.title,
                 content: lesson.content.content,
@@ -55,7 +55,7 @@ implements
                         new LessonVideo(lesson.video.video),
                     )) as Video
                 ).src,
-                order: course.lessons.indexOf(lesson) + 1,
+                order: index + 1,
             })),
         })
     }

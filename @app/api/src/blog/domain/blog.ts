@@ -50,19 +50,19 @@ export class Blog extends AggregateRoot<BlogId> {
     }
 
     get images() {
-        return this.data.images
+        return [...this.data.images]
     }
 
     get tags() {
-        return this.data.tags
+        return [...this.data.tags]
     }
 
     get trainer() {
-        return this.data.trainer
+        return this.data.trainer.clone()
     }
 
     get category() {
-        return this.data.category
+        return this.data.category.clone()
     }
 
     get date() {

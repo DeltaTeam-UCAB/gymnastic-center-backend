@@ -44,7 +44,7 @@ export class Trainer extends AggregateRoot<TrainerID> {
     }
 
     get followers() {
-        return this.data.followers!
+        return [...this.data.followers!]
     }
 
     get image() {

@@ -40,15 +40,15 @@ export class Comment extends AggregateRoot<CommentID> {
     }
 
     get client() {
-        return this.data.client
+        return this.data.client.clone()
     }
 
     get whoLiked() {
-        return this.data.whoLiked
+        return [...this.data.whoLiked]
     }
 
     get whoDisliked() {
-        return this.data.whoDisliked
+        return [...this.data.whoDisliked]
     }
 
     get target() {
