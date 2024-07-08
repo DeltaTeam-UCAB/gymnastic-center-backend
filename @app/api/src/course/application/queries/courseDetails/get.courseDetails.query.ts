@@ -4,16 +4,16 @@ import { ApplicationService } from 'src/core/application/service/application.ser
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { CourseRepository } from '../../repositories/course.repository'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
-import { imageNotFoundError } from 'src/category/application/errors/image.not.found'
 import { courseNotExistError } from '../../errors/course.not.exist'
 import { VideoRepository } from '../../repositories/video.repository'
 import { ImageRepository } from '../../repositories/image.repository'
 import { CourseID } from 'src/course/domain/value-objects/course.id'
 import { LessonVideo } from 'src/course/domain/value-objects/lesson.video'
 import { Video } from 'src/course/application/models/video'
+import { imageNotExistError } from '../../errors/image.not.exist'
 
 export class GetCourseDetailsQuery
-implements
+    implements
         ApplicationService<GetCourseDetailsDTO, GetCourseDetailsResponse>
 {
     constructor(
@@ -29,7 +29,7 @@ implements
         )
         if (!isNotNull(course)) return Result.error(courseNotExistError())
         const image = await this.imageRepository.getById(course.image)
-        if (!isNotNull(image)) return Result.error(imageNotFoundError())
+        if (!isNotNull(image)) return Result.error(imageNotExistError())
 
         return Result.success({
             tags: course.tags.map((t) => t.tag),
