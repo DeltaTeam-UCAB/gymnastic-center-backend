@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { DomainEventStorage } from 'src/core/application/event-storage/event.storage'
 import { DomainEventBase } from 'src/core/domain/events/event'
@@ -12,6 +12,7 @@ export class EventStorageMongoService implements DomainEventStorage {
     ) {}
     async save(event: DomainEventBase): Promise<void> {
         const { name, timestamp, ...rest } = event
+        new Logger('SAVING EVENT').log('NAME: ' + name)
         await this.domainModel.create({
             name,
             timestamp,

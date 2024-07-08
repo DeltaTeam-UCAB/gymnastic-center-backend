@@ -36,6 +36,7 @@ export class CourseCreatedEventListener {
     load() {
         this.eventHandle.listen(
             COURSE_CREATED,
+            COURSE_CREATED + '_STORAGE',
             (json) =>
                 courseCreated({
                     id: new CourseID(json.id._id),

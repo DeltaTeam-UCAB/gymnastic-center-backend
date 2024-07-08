@@ -20,6 +20,7 @@ export class courseLevelChangedEventListener {
     load() {
         this.eventHandle.listen(
             COURSE_LEVEL_CHANGED,
+            COURSE_LEVEL_CHANGED + '_STORAGE',
             (json) =>
                 courseLevelChanged({
                     id: new CourseID(json.id._id),

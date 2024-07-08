@@ -24,6 +24,7 @@ export class CourseLessonRemovedEventListener {
     load() {
         this.eventHandler.listen(
             COURSE_LESSON_REMOVED,
+            COURSE_LESSON_REMOVED + '_DELETE_COMMENTS',
             (json) =>
                 courseLessonRemoved({
                     id: new CourseID(json.id._id),

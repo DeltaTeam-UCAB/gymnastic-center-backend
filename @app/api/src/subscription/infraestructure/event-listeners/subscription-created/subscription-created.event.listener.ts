@@ -26,6 +26,7 @@ export class SubscriptionCreatedEventListener {
     load() {
         this.eventHandle.listen(
             SUBSCRIPTION_CREATED,
+            SUBSCRIPTION_CREATED + '_STORAGE',
             (json) =>
                 subscriptionCreated({
                     id: new SubscriptionID(json.id._id),
@@ -39,8 +40,8 @@ export class SubscriptionCreatedEventListener {
                             new Lesson(new LessonID(lesson._id._id), {
                                 lastTime: lesson.data.lastTime
                                     ? new LessonLastTime(
-                                        lesson.data.lastTime._seconds,
-                                    )
+                                          lesson.data.lastTime._seconds,
+                                      )
                                     : undefined,
                                 progress: new LessonProgress(
                                     lesson.data.progress._percent,

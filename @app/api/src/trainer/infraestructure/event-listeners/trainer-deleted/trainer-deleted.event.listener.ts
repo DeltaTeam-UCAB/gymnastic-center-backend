@@ -19,6 +19,7 @@ export class TrainerDeletedEventListener {
     load() {
         this.eventHandle.listen(
             TRAINER_DELETED,
+            TRAINER_DELETED + '_STORAGE',
             (json) =>
                 trainerDeleted({
                     id: new TrainerID(json.id._id),

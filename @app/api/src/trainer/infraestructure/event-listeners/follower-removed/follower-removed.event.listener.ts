@@ -20,6 +20,7 @@ export class FollowerRemovedEventListener {
     load() {
         this.eventHandle.listen(
             FOLLOWER_REMOVED,
+            FOLLOWER_REMOVED + '_STORAGE',
             (json) =>
                 followerRemoved({
                     id: new TrainerID(json.id._id),

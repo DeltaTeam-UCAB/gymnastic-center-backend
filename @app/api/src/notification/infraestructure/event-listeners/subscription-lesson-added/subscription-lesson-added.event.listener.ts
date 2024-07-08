@@ -35,6 +35,7 @@ export class SubscriptionLessonAdded {
     load() {
         this.eventHandler.listen(
             SUBSCRIPTION_LESSON_ADDED,
+            SUBSCRIPTION_LESSON_ADDED + '_NOTIFY_NEW_CHALLENGS',
             (json) =>
                 lessonAdded({
                     id: new SubscriptionID(json.id._id),

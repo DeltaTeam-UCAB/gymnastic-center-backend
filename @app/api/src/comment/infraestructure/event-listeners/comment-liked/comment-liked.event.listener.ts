@@ -20,6 +20,7 @@ export class CommentLikedEventListener {
     load() {
         this.eventHandle.listen(
             COMMENT_LIKED,
+            COMMENT_LIKED + '_STORAGE',
             (json) =>
                 commentLiked({
                     id: new CommentID(json.id._id),

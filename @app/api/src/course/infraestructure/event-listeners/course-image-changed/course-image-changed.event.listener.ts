@@ -20,6 +20,7 @@ export class CourseImageChangedEventListener {
     load() {
         this.eventHandle.listen(
             COURSE_IMAGE_CHANGED,
+            COURSE_IMAGE_CHANGED + '_STORAGE',
             (json) =>
                 courseImageChanged({
                     id: new CourseID(json.id._id),

@@ -26,6 +26,7 @@ export class CommentCreatedEventListener {
     load() {
         this.eventHandle.listen(
             COMMENT_CREATED,
+            COMMENT_CREATED + '_STORAGE',
             (json) =>
                 commentCreated({
                     id: new CommentID(json.id._id),

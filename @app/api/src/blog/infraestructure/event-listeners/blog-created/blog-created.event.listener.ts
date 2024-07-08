@@ -29,6 +29,7 @@ export class BlogCreatedEventListener {
     load() {
         this.eventHandler.listen(
             BLOG_CREATED,
+            BLOG_CREATED + '_STORAGE',
             (json) =>
                 blogCreated({
                     id: new BlogId(json.id._id),

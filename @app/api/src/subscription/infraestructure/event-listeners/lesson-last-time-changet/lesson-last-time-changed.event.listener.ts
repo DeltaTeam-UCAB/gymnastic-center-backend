@@ -21,6 +21,7 @@ export class LessonLastTimeChangedEventListener {
     load() {
         this.eventHandle.listen(
             LESSON_LAST_TIME_CHANGED,
+            LESSON_LAST_TIME_CHANGED + '_STORAGE',
             (json) =>
                 lessonLastTimeChanged({
                     id: new SubscriptionID(json.id._id),

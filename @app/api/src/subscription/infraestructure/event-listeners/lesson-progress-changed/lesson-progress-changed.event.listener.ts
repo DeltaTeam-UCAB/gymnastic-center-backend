@@ -21,6 +21,7 @@ export class LessonProgressChangedEventListener {
     load() {
         this.eventHandle.listen(
             LESSON_PROGRESS_CHANGED,
+            LESSON_PROGRESS_CHANGED + '_STORAGE',
             (json) =>
                 lessonProgressChanged({
                     id: new SubscriptionID(json.id._id),

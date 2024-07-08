@@ -19,6 +19,7 @@ export class BlogDeletedCommentEventListener {
     load() {
         this.eventHandler.listen(
             BLOG_DELETED,
+            BLOG_DELETED + '_DELETE_COMMENTS',
             (json) =>
                 blogDeleted({
                     id: new BlogId(json.id._id),

@@ -20,6 +20,7 @@ export class FollowerAddedEventListener {
     load() {
         this.eventHandle.listen(
             FOLLOWER_ADDED,
+            FOLLOWER_ADDED + '_STORAGE',
             (json) =>
                 followerAdded({
                     id: new TrainerID(json.id._id),
