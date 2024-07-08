@@ -71,11 +71,11 @@ export const body = async () => {
         durationMinutes: 40,
         lessons: [
             {
-                id: lesson.id,
-                title: lesson.title,
-                content: lesson.content,
+                id: lesson.id.id,
+                title: lesson.title.title,
+                content: lesson.content.content,
                 video: video.src,
-                order: lesson.order,
+                order: 1,
             },
         ],
     })

@@ -2,7 +2,6 @@ import { Course } from '../../../../../../src/course/domain/course'
 import { Category } from '../../../../../../src/course/domain/entities/category'
 import { CategoryID } from '../../../../../../src/course/domain/value-objects/category.id'
 import { Lesson } from '../../../../../../src/course/domain/entities/lesson'
-import { Lesson as LessonModel } from '../../../../../../src/course/application/models/lesson'
 import { Trainer } from '../../../../../../src/course/domain/entities/trainer'
 import { CourseDescription } from '../../../../../../src/course/domain/value-objects/course.description'
 import { CourseID } from '../../../../../../src/course/domain/value-objects/course.id'
@@ -17,10 +16,6 @@ import {
 import { CourseImage } from '../../../../../../src/course/domain/value-objects/course.image'
 import { CourseDuration } from '../../../../../../src/course/domain/value-objects/course.duration'
 import { CourseDate } from '../../../../../../src/course/domain/value-objects/course.date'
-import { LessonID } from '../../../../../../src/course/domain/value-objects/lesson.id'
-import { LessonContent } from '../../../../../../src/course/domain/value-objects/lesson.content'
-import { LessonTitle } from '../../../../../../src/course/domain/value-objects/lesson.title'
-import { LessonVideo } from '../../../../../../src/course/domain/value-objects/lesson.video'
 import { CourseTag } from '../../../../../../src/course/domain/value-objects/course.tag'
 
 export const createCourse = (data: {
@@ -41,7 +36,7 @@ export const createCourse = (data: {
     level?: LEVELS
     weeks?: number
     hours?: number
-    lessons?: LessonModel[]
+    lessons?: Lesson[]
     tags?: string[]
 }): Course =>
     new Course(
@@ -77,16 +72,7 @@ export const createCourse = (data: {
             ),
             duration: new CourseDuration(data.weeks ?? 4, data.hours ?? 40),
             creationDate: new CourseDate(data.creationDate ?? new Date()),
-            lessons: data.lessons
-                ? data.lessons.map(
-                      (l) =>
-                          new Lesson(new LessonID(l.id), {
-                              content: new LessonContent(l.content),
-                              title: new LessonTitle(l.title),
-                              video: new LessonVideo(l.video),
-                          }),
-                  )
-                : [],
+            lessons: data.lessons ?? [],
             tags: data.tags ? data.tags.map((t) => new CourseTag(t)) : [],
         },
     )

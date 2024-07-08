@@ -74,7 +74,7 @@ export class Course extends AggregateRoot<CourseID> {
     }
 
     get tags() {
-        return this.data.tags!
+        return [...this.data.tags!]
     }
 
     get image() {
@@ -82,15 +82,15 @@ export class Course extends AggregateRoot<CourseID> {
     }
 
     get lessons() {
-        return this.data.lessons!
+        return this.data.lessons!.map((e) => e.clone())
     }
 
     get category() {
-        return this.data.category
+        return this.data.category.clone()
     }
 
     get trainer() {
-        return this.data.trainer
+        return this.data.trainer.clone()
     }
 
     get creationDate() {

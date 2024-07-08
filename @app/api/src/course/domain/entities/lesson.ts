@@ -3,8 +3,9 @@ import { LessonID } from '../value-objects/lesson.id'
 import { LessonContent } from '../value-objects/lesson.content'
 import { LessonVideo } from '../value-objects/lesson.video'
 import { LessonTitle } from '../value-objects/lesson.title'
+import { Clonable } from 'src/core/domain/clonable/clonable'
 
-export class Lesson extends Entity<LessonID> {
+export class Lesson extends Entity<LessonID> implements Clonable<Lesson> {
     constructor(
         id: LessonID,
         private data: {
@@ -14,6 +15,12 @@ export class Lesson extends Entity<LessonID> {
         },
     ) {
         super(id)
+    }
+
+    clone(): Lesson {
+        return new Lesson(this.id, {
+            ...this.data,
+        })
     }
 
     get title() {
