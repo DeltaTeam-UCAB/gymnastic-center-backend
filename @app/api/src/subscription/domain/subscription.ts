@@ -4,7 +4,6 @@ import { ClientID } from './value-objects/client.id'
 import { CourseID } from './value-objects/course.id'
 import { Time } from './value-objects/time'
 import { Lesson } from './entities/lesson'
-import { unvalidCourse } from 'src/course/domain/exceptions/unvalid.course'
 import { LessonID } from './value-objects/lesson.id'
 import { LessonLastTime } from './value-objects/lesson.last.time'
 import { lessonNotFound } from './exceptions/lesson.not.found'
@@ -18,6 +17,7 @@ import { lessonExist } from './exceptions/lesson.exist'
 import { lessonNotExist } from './exceptions/lesson.not.exist'
 import { lessonAdded } from './events/subscription.lesson.added'
 import { lessonRemoved } from './events/subscription.lesson.removed'
+import { unvalidSubscription } from './exceptions/unvalid.subscription'
 
 export class Subscription extends AggregateRoot<SubscriptionID> {
     constructor(
@@ -136,6 +136,6 @@ export class Subscription extends AggregateRoot<SubscriptionID> {
             !this.lessons ||
             this.lastTime < this.startTime
         )
-            throw unvalidCourse()
+            throw unvalidSubscription()
     }
 }
