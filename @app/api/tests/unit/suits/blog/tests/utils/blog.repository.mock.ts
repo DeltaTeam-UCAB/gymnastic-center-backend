@@ -56,11 +56,12 @@ export class BlogRepositoryMock implements BlogRepository {
     }
 
     async delete(blog: Blog): Promise<Result<Blog>> {
-        this.blogs.filter((b) => b.id != blog.id)
+        this.blogs = this.blogs.filter((b) => b.id != blog.id)
         return Result.success(blog)
     }
 
     async getAllByTrainer(trainer: TrainerId): Promise<Blog[]> {
-        return this.blogs.filter((b) => b.trainer.id == trainer)
+        this.blogs = this.blogs.filter((b) => b.trainer.id == trainer)
+        return this.blogs
     }
 }

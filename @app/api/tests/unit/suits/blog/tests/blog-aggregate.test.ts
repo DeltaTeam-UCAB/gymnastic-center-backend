@@ -11,7 +11,7 @@ import { CategoryId } from '../../../../../src/blog/domain/value-objects/categor
 import { CategoryName } from '../../../../../src/blog/domain/value-objects/category.name'
 import { TrainerId } from '../../../../../src/blog/domain/value-objects/trainer.id'
 import { TrainerName } from '../../../../../src/blog/domain/value-objects/trainer.name'
-import { DateProviderMock } from '../../course/tests/utils/date.provider.mock'
+import { DateProviderMock } from '../../blog/tests/utils/date.provider.mock'
 
 export const name = 'Should create a blog aggregate'
 const date = new DateProviderMock(new Date())

@@ -1,4 +1,3 @@
-
 import { Blog } from '../../../../../../src/blog/domain/blog'
 import { Category } from '../../../../../../src/blog/domain/entities/category'
 import { BlogBody } from '../../../../../../src/blog/domain/value-objects/blog.body'
@@ -8,7 +7,7 @@ import { BlogTag } from '../../../../../../src/blog/domain/value-objects/blog.ta
 import { BlogTitle } from '../../../../../../src/blog/domain/value-objects/blog.title'
 import { CategoryId } from '../../../../../../src/blog/domain/value-objects/category.id'
 import { CategoryName } from '../../../../../../src/blog/domain/value-objects/category.name'
-import { DateProviderMock } from '../../../course/tests/utils/date.provider.mock'
+import { DateProviderMock } from '../../../blog/tests/utils/date.provider.mock'
 import { Trainer } from '../../../../../../src/blog/domain/entities/trainer'
 import { TrainerId } from '../../../../../../src/blog/domain/value-objects/trainer.id'
 import { TrainerName } from '../../../../../../src/blog/domain/value-objects/trainer.name'
@@ -36,7 +35,7 @@ export const createBlog = (data: {
             ),
             {
                 name: new CategoryName('category name'),
-            }
+            },
         ),
         trainer: new Trainer(
             new TrainerId(

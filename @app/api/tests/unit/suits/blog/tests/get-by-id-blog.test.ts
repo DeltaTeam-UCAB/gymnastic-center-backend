@@ -9,7 +9,7 @@ import { createImage } from './utils/image.factory'
 import { CategoryRepositoryMock } from './utils/category.repository.mock'
 import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
 import { ImageRepositoryMock } from './utils/image.repository.mock'
-import { DateProviderMock } from '../../course/tests/utils/date.provider.mock'
+import { DateProviderMock } from '../../blog/tests/utils/date.provider.mock'
 
 export const name = 'Should get blog by ID'
 export const body = async () => {

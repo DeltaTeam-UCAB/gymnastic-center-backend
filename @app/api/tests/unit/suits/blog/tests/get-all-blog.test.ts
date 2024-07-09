@@ -9,7 +9,7 @@ import { GetAllBlogQuery } from '../../../../../src/blog/application/queries/get
 import { createTrainer } from './utils/trainer.factory'
 import { createCategory } from './utils/category.factory'
 import { createImage } from './utils/image.factory'
-import { DateProviderMock } from '../../course/tests/utils/date.provider.mock'
+import { DateProviderMock } from '../../blog/tests/utils/date.provider.mock'
 import { GetAllBlogsDTO } from '../../../../../src/blog/application/queries/getAll/types/dto'
 
 export const name = 'Should get all blogs'
