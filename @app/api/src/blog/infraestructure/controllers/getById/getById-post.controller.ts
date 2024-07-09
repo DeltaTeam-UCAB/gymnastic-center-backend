@@ -18,6 +18,9 @@ import { ImageByBlogPostgresRepository } from '../../repositories/postgres/image
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
+import { CategoryRedisRepositoryProxy } from '../../repositories/redis/category.repository.proxy'
+import { TrainerRedisRepositoryProxy } from '../../repositories/redis/trainer.repository.proxy'
+import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -25,7 +28,7 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
     bearerAuth: true,
 })
 export class GetPostByIdController
-    implements ControllerContract<[id: string], GetBlogByIdResponse>
+implements ControllerContract<[id: string], GetBlogByIdResponse>
 {
     constructor(
         private blogRepository: BlogPostgresRepository,
@@ -44,9 +47,9 @@ export class GetPostByIdController
             new LoggerDecorator(
                 new GetBlogByIdQuery(
                     this.blogRepository,
-                    this.categoryRepository,
-                    this.trainerRepository,
-                    this.imageRepository,
+                    new CategoryRedisRepositoryProxy(this.categoryRepository),
+                    new TrainerRedisRepositoryProxy(this.trainerRepository),
+                    new ImageRedisRepositoryProxy(this.imageRepository),
                 ),
                 nestLogger,
             ),

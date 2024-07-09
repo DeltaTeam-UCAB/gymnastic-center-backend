@@ -17,6 +17,8 @@ import { VideoPostgresByCourseRepository } from '../../repositories/postgres/vid
 import { GetCourseDetailsResponse } from 'src/course/application/queries/courseDetails/types/response'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
+import { VideoRedisRepositoryProxy } from '../../repositories/redis/video.repository.proxy'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -41,8 +43,8 @@ export class CourseDetailsController
             new LoggerDecorator(
                 new GetCourseDetailsQuery(
                     this.courseRepo,
-                    this.imageRepo,
-                    this.videoRepository,
+                    new ImageRedisRepositoryProxy(this.imageRepo),
+                    new VideoRedisRepositoryProxy(this.videoRepository),
                 ),
                 nestLogger,
             ),

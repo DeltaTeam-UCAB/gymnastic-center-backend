@@ -6,6 +6,7 @@ import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { CategoryPostgresRepository } from '../../repositories/postgres/category.repository'
 import { ImagePostgresByCategoryRepository } from '../../repositories/postgres/image.postgres.repository'
 import { GetCategoriesManyQuery } from 'src/category/application/queries/many/category.many.query'
+import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
 
 @Controller({
     path: 'category',
@@ -13,7 +14,7 @@ import { GetCategoriesManyQuery } from 'src/category/application/queries/many/ca
     bearerAuth: true,
 })
 export class GetCategoriesManyController
-implements
+    implements
         ControllerContract<
             [page: number, perPage: number],
             GetCategoriesManyResponse
@@ -32,7 +33,7 @@ implements
     ): Promise<GetCategoriesManyResponse> {
         const result = await new GetCategoriesManyQuery(
             this.categoryRepository,
-            this.imageRepository,
+            new ImageRedisRepositoryProxy(this.imageRepository),
         ).execute({
             page,
             perPage,

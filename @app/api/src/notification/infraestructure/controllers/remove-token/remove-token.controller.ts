@@ -1,11 +1,11 @@
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
-import { Body, Post, UseGuards } from '@nestjs/common'
+import { Delete, Query, UseGuards } from '@nestjs/common'
 import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { User } from 'src/user/infraestructure/decorators/user.decorator'
-import { AddTokenDTO } from './dto/dto'
+import { RemoveTokenDTO } from './dto/dto'
 import { redisClient } from 'src/core/infraestructure/cache/redis/redis.client'
 
 @Controller({
@@ -13,24 +13,22 @@ import { redisClient } from 'src/core/infraestructure/cache/redis/redis.client'
     docTitle: 'Notification',
     bearerAuth: true,
 })
-export class AddTokenController
+export class RemoveTokenController
     implements
         ControllerContract<
-            [user: CurrentUserResponse, body: AddTokenDTO],
+            [user: CurrentUserResponse, body: RemoveTokenDTO],
             void
         >
 {
-    @Post('savetoken')
+    @Delete('token')
     @Roles('CLIENT')
     @UseGuards(UserGuard, RolesGuard)
     async execute(
         @User() user: CurrentUserResponse,
-        @Body() body: AddTokenDTO,
+        @Query() data: RemoveTokenDTO,
     ): Promise<void> {
-        const tokens = await redisClient.sMembers(
-            'notification-token:' + user.id,
-        )
-        if (!tokens.includes(body.token))
-            await redisClient.sAdd('notification-token:' + user.id, body.token)
+        await redisClient
+            .sRem('notification-token:' + user.id, data.token)
+            .catch((e) => console.log(e))
     }
 }

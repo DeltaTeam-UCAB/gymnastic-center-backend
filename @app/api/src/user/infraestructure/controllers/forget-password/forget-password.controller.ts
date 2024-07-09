@@ -13,7 +13,7 @@ import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { RecoveryCodePushSender } from '../../sender/recovery.code.push'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
 import { DeviceLinker } from 'src/core/infraestructure/device-linker/device.linker'
-import { MONGO_USER_LINKER } from 'src/core/infraestructure/device-linker/mongo/mongo.device.linker.module'
+import { REDIS_USER_LINKER } from 'src/core/infraestructure/device-linker/redis/redis.device.linker'
 @Controller({
     path: 'auth',
     docTitle: 'Auth',
@@ -29,7 +29,7 @@ implements
 {
     constructor(
         private userRepository: UserPostgresRepository,
-        @Inject(MONGO_USER_LINKER) private deviceLinker: DeviceLinker,
+        @Inject(REDIS_USER_LINKER) private deviceLinker: DeviceLinker,
     ) {}
     @Post('forget/password')
     async execute(@Body() body: ForgetPasswordDTO): Promise<{

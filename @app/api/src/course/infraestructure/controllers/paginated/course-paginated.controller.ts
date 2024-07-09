@@ -8,13 +8,14 @@ import { GetCoursesManyQuery } from 'src/course/application/queries/many/course.
 import { ImagePostgresByCourseRepository } from '../../repositories/postgres/image.repository'
 import { GetCoursesManyResponse } from 'src/course/application/queries/many/types/response'
 import { GetAllCoursesDTO } from './dto/getAll.blogs.dto'
+import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
 @Controller({
     path: COURSE_ROUTE_PREFIX,
     docTitle: COURSE_DOC_PREFIX,
     bearerAuth: true,
 })
 export class CoursesManyController
-    implements
+implements
         ControllerContract<[data: GetAllCoursesDTO], GetCoursesManyResponse>
 {
     constructor(
@@ -29,7 +30,7 @@ export class CoursesManyController
     ): Promise<GetCoursesManyResponse> {
         const result = await new GetCoursesManyQuery(
             this.courseRepository,
-            this.imageRepository,
+            new ImageRedisRepositoryProxy(this.imageRepository),
         ).execute(data)
 
         return result.unwrap()

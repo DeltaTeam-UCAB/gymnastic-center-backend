@@ -32,6 +32,8 @@ import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
+import { CategoryRedisRepositoryProxy } from '../../repositories/redis/category.repository.proxy'
+import { TrainerRedisRepositoryProxy } from '../../repositories/redis/trainer.repository.proxy'
 
 @Controller({
     path: COURSE_ROUTE_PREFIX,
@@ -82,8 +84,8 @@ export class CreateCourseController
             new CreateCourseCommand(
                 this.idGen,
                 courseRepository,
-                this.categoryRepository,
-                this.trainerRepository,
+                new CategoryRedisRepositoryProxy(this.categoryRepository),
+                new TrainerRedisRepositoryProxy(this.trainerRepository),
                 new ConcreteDateProvider(),
                 this.eventPublisher,
             ),

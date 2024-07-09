@@ -24,6 +24,7 @@ import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
 import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
+import { UserRedisRepositoryProxy } from '../../repositories/redis/user.repository.proxy'
 
 @Controller({
     path: 'comment',
@@ -31,7 +32,7 @@ import { DomainErrorParserDecorator } from 'src/core/application/decorators/doma
     bearerAuth: true,
 })
 export class CreateController
-    implements
+implements
         ControllerContract<
             [body: CreateCommentDTO, user: CurrentUserResponse],
             CreateCommentResponse
@@ -68,7 +69,7 @@ export class CreateController
                         new DomainErrorParserDecorator(
                             new CreateCommentCommand(
                                 this.commentRepo,
-                                this.userRepo,
+                                new UserRedisRepositoryProxy(this.userRepo),
                                 new ConcreteDateProvider(),
                                 this.idGen,
                                 this.eventHandler,

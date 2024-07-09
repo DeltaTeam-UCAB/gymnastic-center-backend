@@ -12,6 +12,7 @@ import { FindManyTrainersResponse } from 'src/trainer/application/queries/find-m
 import { FindManyTrainersQuery } from 'src/trainer/application/queries/find-many/find-many-trainers-query'
 import { FindManyTrainersDTO } from './dto/dto'
 import { ImagePostgresByTrainerRepository } from '../../repositories/postgres/image.repository'
+import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
 
 @Controller({
     path: 'trainer',
@@ -19,7 +20,7 @@ import { ImagePostgresByTrainerRepository } from '../../repositories/postgres/im
     bearerAuth: true,
 })
 export class FindTrainerController
-implements
+    implements
         ControllerContract<
             [data: FindManyTrainersDTO, user: User],
             FindManyTrainersResponse[]
@@ -40,7 +41,7 @@ implements
             new LoggerDecorator(
                 new FindManyTrainersQuery(
                     this.trainerRepo,
-                    this.imageRepository,
+                    new ImageRedisRepositoryProxy(this.imageRepository),
                 ),
                 new NestLogger('FindManyTrainers'),
             ),

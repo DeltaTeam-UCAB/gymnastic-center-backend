@@ -12,6 +12,7 @@ import { SubscriptionPostgresByCourseRepository } from '../../repositories/postg
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { User } from 'src/user/infraestructure/decorators/user.decorator'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
 
 @Controller({
     path: 'progress',
@@ -19,7 +20,7 @@ import { CurrentUserResponse } from 'src/user/application/queries/current/types/
     bearerAuth: true,
 })
 export class ClientCoursesController
-implements
+    implements
         ControllerContract<
             [data: GetClientCoursesDTO, user: CurrentUserResponse],
             GetSubscribedCoursesResponse
@@ -40,7 +41,7 @@ implements
     ): Promise<GetSubscribedCoursesResponse> {
         const result = await new GetSubscribedCoursesPaginatedQuery(
             this.courseRepository,
-            this.imageRepository,
+            new ImageRedisRepositoryProxy(this.imageRepository),
             this.subscriptionRepository,
         ).execute({
             client: user.id,
