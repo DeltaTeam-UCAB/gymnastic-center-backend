@@ -19,6 +19,7 @@ import { CurrentUserResponse } from '../../../../../src/user/application/queries
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
 import { ImagePostgresByTrainerRepository } from '../../repositories/postgres/image.repository'
+import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
 
 @Controller({
     path: 'trainer',
@@ -60,7 +61,7 @@ implements
                         new CreateTrainerCommand(
                             this.idGen,
                             this.trainerRepo,
-                            this.imageRepository,
+                            new ImageRedisRepositoryProxy(this.imageRepository),
                             this.eventPublisher,
                         ),
                     ),

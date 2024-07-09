@@ -41,6 +41,7 @@ export const body = async () => {
             date: dateProvider.current,
             id: commentId,
             user: comment.client.name.name,
+            userId: comment.client.id.id,
             userDisliked: true,
             userLiked: false,
         },

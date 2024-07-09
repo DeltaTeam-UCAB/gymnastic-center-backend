@@ -15,6 +15,7 @@ import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
 import { CurrentUserQuery } from 'src/user/application/queries/current/current.query'
 import { TokenPayload } from 'src/user/application/commads/login/types/token.payload'
+import { UserRedisRepositoryProxy } from '../../repositories/redis/user.repository.proxy'
 
 @Controller({
     path: 'auth',
@@ -44,7 +45,11 @@ implements
         const tokenProvider = this.jwtProvider.create<TokenPayload>()
         const result = await new ErrorDecorator(
             new LoggerDecorator(
-                new LoginCommand(this.userRepo, this.crypto, tokenProvider),
+                new LoginCommand(
+                    new UserRedisRepositoryProxy(this.userRepo),
+                    this.crypto,
+                    tokenProvider,
+                ),
                 new NestLogger('Login'),
             ),
             (e) => new HttpException(e.message, 400),
@@ -54,7 +59,7 @@ implements
             ...data,
             user: (
                 await new CurrentUserQuery(
-                    this.userRepo,
+                    new UserRedisRepositoryProxy(this.userRepo),
                     tokenProvider,
                 ).execute({
                     token: data.token,

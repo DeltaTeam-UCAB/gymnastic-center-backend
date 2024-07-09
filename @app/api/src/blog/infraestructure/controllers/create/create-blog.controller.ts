@@ -27,6 +27,8 @@ import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/reposit
 import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
+import { TrainerRedisRepositoryProxy } from '../../repositories/redis/trainer.repository.proxy'
+import { CategoryRedisRepositoryProxy } from '../../repositories/redis/category.repository.proxy'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -73,8 +75,8 @@ export class CreateBlogController
             new CreateBlogCommand(
                 this.idGen,
                 blogRepository,
-                this.trainerRepository,
-                this.categoryRepository,
+                new TrainerRedisRepositoryProxy(this.trainerRepository),
+                new CategoryRedisRepositoryProxy(this.categoryRepository),
                 new ConcreteDateProvider(),
                 this.eventPublisher,
             ),

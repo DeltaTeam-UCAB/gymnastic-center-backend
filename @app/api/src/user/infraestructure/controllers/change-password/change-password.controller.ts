@@ -11,6 +11,7 @@ import { Crypto } from 'src/core/application/crypto/crypto'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { UserRedisRepositoryProxy } from '../../repositories/redis/user.repository.proxy'
 
 @Controller({
     path: 'auth',
@@ -18,7 +19,7 @@ import { CurrentUserResponse } from 'src/user/application/queries/current/types/
     bearerAuth: true,
 })
 export class ChangePasswordController
-    implements
+implements
         ControllerContract<
             [body: ChangePasswordDTO, user: CurrentUserResponse],
             void
@@ -33,7 +34,7 @@ export class ChangePasswordController
         await new ErrorDecorator(
             new LoggerDecorator(
                 new ChangePasswordCommand(
-                    this.userRepository,
+                    new UserRedisRepositoryProxy(this.userRepository),
                     new ConcreteDateProvider(),
                     this.crypto,
                 ),

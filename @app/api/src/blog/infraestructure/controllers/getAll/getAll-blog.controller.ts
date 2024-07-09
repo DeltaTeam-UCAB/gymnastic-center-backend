@@ -12,6 +12,9 @@ import { ImageByBlogPostgresRepository } from '../../repositories/postgres/image
 import { GetAllBlogsDTO } from './dto/getAll.blogs.dto'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { CategoryRedisRepositoryProxy } from '../../repositories/redis/category.repository.proxy'
+import { TrainerRedisRepositoryProxy } from '../../repositories/redis/trainer.repository.proxy'
+import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -19,7 +22,7 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
     bearerAuth: true,
 })
 export class GetAllBlogController
-    implements
+implements
         ControllerContract<[query: GetAllBlogsDTO], GetAllBlogResponse[]>
 {
     constructor(
@@ -38,9 +41,9 @@ export class GetAllBlogController
         const result = await new LoggerDecorator(
             new GetAllBlogQuery(
                 this.blogRepository,
-                this.categoryRepository,
-                this.trainerRepository,
-                this.imageRepository,
+                new CategoryRedisRepositoryProxy(this.categoryRepository),
+                new TrainerRedisRepositoryProxy(this.trainerRepository),
+                new ImageRedisRepositoryProxy(this.imageRepository),
             ),
             nestLogger,
         ).execute({

@@ -27,6 +27,7 @@ export class FindCommentsQuery
             const commentResponse = {
                 id: c.id.id,
                 user: c.client.name.name,
+                userId: c.client.id.id,
                 countLikes: c.whoLiked.length,
                 countDislikes: c.whoDisliked.length,
                 body: c.content.content,

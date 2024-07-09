@@ -17,6 +17,7 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { DeleteTrainerCommand } from 'src/trainer/application/commands/delete/delete.trainer.command'
 import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
+import { TrainerRedisRepositoryProxy } from '../../repositories/redis/trainer.repository.proxy'
 
 @Controller({
     path: 'trainer',
@@ -24,7 +25,7 @@ import { DomainErrorParserDecorator } from 'src/core/application/decorators/doma
     bearerAuth: true,
 })
 export class DeleteTrainerController
-    implements ControllerContract<[id: string], DeleteTrainerResponse>
+implements ControllerContract<[id: string], DeleteTrainerResponse>
 {
     constructor(
         private trainerRepository: TrainerPostgresRepository,
@@ -41,7 +42,7 @@ export class DeleteTrainerController
             new LoggerDecorator(
                 new DomainErrorParserDecorator(
                     new DeleteTrainerCommand(
-                        this.trainerRepository,
+                        new TrainerRedisRepositoryProxy(this.trainerRepository),
                         this.eventPublisher,
                     ),
                 ),

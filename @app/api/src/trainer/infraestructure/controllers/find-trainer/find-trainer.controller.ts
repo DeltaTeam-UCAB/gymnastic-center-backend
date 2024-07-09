@@ -17,6 +17,7 @@ import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { ImagePostgresByTrainerRepository } from '../../repositories/postgres/image.repository'
+import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
 
 @Controller({
     path: 'trainer',
@@ -24,7 +25,7 @@ import { ImagePostgresByTrainerRepository } from '../../repositories/postgres/im
     bearerAuth: true,
 })
 export class FindTrainerController
-implements
+    implements
         ControllerContract<[param: string, user: User], FindTrainerResponse>
 {
     constructor(
@@ -40,7 +41,10 @@ implements
     ): Promise<FindTrainerResponse> {
         const result = await new ErrorDecorator(
             new LoggerDecorator(
-                new FindTrainerQuery(this.trainerRepo, this.imageRepository),
+                new FindTrainerQuery(
+                    this.trainerRepo,
+                    new ImageRedisRepositoryProxy(this.imageRepository),
+                ),
                 new NestLogger('FindTrainer'),
             ),
             (e) => new HttpException(e.message, 400),

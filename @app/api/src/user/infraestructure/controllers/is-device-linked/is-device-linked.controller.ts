@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
 import { DeviceLinker } from 'src/core/infraestructure/device-linker/device.linker'
-import { MONGO_USER_LINKER } from 'src/core/infraestructure/device-linker/mongo/mongo.device.linker.module'
 import { User } from '../../decorators/user.decorator'
 import { UserGuard } from '../../guards/user.guard'
+import { REDIS_USER_LINKER } from 'src/core/infraestructure/device-linker/redis/redis.device.linker'
 
 @Controller({
     path: 'user',
@@ -19,11 +19,11 @@ import { UserGuard } from '../../guards/user.guard'
     bearerAuth: true,
 })
 export class IsDeviceLinkedController
-implements
+    implements
         ControllerContract<[token: string, user: CurrentUserResponse], void>
 {
     constructor(
-        @Inject(MONGO_USER_LINKER) private deviceLinker: DeviceLinker,
+        @Inject(REDIS_USER_LINKER) private deviceLinker: DeviceLinker,
     ) {}
     @Get('is/device/linked')
     @UseGuards(UserGuard)
