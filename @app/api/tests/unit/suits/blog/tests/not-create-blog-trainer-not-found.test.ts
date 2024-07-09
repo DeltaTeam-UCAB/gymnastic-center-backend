@@ -1,6 +1,6 @@
 import { Result } from '../../../../../src/core/application/result-handler/result.handler'
 import { IdGeneratorMock } from './utils/id.generator.mock'
-import { DateProviderMock } from '../../course/tests/utils/date.provider.mock'
+import { DateProviderMock } from '../../blog/tests/utils/date.provider.mock'
 import { BlogRepositoryMock } from './utils/blog.repository.mock'
 import { CreateBlogDTO } from '../../../../../src/blog/application/commands/create/types/dto'
 import { CreateBlogResponse } from '../../../../../src/blog/application/commands/create/types/response'

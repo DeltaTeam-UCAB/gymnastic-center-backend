@@ -1,7 +1,7 @@
 import { CreateBlogCommand } from '../../../../../src/blog/application/commands/create/create.blog.command'
 import { IdGeneratorMock } from './utils/id.generator.mock'
 import { BlogRepositoryMock } from './utils/blog.repository.mock'
-import { DateProviderMock } from '../../course/tests/utils/date.provider.mock'
+import { DateProviderMock } from '../../blog/tests/utils/date.provider.mock'
 import { CreateBlogDTO } from '../../../../../../api/src/blog/application/commands/create/types/dto'
 import { CategoryRepositoryMock } from './utils/category.repository.mock'
 import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
