@@ -15,7 +15,7 @@ import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class SubscriptionPostgresByCourseRepository
-    implements SubscriptionRepository
+implements SubscriptionRepository
 {
     constructor(
         @InjectRepository(SubscriptionORM)
@@ -25,8 +25,15 @@ export class SubscriptionPostgresByCourseRepository
     ) {}
     getManyByClientID(data: GetManySuscriptionsData): Promise<Subscription[]> {
         return this.subscriptionProvider
-            .findBy({
-                client: data.client.id,
+            .find({
+                skip: data.perPage * (data.page - 1),
+                take: data.perPage,
+                where: {
+                    client: data.client.id,
+                },
+                order: {
+                    endDate: 'DESC',
+                },
             })
             .map(
                 async (subscription) =>
