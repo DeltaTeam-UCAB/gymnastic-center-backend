@@ -14,12 +14,13 @@ import { RecoveryCodePushSender } from '../../sender/recovery.code.push'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
 import { DeviceLinker } from 'src/core/infraestructure/device-linker/device.linker'
 import { REDIS_USER_LINKER } from 'src/core/infraestructure/device-linker/redis/redis.device.linker'
+import { UserRedisRepositoryProxy } from '../../repositories/redis/user.repository.proxy'
 @Controller({
     path: 'auth',
     docTitle: 'Auth',
 })
 export class ForgetPasswordController
-implements
+    implements
         ControllerContract<
             [body: ForgetPasswordDTO, user: CurrentUserResponse],
             {
@@ -39,7 +40,7 @@ implements
             new RecoveryPasswordSenderDecorator(
                 new LoggerDecorator(
                     new RecoveryPasswordCommand(
-                        this.userRepository,
+                        new UserRedisRepositoryProxy(this.userRepository),
                         new CryptoRandomCodeGenerator(),
                         new ConcreteDateProvider(),
                     ),

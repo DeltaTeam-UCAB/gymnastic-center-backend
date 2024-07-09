@@ -11,7 +11,7 @@ import { CurrentUserResponse } from 'src/user/application/queries/current/types/
     bearerAuth: true,
 })
 export class CurrentUserController
-    implements
+implements
         ControllerContract<[user: CurrentUserResponse], CurrentUserResponse>
 {
     @Get('current')
@@ -19,7 +19,6 @@ export class CurrentUserController
     async execute(
         @UserDecorator() user: CurrentUserResponse,
     ): Promise<CurrentUserResponse> {
-        console.log(JSON.stringify(user))
         return user
     }
 }

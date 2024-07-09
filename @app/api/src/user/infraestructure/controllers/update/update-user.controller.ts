@@ -15,6 +15,7 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
+import { UserRedisRepositoryProxy } from '../../repositories/redis/user.repository.proxy'
 
 @Controller({
     path: 'user',
@@ -49,7 +50,10 @@ implements
         const result = await new ErrorDecorator(
             new AuditDecorator(
                 new LoggerDecorator(
-                    new UpdateUserCommand(this.crypto, this.userRepo),
+                    new UpdateUserCommand(
+                        this.crypto,
+                        new UserRedisRepositoryProxy(this.userRepo),
+                    ),
                     new NestLogger('UpdateUser'),
                 ),
                 new AuditingTxtRepository(),

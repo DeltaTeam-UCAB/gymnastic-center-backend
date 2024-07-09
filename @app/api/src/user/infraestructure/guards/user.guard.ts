@@ -9,6 +9,7 @@ import { JWT_PROVIDER_TOKEN } from 'src/core/infraestructure/token/jwt/module/jw
 import { JwtProviderService } from 'src/core/infraestructure/token/jwt/service/jwt.provider.service'
 import { UserPostgresRepository } from '../repositories/postgres/user.repository'
 import { CurrentUserQuery } from 'src/user/application/queries/current/current.query'
+import { UserRedisRepositoryProxy } from '../repositories/redis/user.repository.proxy'
 
 @Injectable()
 export class UserGuard implements CanActivate {
@@ -20,7 +21,7 @@ export class UserGuard implements CanActivate {
         const request = context.switchToHttp().getRequest()
         const token = request.headers.authorization?.replace('Bearer ', '')
         const result = await new CurrentUserQuery(
-            this.userRepo,
+            new UserRedisRepositoryProxy(this.userRepo),
             this.jwtProvider.create(),
         ).execute({
             token,
