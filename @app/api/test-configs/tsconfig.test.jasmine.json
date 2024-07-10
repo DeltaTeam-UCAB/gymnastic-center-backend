@@ -1,0 +1,28 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["../tests", "../src", "./tests/unit/global.d.ts"],
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "module": "ESNext",
+    "target": "ESNext",
+    "sourceMap": true,
+    "outDir": "../dist_test",
+    "baseUrl": "../",
+    "paths": {
+      "src/*": [
+        "./src/*"
+      ],
+      "tests/*": [
+        "./tests/*"
+      ]
+    }
+  },
+  "tscc": {
+    "deleteOutDir": true,
+      "transformsMethodsToArrow": true,
+    "linesPostCompile": [{
+        "files": [".*\\.test.js$", "suit.tests.js$"],
+        "lines": ["import { lookFor, suiteDeclare, loader } from \"#corejasmine\";"]
+    }]
+  }
+}
