@@ -40,4 +40,8 @@ export class SubscriptionRepositoryMock implements SubscriptionRepository {
     async getAllByCourse(course: CourseID): Promise<Subscription[]> {
         return this.subscriptions.filter((e) => e.course == course)
     }
+
+    async countByClient(client: ClientID): Promise<number> {
+        return this.subscriptions.filter((e) => e.client == client).length
+    }
 }
