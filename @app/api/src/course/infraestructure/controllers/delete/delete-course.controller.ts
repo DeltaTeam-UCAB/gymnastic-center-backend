@@ -11,8 +11,8 @@ import {
     ParseUUIDPipe,
     UseGuards,
 } from '@nestjs/common'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { DeleteCourseCommand } from 'src/course/application/commands/delete/delete.command'
@@ -24,7 +24,7 @@ import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
     bearerAuth: true,
 })
 export class DeleteCourseController
-    implements ControllerContract<[id: string], DeleteCourseResponse>
+implements ControllerContract<[id: string], DeleteCourseResponse>
 {
     constructor(
         private eventPublisher: RabbitMQEventHandler,

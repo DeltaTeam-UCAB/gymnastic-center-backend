@@ -16,13 +16,13 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
 import { CreateCategoryCommand } from 'src/category/application/commands/create/create.category.command'
 import { CATEGORY_NAME_EXIST } from 'src/category/application/errors/category.name.exist'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
 import { ImagePostgresByCategoryRepository } from '../../repositories/postgres/image.postgres.repository'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
-import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
-import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { CurrentUserResponse } from '../../auth/current/types/response'
+import { User as UserDecorator } from '../../decorators/user.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { IMAGE_NOT_FOUND } from 'src/category/application/errors/image.not.found'
@@ -33,7 +33,7 @@ import { IMAGE_NOT_FOUND } from 'src/category/application/errors/image.not.found
     bearerAuth: true,
 })
 export class CreateCategoryController
-    implements
+implements
         ControllerContract<
             [body: CreateCategoryDTO, user: CurrentUserResponse],
             CreateCategoryResponse

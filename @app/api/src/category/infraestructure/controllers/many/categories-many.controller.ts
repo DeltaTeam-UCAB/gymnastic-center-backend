@@ -2,7 +2,7 @@ import { Get, ParseIntPipe, Query, UseGuards } from '@nestjs/common'
 import { GetCategoriesManyResponse } from 'src/category/application/queries/many/types/response'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { CategoryPostgresRepository } from '../../repositories/postgres/category.repository'
 import { ImagePostgresByCategoryRepository } from '../../repositories/postgres/image.postgres.repository'
 import { GetCategoriesManyQuery } from 'src/category/application/queries/many/category.many.query'
@@ -14,7 +14,7 @@ import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.reposi
     bearerAuth: true,
 })
 export class GetCategoriesManyController
-    implements
+implements
         ControllerContract<
             [page: number, perPage: number],
             GetCategoriesManyResponse

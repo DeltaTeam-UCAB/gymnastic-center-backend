@@ -8,11 +8,11 @@ import {
     ParseUUIDPipe,
     UseGuards,
 } from '@nestjs/common'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { GetVideoByIdResponse } from 'src/video/application/queries/get-by-id/types/response'
 import { VideoPostgresRepository } from '../../repositories/postgres/video.repository'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { GetVideoByIdQuery } from 'src/video/application/queries/get-by-id/get.video.id.query'
+import { UserGuard } from '../../guards/user.guard'
 
 @Controller({
     path: VIDEO_ROUTE_PREFIX,
@@ -20,7 +20,7 @@ import { GetVideoByIdQuery } from 'src/video/application/queries/get-by-id/get.v
     bearerAuth: true,
 })
 export class FindVideoController
-implements ControllerContract<[id: string], GetVideoByIdResponse>
+    implements ControllerContract<[id: string], GetVideoByIdResponse>
 {
     constructor(private videoRepository: VideoPostgresRepository) {}
     @Get('one/:id')

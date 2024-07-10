@@ -1,7 +1,6 @@
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Get, HttpException, Query, UseGuards } from '@nestjs/common'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { BLOG_DOC_PREFIX, BLOG_ROUTE_PREFIX } from '../prefix'
 import { BlogPostgresRepository } from '../../repositories/postgres/blog.repository'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
@@ -10,6 +9,7 @@ import { CountBlogsQuery } from 'src/blog/application/queries/count/count.query.
 import { CountBlogsResponse } from 'src/blog/application/queries/count/types/response'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
 import { CountBlogsDTO } from './dto/dto'
+import { UserGuard } from '../../guards/user.guard'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
@@ -17,7 +17,7 @@ import { CountBlogsDTO } from './dto/dto'
     bearerAuth: true,
 })
 export class GetAllBlogController
-    implements ControllerContract<[query: CountBlogsDTO], CountBlogsResponse>
+implements ControllerContract<[query: CountBlogsDTO], CountBlogsResponse>
 {
     constructor(private blogRepository: BlogPostgresRepository) {}
 

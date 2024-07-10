@@ -1,8 +1,8 @@
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Get, UseGuards } from '@nestjs/common'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
 import { IMAGE_DOC_PREFIX, IMAGE_ROUTE_PREFIX } from '../prefix'
 import { GetAllImagesQuery } from 'src/image/application/queries/get-all/get.all.image.query'
 import { GetAllImagesResponse } from 'src/image/application/queries/get-all/types/response'
@@ -16,7 +16,7 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
     bearerAuth: true,
 })
 export class FindImageController
-    implements ControllerContract<undefined, GetAllImagesResponse>
+implements ControllerContract<undefined, GetAllImagesResponse>
 {
     constructor(private imageRepository: ImagePostgresRepository) {}
     @Get('all')
@@ -25,7 +25,7 @@ export class FindImageController
     async execute(): Promise<GetAllImagesResponse> {
         const nestLogger = new NestLogger('Find all images logger')
         const service = new LoggerDecorator(
-            await new GetAllImagesQuery(this.imageRepository),
+            new GetAllImagesQuery(this.imageRepository),
             nestLogger,
         )
 

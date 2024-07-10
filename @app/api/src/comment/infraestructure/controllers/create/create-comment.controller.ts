@@ -3,9 +3,9 @@ import { CreateCommentDTO } from './dto/create.comment.dto'
 import { CreateCommentResponse } from 'src/comment/application/commands/create/types/response'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Body, HttpException, Inject, Post, UseGuards } from '@nestjs/common'
-import { Roles } from 'src/user/infraestructure/guards/roles.guard'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
+import { Roles } from '../../guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
+import { RolesGuard } from '../../guards/roles.guard'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { CreateCommentCommand } from 'src/comment/application/commands/create/create-comment.command'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
@@ -13,7 +13,7 @@ import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.modul
 import { CommentPostgresRepository } from '../../repositories/postgres/comment.repository'
 import { BlogPostgresByCommentRepository } from '../../repositories/postgres/blog.repository'
 import { LessonPostgresByCommentRepository } from '../../repositories/postgres/lesson.repository'
-import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { User as UserDecorator } from '../../decorators/user.decorator'
 import { CheckTargetExistence } from 'src/comment/application/decorators/check-target-existence.decorator'
 import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
@@ -22,7 +22,7 @@ import { UserByCommentPostgresRepository } from '../../repositories/postgres/use
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
-import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { CurrentUserResponse } from '../../auth/current/types/response'
 import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
 import { UserRedisRepositoryProxy } from '../../repositories/redis/user.repository.proxy'
 
@@ -32,7 +32,7 @@ import { UserRedisRepositoryProxy } from '../../repositories/redis/user.reposito
     bearerAuth: true,
 })
 export class CreateController
-implements
+    implements
         ControllerContract<
             [body: CreateCommentDTO, user: CurrentUserResponse],
             CreateCommentResponse

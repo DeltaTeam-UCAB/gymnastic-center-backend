@@ -5,13 +5,13 @@ import { FindCommentsDTO } from './dto/find.comments.dto'
 import { Get, HttpException, Query, UseGuards } from '@nestjs/common'
 import { FindCommentsQuery } from 'src/comment/application/queries/find/find-comments.query'
 import { CommentPostgresRepository } from '../../repositories/postgres/comment.repository'
-import { User } from 'src/user/application/models/user'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { UserGuard } from '../../guards/user.guard'
+import { User as UserDecorator } from '../../decorators/user.decorator'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
 import { Optional } from '@mono/types-utils'
 import { TargetType } from 'src/comment/application/types/target-type'
+import { CurrentUserResponse } from '../../auth/current/types/response'
 
 @Controller({
     path: 'comment',
@@ -19,9 +19,9 @@ import { TargetType } from 'src/comment/application/types/target-type'
     bearerAuth: true,
 })
 export class FindCommentsController
-    implements
+implements
         ControllerContract<
-            [query: FindCommentsDTO, user: User],
+            [query: FindCommentsDTO, user: CurrentUserResponse],
             FindCommentsResponse[]
         >
 {
@@ -31,7 +31,7 @@ export class FindCommentsController
     @UseGuards(UserGuard)
     async execute(
         @Query() query: FindCommentsDTO,
-        @UserDecorator() user: User,
+        @UserDecorator() user: CurrentUserResponse,
     ): Promise<FindCommentsResponse[]> {
         if (!isNotNull(query.blog) && !isNotNull(query.lesson)) {
             throw new HttpException('Blog and Lesson ID are null', 400)

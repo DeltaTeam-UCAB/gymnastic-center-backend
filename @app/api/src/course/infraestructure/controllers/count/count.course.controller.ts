@@ -2,7 +2,7 @@ import { Get, HttpException, Query, UseGuards } from '@nestjs/common'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { CoursePostgresRepository } from '../../repositories/postgres/course.repository'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { COURSE_DOC_PREFIX, COURSE_ROUTE_PREFIX } from '../prefix'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
@@ -18,7 +18,7 @@ import { isNotNull } from 'src/utils/null-manager/null-checker'
     bearerAuth: true,
 })
 export class CourseDetailsController
-    implements
+implements
         ControllerContract<[query: CountCoursesDTO], CountCoursesResponse>
 {
     constructor(private courseRepo: CoursePostgresRepository) {}

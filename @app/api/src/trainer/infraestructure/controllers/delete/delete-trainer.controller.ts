@@ -10,14 +10,13 @@ import {
     ParseUUIDPipe,
     UseGuards,
 } from '@nestjs/common'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { DeleteTrainerCommand } from 'src/trainer/application/commands/delete/delete.trainer.command'
 import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
-import { TrainerRedisRepositoryProxy } from '../../repositories/redis/trainer.repository.proxy'
 
 @Controller({
     path: 'trainer',
@@ -42,7 +41,7 @@ implements ControllerContract<[id: string], DeleteTrainerResponse>
             new LoggerDecorator(
                 new DomainErrorParserDecorator(
                     new DeleteTrainerCommand(
-                        new TrainerRedisRepositoryProxy(this.trainerRepository),
+                        this.trainerRepository,
                         this.eventPublisher,
                     ),
                 ),

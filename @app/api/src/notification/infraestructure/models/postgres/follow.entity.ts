@@ -1,21 +1,21 @@
-import { User } from 'src/user/infraestructure/models/postgres/user.entity'
 import { Entity, JoinColumn, ManyToMany, PrimaryColumn } from 'typeorm'
 import { Trainer } from './trainer.entity'
+import { User } from './user.entity'
 
 @Entity()
 export class Follow {
     @PrimaryColumn({
         type: 'uuid',
     })
-    userId: string
+        userId: string
     @ManyToMany(() => User)
     @JoinColumn()
-    user: User
+        user: User
     @PrimaryColumn({
         type: 'uuid',
     })
-    trainerId: string
+        trainerId: string
     @ManyToMany(() => Trainer)
     @JoinColumn()
-    trainer: Trainer
+        trainer: Trainer
 }

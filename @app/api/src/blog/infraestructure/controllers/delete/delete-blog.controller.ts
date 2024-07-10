@@ -12,8 +12,8 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { BlogPostgresRepository } from '../../repositories/postgres/blog.repository'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { BLOG_DOC_PREFIX, BLOG_ROUTE_PREFIX } from '../prefix'
@@ -25,7 +25,7 @@ import { DomainErrorParserDecorator } from 'src/core/application/decorators/doma
     bearerAuth: true,
 })
 export class DeleteBlogController
-    implements ControllerContract<[id: string], DeleteBlogResponse>
+implements ControllerContract<[id: string], DeleteBlogResponse>
 {
     constructor(
         private blogRepository: BlogPostgresRepository,

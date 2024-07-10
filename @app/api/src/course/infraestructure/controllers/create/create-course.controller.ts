@@ -3,8 +3,8 @@ import { ControllerContract } from 'src/core/infraestructure/controllers/control
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
 import { COURSE_ROUTE_PREFIX } from '../prefix'
 import { COURSE_DOC_PREFIX } from '../prefix'
 import { CreateCourseDTO } from './dto/create-course.dto'
@@ -26,8 +26,8 @@ import { CoursePostgresTransactionalRepository } from '../../repositories/postgr
 import { TransactionHandlerDecorator } from 'src/core/application/decorators/transaction.handler.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
-import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
-import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { CurrentUserResponse } from '../../auth/current/types/response'
+import { User as UserDecorator } from '../../decorators/user.decorator'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
@@ -41,7 +41,7 @@ import { TrainerRedisRepositoryProxy } from '../../repositories/redis/trainer.re
     bearerAuth: true,
 })
 export class CreateCourseController
-    implements
+implements
         ControllerContract<
             [body: CreateCourseDTO, user: CurrentUserResponse],
             {
