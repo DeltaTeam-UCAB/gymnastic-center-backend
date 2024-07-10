@@ -48,7 +48,6 @@
     "@mono/string-methods": "workspace:*",
     "@mono/types-utils": "workspace:*",
     "@nestjs/common": "^9.4.0",
-    "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.4.0",
     "@nestjs/jwt": "^10.0.1",
     "@nestjs/mongoose": "^10.0.6",
@@ -73,8 +72,7 @@
     "redis": "^4.6.15",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.3.20",
-    "uuid": "^9.0.0"
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@japa/expect": "^3.0.2",
@@ -83,7 +81,6 @@
     "@mono/compiler": "workspace: *",
     "@mono/eslint-config": "workspace:^1.0.0",
     "@mono/test-utils": "workspace: *",
-    "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.2.1",
     "@types/amqplib": "^0.10.5",
