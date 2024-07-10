@@ -1,4 +1,4 @@
-import { TargetType } from 'src/comment/application/models/comment'
+import { TargetType } from 'src/comment/application/types/target-type'
 
 export type FindCommentsDTO = {
     targetId: string

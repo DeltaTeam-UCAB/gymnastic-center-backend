@@ -4,7 +4,6 @@ import { ClientID } from './value-objects/client.id'
 import { CourseID } from './value-objects/course.id'
 import { Time } from './value-objects/time'
 import { Lesson } from './entities/lesson'
-import { unvalidCourse } from 'src/course/domain/exceptions/unvalid.course'
 import { LessonID } from './value-objects/lesson.id'
 import { LessonLastTime } from './value-objects/lesson.last.time'
 import { lessonNotFound } from './exceptions/lesson.not.found'
@@ -13,6 +12,12 @@ import { subscriptionCreated } from './events/subscription.created'
 import { lastTimeChanged } from './events/last.time.changed'
 import { lessonLastTimeChanged } from './events/lesson.last.time.changed'
 import { lessonProgressChanged } from './events/lesson.progress.changed'
+import { subscriptionDeleted } from './events/subscription.deleted'
+import { lessonExist } from './exceptions/lesson.exist'
+import { lessonNotExist } from './exceptions/lesson.not.exist'
+import { lessonAdded } from './events/subscription.lesson.added'
+import { lessonRemoved } from './events/subscription.lesson.removed'
+import { unvalidSubscription } from './exceptions/unvalid.subscription'
 
 export class Subscription extends AggregateRoot<SubscriptionID> {
     constructor(
@@ -51,7 +56,7 @@ export class Subscription extends AggregateRoot<SubscriptionID> {
     }
 
     get lessons() {
-        return this.data.lessons
+        return this.data.lessons.map((e) => e.clone())
     }
 
     changeLastTime(lastTime: Time) {
@@ -66,7 +71,7 @@ export class Subscription extends AggregateRoot<SubscriptionID> {
     }
 
     changeLessonLastTime(lessonId: LessonID, lastTime: LessonLastTime) {
-        const lesson = this.lessons.find((e) => e.id == lessonId)
+        const lesson = this.data.lessons.find((e) => e.id == lessonId)
         if (!lesson) throw lessonNotFound()
         lesson.changeLastTime(lastTime)
         this.publish(
@@ -79,7 +84,7 @@ export class Subscription extends AggregateRoot<SubscriptionID> {
     }
 
     changeLessonProgress(lessonId: LessonID, progress: LessonProgress) {
-        const lesson = this.lessons.find((e) => e.id == lessonId)
+        const lesson = this.data.lessons.find((e) => e.id == lessonId)
         if (!lesson) throw lessonNotFound()
         lesson.changeProgress(progress)
         this.publish(
@@ -87,6 +92,36 @@ export class Subscription extends AggregateRoot<SubscriptionID> {
                 id: this.id,
                 lessonId,
                 progress,
+            }),
+        )
+    }
+
+    addLesson(lesson: Lesson) {
+        if (this.lessons.some((e) => e.id == lesson.id)) throw lessonExist()
+        this.data.lessons?.push(lesson)
+        this.publish(
+            lessonAdded({
+                id: this.id,
+                lesson,
+            }),
+        )
+    }
+
+    removeLesson(lessonId: LessonID) {
+        if (!this.lessons.some((e) => e.id == lessonId)) throw lessonNotExist()
+        this.data.lessons = this.lessons.filter((e) => e.id != lessonId)
+        this.publish(
+            lessonRemoved({
+                id: this.id,
+                lesson: lessonId,
+            }),
+        )
+    }
+
+    delete() {
+        this.publish(
+            subscriptionDeleted({
+                id: this.id,
             }),
         )
     }
@@ -101,6 +136,6 @@ export class Subscription extends AggregateRoot<SubscriptionID> {
             !this.lessons ||
             this.lastTime < this.startTime
         )
-            throw unvalidCourse()
+            throw unvalidSubscription()
     }
 }

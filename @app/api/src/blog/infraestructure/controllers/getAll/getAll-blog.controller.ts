@@ -1,8 +1,7 @@
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Get, Query, UseGuards } from '@nestjs/common'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { ApiHeader } from '@nestjs/swagger'
+import { UserGuard } from '../../guards/user.guard'
 import { BLOG_DOC_PREFIX, BLOG_ROUTE_PREFIX } from '../prefix'
 import { GetAllBlogResponse } from 'src/blog/application/queries/getAll/types/response'
 import { BlogPostgresRepository } from '../../repositories/postgres/blog.repository'
@@ -13,13 +12,17 @@ import { ImageByBlogPostgresRepository } from '../../repositories/postgres/image
 import { GetAllBlogsDTO } from './dto/getAll.blogs.dto'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { CategoryRedisRepositoryProxy } from '../../repositories/redis/category.repository.proxy'
+import { TrainerRedisRepositoryProxy } from '../../repositories/redis/trainer.repository.proxy'
+import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
 
 @Controller({
     path: BLOG_ROUTE_PREFIX,
     docTitle: BLOG_DOC_PREFIX,
+    bearerAuth: true,
 })
 export class GetAllBlogController
-implements
+    implements
         ControllerContract<[query: GetAllBlogsDTO], GetAllBlogResponse[]>
 {
     constructor(
@@ -31,9 +34,6 @@ implements
 
     @Get('many')
     @UseGuards(UserGuard)
-    @ApiHeader({
-        name: 'auth',
-    })
     async execute(
         @Query() query: GetAllBlogsDTO,
     ): Promise<GetAllBlogResponse[]> {
@@ -41,9 +41,9 @@ implements
         const result = await new LoggerDecorator(
             new GetAllBlogQuery(
                 this.blogRepository,
-                this.categoryRepository,
-                this.trainerRepository,
-                this.imageRepository,
+                new CategoryRedisRepositoryProxy(this.categoryRepository),
+                new TrainerRedisRepositoryProxy(this.trainerRepository),
+                new ImageRedisRepositoryProxy(this.imageRepository),
             ),
             nestLogger,
         ).execute({

@@ -8,13 +8,14 @@ import { Body, HttpException, Post } from '@nestjs/common'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { UserRedisRepositoryProxy } from '../../repositories/redis/user.repository.proxy'
 
 @Controller({
     path: 'auth',
     docTitle: 'Auth',
 })
 export class ValidateCodeController
-    implements ControllerContract<[body: ValidateCodeDTO], void>
+implements ControllerContract<[body: ValidateCodeDTO], void>
 {
     constructor(private userRepository: UserPostgresRepository) {}
     @Post('code/validate')
@@ -22,7 +23,7 @@ export class ValidateCodeController
         await new ErrorDecorator(
             new LoggerDecorator(
                 new ValidRecoveryCodeQuery(
-                    this.userRepository,
+                    new UserRedisRepositoryProxy(this.userRepository),
                     new ConcreteDateProvider(),
                 ),
                 new NestLogger('ValidateCode'),

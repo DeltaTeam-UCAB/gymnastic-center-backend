@@ -1,11 +1,7 @@
-import { createCategory } from './utils/category.factory'
-import { CategoryRepositoryMock } from './utils/category.repository.mock'
 import { createCourse } from './utils/course.factory'
 import { CourseRepositoryMock } from './utils/course.repository.mock'
 import { createImage } from './utils/image.factory'
 import { ImageRepositoryMock } from './utils/image.repository.mock'
-import { createTrainer } from './utils/trainer.factory'
-import { TrainerRepositoryMock } from './utils/trainer.repository.mock'
 import { createVideo } from './utils/video.factory'
 import { VideoRepositoryMock } from './utils/video.repository.mock'
 import { GetCourseDetailsQuery } from '../../../../../src/course/application/queries/courseDetails/get.courseDetails.query'
@@ -16,36 +12,36 @@ import { GetCourseDetailsResponse } from '../../../../../src/course/application/
 export const name = 'Should bring all the details of a course'
 
 export const body = async () => {
-    const imageId = 'test-image-id'
+    const imageId = '9e68f321-0b22-4a95-adf3-083d64cf2f28'
     const image = createImage({
         id: imageId,
     })
     const imageRepository = new ImageRepositoryMock([image])
-    const videoId = 'test-video-id'
+    const videoId = '96737b3c-96a1-4795-b32b-3beec712b9d6'
     const video = createVideo({
         id: videoId,
     })
     const videoRepository = new VideoRepositoryMock([video])
-    const categoryId = 'test-category-id'
-    const category = createCategory({
-        id: categoryId,
-    })
-    const categoryRepository = new CategoryRepositoryMock([category])
-    const trainerId = 'test-trainer-id'
-    const trainer = createTrainer({
-        id: trainerId,
-    })
-    const trainerRepository = new TrainerRepositoryMock([trainer])
-    const courseId = 'test-course-id'
-    const lessonId = 'test-lesson-id'
+    const categoryId = '901ddd30-8331-4b11-a1a6-ec2bf87f7a1f'
+    const categoryName = 'category test name'
+    const trainerId = '823f2b7e-f323-46be-99ea-7ab16c848b1e'
+    const trainerName = 'test trainer name'
+    const courseId = '7c51eba6-943b-4ecd-9dfc-2f59f8b6b4d2'
+    const lessonId = 'a5b61d8e-76f1-4854-aff3-32252c479b4d'
     const lesson = createLesson({
         id: lessonId,
         video: videoId,
     })
     const course = createCourse({
         id: courseId,
-        category: categoryId,
-        trainer: trainerId,
+        category: {
+            id: categoryId,
+            name: categoryName,
+        },
+        trainer: {
+            id: trainerId,
+            name: trainerName,
+        },
         imageId: imageId,
         lessons: [lesson],
     })
@@ -55,29 +51,31 @@ export const body = async () => {
             courseRepository,
             imageRepository,
             videoRepository,
-            trainerRepository,
-            categoryRepository,
         ).execute({
             id: courseId,
         })
     lookFor(result.unwrap()).toDeepEqual({
-        id: course.id,
-        title: course.title,
-        description: course.description,
-        level: course.level,
+        id: course.id.id,
+        title: course.title.title,
+        description: course.description.description,
+        level: course.level.level,
         image: image.src,
-        trainer,
-        category: category.name,
+        trainer: {
+            id: trainerId,
+            name: trainerName,
+        },
+        category: categoryName,
         tags: [],
-        date: course.date,
+        date: course.creationDate.date,
+        durationWeeks: 4,
+        durationMinutes: 40,
         lessons: [
             {
-                id: lesson.id,
-                title: lesson.title,
-                content: lesson.content,
-                image: undefined,
+                id: lesson.id.id,
+                title: lesson.title.title,
+                content: lesson.content.content,
                 video: video.src,
-                order: lesson.order,
+                order: 1,
             },
         ],
     })

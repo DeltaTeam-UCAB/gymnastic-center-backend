@@ -26,7 +26,7 @@ export class UpdateUserCommand
             if (isEmailExist) return Result.error(invalidCredentialsError())
         }
         Object.keys(data).forEach((e) => {
-            if (e === 'id') return
+            if (e === 'id' || (!data[e] && e !== 'image')) return
             user[e] = data[e]
         })
         if (data.password)

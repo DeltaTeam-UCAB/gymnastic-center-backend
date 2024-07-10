@@ -1,10 +1,19 @@
 import { Result } from 'src/core/application/result-handler/result.handler'
-import { Blog } from '../models/blog'
+import { Blog } from '../../domain/blog'
 import { Optional } from '@mono/types-utils'
 import { GetAllBlogsDTO } from '../queries/getAll/types/dto'
+import { BlogTitle } from 'src/blog/domain/value-objects/blog.title'
+import { BlogId } from 'src/blog/domain/value-objects/blog.id'
+import { TrainerId } from 'src/blog/domain/value-objects/trainer.id'
+import { CategoryId } from 'src/blog/domain/value-objects/category.id'
+
 export interface BlogRepository {
     save(blog: Blog): Promise<Result<Blog>>
-    existByTitle(title: string): Promise<boolean>
-    getById(id: string): Promise<Optional<Blog>>
+    existByTitle(title: BlogTitle): Promise<boolean>
+    getById(id: BlogId): Promise<Optional<Blog>>
     getAll(filters: GetAllBlogsDTO): Promise<Blog[]>
+    countByTrainer(id: TrainerId): Promise<number>
+    countByCategory(id: CategoryId): Promise<number>
+    delete(blog: Blog): Promise<Result<Blog>>
+    getAllByTrainer(trainer: TrainerId): Promise<Blog[]>
 }

@@ -1,21 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsInt, IsOptional, IsString, IsUUID } from 'class-validator'
+import { IsInt, IsString, IsUUID } from 'class-validator'
 
 export class CreateLessonDTO {
     @ApiProperty()
     @IsString()
-    title: string
+        title: string
     @ApiProperty()
     @IsString()
-    content: string
+        content: string
     @ApiProperty()
     @IsUUID()
-    @IsOptional()
-    image?: string
-    @ApiProperty()
-    @IsUUID()
-    @IsOptional()
-    video?: string
+        video: string
     @ApiProperty()
     @IsInt()
         order: number

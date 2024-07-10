@@ -4,9 +4,10 @@ import { CreateCourseResponse } from '../types/response'
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { TrainerRepository } from 'src/course/application/repositories/trainer.repository'
 import { trainerNotExistError } from 'src/course/application/errors/trainer.not.exist'
+import { TrainerID } from 'src/course/domain/value-objects/trainer.id'
 
 export class TrainerExistDecorator
-implements ApplicationService<CreateCourseDTO, CreateCourseResponse>
+    implements ApplicationService<CreateCourseDTO, CreateCourseResponse>
 {
     constructor(
         private service: ApplicationService<
@@ -19,7 +20,7 @@ implements ApplicationService<CreateCourseDTO, CreateCourseResponse>
         data: CreateCourseDTO,
     ): Promise<Result<CreateCourseResponse>> {
         const trainerExist = await this.trainerRepository.existById(
-            data.trainer,
+            new TrainerID(data.trainer),
         )
         if (!trainerExist) return Result.error(trainerNotExistError())
         return this.service.execute(data)

@@ -1,36 +1,41 @@
 import { Optional } from '@mono/types-utils'
-import { Trainer } from '../../../../../../src/trainer/application/models/trainer'
+import { Trainer } from '../../../../../../src/trainer/domain/trainer'
 import { TrainerRepository } from '../../../../../../src/trainer/application/repositories/trainer.repository'
 import { Result } from '../../../../../../src/core/application/result-handler/result.handler'
+import { ClientID } from '../../../../../../src/trainer/domain/value-objects/client.id'
+import { TrainerID } from '../../../../../../src/trainer/domain/value-objects/trainer.id'
+import { TrainerName } from '../../../../../../src/trainer/domain/value-objects/trainer.name'
 
 export class TrainerRepositoryMock implements TrainerRepository {
     constructor(private trainers: Trainer[] = []) {}
+    async getAllFilteredByFollowed(
+        perPage: number,
+        page: number,
+        clientId: ClientID,
+    ): Promise<Trainer[]> {
+        return []
+    }
+    async getAll(perPage: number, page: number): Promise<Trainer[]> {
+        return []
+    }
 
     async save(trainer: Trainer): Promise<Result<Trainer>> {
-        this.trainers = this.trainers.filter((e) => e.id !== trainer.id)
+        this.trainers = this.trainers.filter((e) => e.id != trainer.id)
         this.trainers.push(trainer)
         return Result.success(trainer)
     }
-    async getById(id: string): Promise<Optional<Trainer>> {
-        return this.trainers.find((e) => e.id === id)
+    async getById(id: TrainerID): Promise<Optional<Trainer>> {
+        console.log
+        return this.trainers.find((e) => e.id == id)
     }
-    async existByName(name: string): Promise<boolean> {
-        return !!this.trainers.findMap((e) => e.name === name)
+    async existByName(name: TrainerName): Promise<boolean> {
+        return !!this.trainers.findMap((e) => e.name == name)
     }
-    async followTrainer(
-        userId: string,
-        trainerId: string,
-    ): Promise<Result<boolean>> {
-        const trainer = this.trainers.find((e) => e.id === trainerId)
-        trainer?.followers.push(userId)
-        return Result.success(true)
+    async countFollowsByClient(client: ClientID): Promise<number> {
+        return this.trainers.filter((e) => e.isFollowedBy(client)).length
     }
-    async unfollowTrainer(
-        userId: string,
-        trainerId: string,
-    ): Promise<Result<boolean>> {
-        const trainer = this.trainers.find((e) => e.id === trainerId) as Trainer
-        trainer.followers = trainer.followers.filter((e) => e !== userId)
-        return Result.success(false)
+    async delete(trainer: Trainer): Promise<Result<Trainer>> {
+        this.trainers = this.trainers.filter((t) => t.id != trainer.id)
+        return Result.success(trainer)
     }
 }

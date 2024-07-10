@@ -6,14 +6,24 @@ import { BlogRepository } from '../../../../../../src/blog/application/repositor
 import { TrainerRepository } from '../../../../../../src/blog/application/repositories/trainer.repository'
 import { CategoryRepository } from '../../../../../../src/blog/application/repositories/category.repository'
 import { IDGenerator } from '../../../../../../src/core/application/ID/ID.generator'
+import { DateProviderMock } from '../../../blog/tests/utils/date.provider.mock'
+import { eventPublisherStub } from './event.publisher.stup'
 
 export const decorateCreateCommand = (
     idGen: IDGenerator<string>,
     blogRepository: BlogRepository,
     trainerRepository: TrainerRepository,
     categoryRepository: CategoryRepository,
+    dateProvider: DateProviderMock,
 ) => {
-    const commandBase = new CreateBlogCommand(idGen, blogRepository)
+    const commandBase = new CreateBlogCommand(
+        idGen,
+        blogRepository,
+        trainerRepository,
+        categoryRepository,
+        dateProvider,
+        eventPublisherStub,
+    )
     const commandWithTitleValidator = new BlogTitleNotExistDecorator(
         commandBase,
         blogRepository,

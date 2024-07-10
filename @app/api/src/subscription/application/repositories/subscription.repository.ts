@@ -11,4 +11,6 @@ export interface SubscriptionRepository {
         client: ClientID,
     ): Promise<Optional<Subscription>>
     getLastSubscriptionCourse(client: ClientID): Promise<Optional<Subscription>>
+    delete(subscription: Subscription): Promise<Result<Subscription>>
+    getAllByCourse(course: CourseID): Promise<Subscription[]>
 }

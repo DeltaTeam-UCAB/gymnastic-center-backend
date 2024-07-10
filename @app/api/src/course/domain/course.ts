@@ -9,6 +9,7 @@ import { Lesson } from './entities/lesson'
 import { Trainer } from './entities/trainer'
 import { Category } from './entities/category'
 import { CourseImage } from './value-objects/course.image'
+import { CourseDate } from './value-objects/course.date'
 import { unvalidCourse } from './exceptions/unvalid.course'
 import { courseCreated } from './events/course.created'
 import { courseTitleChanged } from './events/course.title.changed'
@@ -20,6 +21,12 @@ import { courseCategoryChanged } from './events/course.category.changed'
 import { courseTrainerChanged } from './events/course.trainer.changed'
 import { courseTagAdded } from './events/course.tag.added'
 import { courseTagRemoved } from './events/course.tag.removed'
+import { courseDeleted } from './events/course.deleted'
+import { lessonExist } from './exceptions/lesson.exist'
+import { courseLessonAdded } from './events/course.lesson.added'
+import { LessonID } from './value-objects/lesson.id'
+import { lessonNotExist } from './exceptions/lesson.not.exist'
+import { courseLessonRemoved } from './events/course.lesson.removed'
 
 export class Course extends AggregateRoot<CourseID> {
     constructor(
@@ -34,6 +41,7 @@ export class Course extends AggregateRoot<CourseID> {
             trainer: Trainer
             category: Category
             image: CourseImage
+            creationDate: CourseDate
         },
     ) {
         if (!data.lessons) data.lessons = []
@@ -66,7 +74,7 @@ export class Course extends AggregateRoot<CourseID> {
     }
 
     get tags() {
-        return this.data.tags!
+        return [...this.data.tags!]
     }
 
     get image() {
@@ -74,15 +82,19 @@ export class Course extends AggregateRoot<CourseID> {
     }
 
     get lessons() {
-        return this.data.lessons!
+        return this.data.lessons!.map((e) => e.clone())
     }
 
     get category() {
-        return this.data.category
+        return this.data.category.clone()
     }
 
     get trainer() {
-        return this.data.trainer
+        return this.data.trainer.clone()
+    }
+
+    get creationDate() {
+        return this.data.creationDate
     }
 
     changeTitle(title: CourseTitle) {
@@ -175,6 +187,36 @@ export class Course extends AggregateRoot<CourseID> {
         )
     }
 
+    addLesson(lesson: Lesson) {
+        if (this.lessons.some((e) => e.id == lesson.id)) throw lessonExist()
+        this.data.lessons?.push(lesson)
+        this.publish(
+            courseLessonAdded({
+                id: this.id,
+                lesson,
+            }),
+        )
+    }
+
+    removeLesson(lessonId: LessonID) {
+        if (!this.lessons.some((e) => e.id == lessonId)) throw lessonNotExist()
+        this.data.lessons = this.lessons.filter((e) => e.id != lessonId)
+        this.publish(
+            courseLessonRemoved({
+                id: this.id,
+                lesson: lessonId,
+            }),
+        )
+    }
+
+    delete() {
+        this.publish(
+            courseDeleted({
+                id: this.id,
+            }),
+        )
+    }
+
     validateState(): void {
         if (
             !this.id ||
@@ -185,7 +227,8 @@ export class Course extends AggregateRoot<CourseID> {
             !this.level ||
             !this.duration ||
             !this.category ||
-            !this.trainer
+            !this.trainer ||
+            !this.creationDate
         )
             throw unvalidCourse()
     }

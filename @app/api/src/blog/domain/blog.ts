@@ -17,6 +17,7 @@ import { blogTrainerChanged } from './events/blog.trainer.changed'
 import { blogImageAdded } from './events/blog.image.added'
 import { blogImageRemoved } from './events/blog.image.removed'
 import { BlogDate } from './value-objects/blog.date'
+import { blogDeleted } from './events/blog.deleted'
 
 export class Blog extends AggregateRoot<BlogId> {
     constructor(
@@ -49,19 +50,19 @@ export class Blog extends AggregateRoot<BlogId> {
     }
 
     get images() {
-        return this.data.images
+        return [...this.data.images]
     }
 
     get tags() {
-        return this.data.tags
+        return [...this.data.tags]
     }
 
     get trainer() {
-        return this.data.trainer
+        return this.data.trainer.clone()
     }
 
     get category() {
-        return this.data.category
+        return this.data.category.clone()
     }
 
     get date() {
@@ -144,6 +145,14 @@ export class Blog extends AggregateRoot<BlogId> {
             blogTagRemoved({
                 id: this.id,
                 tag,
+            }),
+        )
+    }
+
+    delete() {
+        this.publish(
+            blogDeleted({
+                id: this.id,
             }),
         )
     }

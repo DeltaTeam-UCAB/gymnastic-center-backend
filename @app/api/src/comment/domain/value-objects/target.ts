@@ -5,21 +5,27 @@ import { unvalidTargetBlogId } from '../exceptions/unvalid.target.blog.id'
 import { unvalidTargetLessonId } from '../exceptions/unvalid.target.lesson.id'
 import { noBlogTarget } from '../exceptions/no.blog.target'
 import { noLessonTarget } from '../exceptions/no.lesson.target'
+import { BlogID } from './blog.id'
+import { LessonID } from './lesson.id'
 
 export class Target implements ValueObject<Target> {
-    private constructor(private _blogId?: string, private _lessonId?: string) {
-        if (isNotNull(_blogId) && !regExpUUID.test(_blogId))
+    private constructor(
+        private _blogId?: BlogID,
+        private _lessonId?: LessonID,
+    ) {
+        if (isNotNull(_blogId) && !regExpUUID.test(_blogId.id))
             throw unvalidTargetBlogId()
-        if (isNotNull(_lessonId) && !regExpUUID.test(_lessonId))
+
+        if (isNotNull(_lessonId) && !regExpUUID.test(_lessonId.id))
             throw unvalidTargetLessonId()
     }
 
     equals(other?: Target | undefined): boolean {
         if (other?.lessonTarget() && this.lessonTarget())
-            return other.lesson === this.lesson
+            return other.lesson == this.lesson
 
         if (other?.blogTarget() && this.blogTarget())
-            return other.blog === this.blog
+            return other.blog == this.blog
 
         return false
     }
@@ -34,19 +40,19 @@ export class Target implements ValueObject<Target> {
 
     get blog() {
         if (!this.blogTarget()) throw noBlogTarget()
-        return this._blogId as string
+        return this._blogId as BlogID
     }
 
     get lesson() {
         if (!this.lessonTarget()) throw noLessonTarget()
-        return this._lessonId as string
+        return this._lessonId as LessonID
     }
 
-    static blog(id: string): Target {
+    static blog(id: BlogID): Target {
         return new Target(id)
     }
 
-    static lesson(id: string): Target {
+    static lesson(id: LessonID): Target {
         return new Target(undefined, id)
     }
 }

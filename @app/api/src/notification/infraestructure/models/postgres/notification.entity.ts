@@ -1,33 +1,33 @@
-import { User } from 'src/user/infraestructure/models/postgres/user.entity'
 import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm'
+import { User } from './user.entity'
 
 @Entity()
 export class Notification {
     @PrimaryColumn({
         type: 'uuid',
     })
-    id: string
+        id: string
     @Column({
         type: 'varchar',
     })
-    title: string
+        title: string
     @Column({
         type: 'varchar',
     })
-    body: string
+        body: string
     @Column({
         type: 'uuid',
     })
-    client: string
+        client: string
     @Column({
         type: 'timestamp',
     })
-    date: Date
+        date: Date
     @Column({
         type: 'boolean',
         default: false,
     })
-    readed: boolean
+        readed: boolean
     @ManyToOne(() => User, (user) => user.id)
-    clientRecord: User
+        clientRecord: User
 }

@@ -9,7 +9,7 @@ export class SubscriptionRepositoryMock implements SubscriptionRepository {
     constructor(private subscriptions: Subscription[] = []) {}
     async save(subscription: Subscription): Promise<Result<Subscription>> {
         this.subscriptions = this.subscriptions.filter(
-            (e) => e.id == subscription.id,
+            (e) => e.id != subscription.id,
         )
         this.subscriptions.push(subscription)
         return Result.success(subscription)
@@ -28,5 +28,16 @@ export class SubscriptionRepositoryMock implements SubscriptionRepository {
         client: ClientID,
     ): Promise<Optional<Subscription>> {
         return this.subscriptions.find((e) => e.client == client)
+    }
+
+    async delete(subscription: Subscription): Promise<Result<Subscription>> {
+        this.subscriptions = this.subscriptions.filter(
+            (e) => e.id != subscription.id,
+        )
+        return Result.success(subscription)
+    }
+
+    async getAllByCourse(course: CourseID): Promise<Subscription[]> {
+        return this.subscriptions.filter((e) => e.course == course)
     }
 }

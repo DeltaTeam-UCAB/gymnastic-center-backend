@@ -1,3 +1,5 @@
+import { BlogID } from 'src/comment/domain/value-objects/blog.id'
+
 export interface BlogRepository {
-    existsById(id: string): Promise<boolean>
+    existsById(id: BlogID): Promise<boolean>
 }

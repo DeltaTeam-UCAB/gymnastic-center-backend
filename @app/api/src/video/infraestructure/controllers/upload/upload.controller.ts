@@ -10,30 +10,39 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common'
-import { ApiConsumes, ApiHeader } from '@nestjs/swagger'
+import { ApiConsumes } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { configVideoMulter } from '../../helpers/multer.helper'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { VideoStorage } from 'src/core/application/storage/video/video.manager'
 import { CLOUDINARY_VIDEO_STORAGE } from 'src/core/infraestructure/storage/video/video.storage.module'
 import { VIDEO_DOC_PREFIX, VIDEO_ROUTE_PREFIX } from '../prefix'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { rmSync } from 'fs'
 import { VideoPostgresRepository } from '../../repositories/postgres/video.repository'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { SaveVideoCommand } from 'src/video/application/commands/save/save.video.command'
 import { SaveVideoResponse } from 'src/video/application/commands/save/types/response'
+import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
+import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
+import { User as UserDecorator } from '../../decorators/user.decorator'
+import { CurrentUserResponse } from '../../auth/current/types/response'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
 
 @Controller({
     path: VIDEO_ROUTE_PREFIX,
     docTitle: VIDEO_DOC_PREFIX,
+    bearerAuth: true,
 })
 export class UploadVideoController
-    implements
+implements
         ControllerContract<
-            [file: Express.Multer.File, body: UploadVideoDTO],
+            [
+                file: Express.Multer.File,
+                body: UploadVideoDTO,
+                user: CurrentUserResponse,
+            ],
             SaveVideoResponse
         >
 {
@@ -44,9 +53,6 @@ export class UploadVideoController
     ) {}
     @Post('upload')
     @Roles('ADMIN')
-    @ApiHeader({
-        name: 'auth',
-    })
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('video', configVideoMulter))
     @UseGuards(UserGuard, RolesGuard)
@@ -54,13 +60,26 @@ export class UploadVideoController
         @UploadedFile() file: Express.Multer.File,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         @Body() _body: UploadVideoDTO,
+        @UserDecorator() user: CurrentUserResponse,
     ): Promise<SaveVideoResponse> {
         try {
+            const audit = {
+                user: user.id,
+                operation: 'Upload Video',
+                succes: true,
+                ocurredOn: new Date(Date.now()),
+                data: JSON.stringify(_body),
+            }
+
             const result = await new ErrorDecorator(
-                new SaveVideoCommand(
-                    this.idGen,
-                    this.videoRepository,
-                    this.videoStorage,
+                new AuditDecorator(
+                    new SaveVideoCommand(
+                        this.idGen,
+                        this.videoRepository,
+                        this.videoStorage,
+                    ),
+                    new AuditingTxtRepository(),
+                    audit,
                 ),
                 () => new InternalServerErrorException(),
             ).execute({

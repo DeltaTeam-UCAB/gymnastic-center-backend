@@ -1,66 +1,47 @@
-import {
-    Comment,
-    TargetType,
-} from '../../../../../../src/comment/application/models/comment'
+import { Comment } from '../../../../../../src/comment/domain/comment'
 import { CommentRepository } from '../../../../../../src/comment/application/repositories/comment.repository'
+import { Target } from '../../../../../../src/comment/domain/value-objects/target'
 import { Result } from '../../../../../../src/core/application/result-handler/result.handler'
-import { isNotNull } from '../../../../../../src/utils/null-manager/null-checker'
+import { Optional } from '@mono/types-utils'
+import { CommentID } from '../../../../../../src/comment/domain/value-objects/comment.id'
 
 export class CommentRepositoryMock implements CommentRepository {
     constructor(private comments: Comment[] = []) {}
 
-    async existsById(id: string): Promise<boolean> {
-        const comment = this.comments.filter((c) => c.id === id)[0]
-        return isNotNull(comment)
+    async getCommentById(id: CommentID): Promise<Optional<Comment>> {
+        const comment = this.comments.filter((c) => c.id == id)[0]
+        return comment
+    }
+
+    async existsById(id: CommentID): Promise<boolean> {
+        const exists = this.comments.some((c) => c.id == id)
+        return exists
     }
 
     async save(comment: Comment): Promise<Result<Comment>> {
+        this.comments = this.comments.filter((c) => c.id != comment.id)
         this.comments.push(comment)
         return Result.success(comment)
     }
     async getComments(
-        targetId: string,
-        targetType: TargetType,
+        target: Target,
         page: number,
         perPage: number,
     ): Promise<Comment[]> {
-        const start = page * perPage
+        const start = (page - 1) * perPage
         const end = start + perPage
         const comments = this.comments
-            .filter((c) => c.targetId === targetId)
+            .filter((c) => c.target == target)
             .slice(start, end)
         return comments
     }
-    async toggleLike(userId: string, commentId: string): Promise<boolean> {
-        const comment = this.comments.find((c) => c.id === commentId)
-        let like
-        if (!isNotNull(comment)) return false
-        const likes = comment.likes
-        const dislikes = comment.dislikes
-        if (likes.includes(userId)) {
-            like = false
-            comment.likes = likes.filter((s) => s !== userId)
-        } else {
-            like = true
-            comment.likes.push(userId)
-            comment.dislikes = dislikes.filter((s) => s !== userId)
-        }
-        return like
+
+    async delete(comment: Comment): Promise<Result<Comment>> {
+        this.comments = this.comments.filter((e) => e.id != comment.id)
+        return Result.success(comment)
     }
-    async toggleDislike(userId: string, commentId: string): Promise<boolean> {
-        const comment = this.comments.find((c) => c.id === commentId)
-        let dislike
-        if (!isNotNull(comment)) return false
-        const likes = comment.likes
-        const dislikes = comment.dislikes
-        if (dislikes.includes(userId)) {
-            dislike = false
-            comment.dislikes = dislikes.filter((s) => s !== userId)
-        } else {
-            dislike = true
-            comment.dislikes.push(userId)
-            comment.likes = likes.filter((s) => s !== userId)
-        }
-        return dislike
+
+    async getAllCommentsByTarget(target: Target): Promise<Comment[]> {
+        return this.comments.filter((c) => c.target == target)
     }
 }

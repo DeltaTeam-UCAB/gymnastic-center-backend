@@ -29,4 +29,9 @@ export class NotificationRepositoryMock implements NotificationRepository {
             (e) => e.client === clientId && !e.readed,
         ).length
     }
+
+    async deleteByUser(client: string): Promise<Result<void>> {
+        this.notifications = this.notifications.filter((e) => e.id !== client)
+        return Result.success(undefined)
+    }
 }

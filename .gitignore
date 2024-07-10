@@ -8,3 +8,5 @@ commonjs
 public/uploads
 .DS_Store
 .tap
+/@app/api/firebase.json
+/@app/api/auditingFiles

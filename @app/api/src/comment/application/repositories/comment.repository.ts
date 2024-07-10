@@ -1,15 +1,18 @@
 import { Result } from 'src/core/application/result-handler/result.handler'
-import { Comment, TargetType } from '../models/comment'
+import { Target } from 'src/comment/domain/value-objects/target'
+import { Comment } from 'src/comment/domain/comment'
+import { CommentID } from 'src/comment/domain/value-objects/comment.id'
+import { Optional } from '@mono/types-utils'
 
 export interface CommentRepository {
     save(comment: Comment): Promise<Result<Comment>>
     getComments(
-        targetId: string,
-        targetType: TargetType,
+        target: Target,
         page: number,
         perPage: number,
     ): Promise<Comment[]>
-    existsById(id: string): Promise<boolean>
-    toggleLike(userId: string, commentId: string): Promise<boolean>
-    toggleDislike(userId: string, commentId: string): Promise<boolean>
+    getCommentById(id: CommentID): Promise<Optional<Comment>>
+    existsById(id: CommentID): Promise<boolean>
+    delete(comment: Comment): Promise<Result<Comment>>
+    getAllCommentsByTarget(target: Target): Promise<Comment[]>
 }

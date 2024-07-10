@@ -12,6 +12,7 @@ export default async function bootstrap() {
             description: 'API Documentation for Gymnastic center',
             version: '1.0',
             path: 'api/docs',
+            bearerAuth: true,
         })
     await runServer(app.build(), PORT)
 }

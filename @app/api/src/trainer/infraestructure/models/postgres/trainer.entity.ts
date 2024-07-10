@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import { Image } from './image.entity'
 
 @Entity()
 export class Trainer {
@@ -14,4 +15,19 @@ export class Trainer {
         type: 'varchar',
     })
     location: string
+    @Column({
+        type: 'uuid',
+    })
+        image: string
+    @Column({
+        type: 'boolean',
+        default: true,
+        nullable: true,
+    })
+    active: boolean
+    @ManyToOne(() => Image, (image) => image.id)
+    @JoinColumn({
+        name: 'image',
+    })
+    imageEntity: Image
 }

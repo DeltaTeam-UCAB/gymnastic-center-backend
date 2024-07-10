@@ -10,31 +10,40 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common'
-import { ApiConsumes, ApiHeader } from '@nestjs/swagger'
+import { ApiConsumes } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { configImageMulter } from '../../helpers/multer.helper'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
 import { ImageStorage } from 'src/core/application/storage/images/image.storage'
 import { IMAGE_DOC_PREFIX, IMAGE_ROUTE_PREFIX } from '../prefix'
-import { rmSync } from 'fs'
+import { rmSync } from 'node:fs'
 import { CLOUDINARY_IMAGE_STORAGE } from 'src/core/infraestructure/storage/image/image.storage.module'
 import { SaveImageCommand } from 'src/image/application/commands/save/save.image.command'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { ImagePostgresRepository } from '../../repositories/postgres/image.repository'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
+import { CurrentUserResponse } from '../../auth/current/types/response'
+import { User as UserDecorator } from '../../decorators/user.decorator'
+import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
+import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 
 @Controller({
     path: IMAGE_ROUTE_PREFIX,
     docTitle: IMAGE_DOC_PREFIX,
+    bearerAuth: true,
 })
 export class UploadImageController
 implements
         ControllerContract<
-            [file: Express.Multer.File, body: UploadImageDTO],
+            [
+                file: Express.Multer.File,
+                body: UploadImageDTO,
+                user: CurrentUserResponse,
+            ],
             {
                 id: string
             }
@@ -47,9 +56,6 @@ implements
     ) {}
     @Post('upload')
     @Roles('ADMIN')
-    @ApiHeader({
-        name: 'auth',
-    })
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image', configImageMulter))
     @UseGuards(UserGuard, RolesGuard)
@@ -57,17 +63,30 @@ implements
         @UploadedFile() file: Express.Multer.File,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         @Body() _body: UploadImageDTO,
+        @UserDecorator() user: CurrentUserResponse,
     ): Promise<{ id: string }> {
         try {
+            const audit = {
+                user: user.id,
+                operation: 'Upload Image',
+                succes: true,
+                ocurredOn: new Date(Date.now()),
+                data: JSON.stringify(_body),
+            }
             const nestLogger = new NestLogger('Upload image logger')
+
             const result = await new ErrorDecorator(
-                new LoggerDecorator(
-                    new SaveImageCommand(
-                        this.idGen,
-                        this.imageRepository,
-                        this.imageStorage,
+                new AuditDecorator(
+                    new LoggerDecorator(
+                        new SaveImageCommand(
+                            this.idGen,
+                            this.imageRepository,
+                            this.imageStorage,
+                        ),
+                        nestLogger,
                     ),
-                    nestLogger,
+                    new AuditingTxtRepository(),
+                    audit,
                 ),
                 () => new InternalServerErrorException(),
             ).execute({

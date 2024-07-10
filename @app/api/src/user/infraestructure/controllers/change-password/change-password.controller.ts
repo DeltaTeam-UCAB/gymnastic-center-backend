@@ -10,13 +10,20 @@ import { SHA256_CRYPTO } from 'src/core/infraestructure/crypto/sha256/sha256.mod
 import { Crypto } from 'src/core/application/crypto/crypto'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { UserRedisRepositoryProxy } from '../../repositories/redis/user.repository.proxy'
 
 @Controller({
     path: 'auth',
     docTitle: 'Auth',
+    bearerAuth: true,
 })
 export class ChangePasswordController
-implements ControllerContract<[body: ChangePasswordDTO], void>
+implements
+        ControllerContract<
+            [body: ChangePasswordDTO, user: CurrentUserResponse],
+            void
+        >
 {
     constructor(
         private userRepository: UserPostgresRepository,
@@ -27,7 +34,7 @@ implements ControllerContract<[body: ChangePasswordDTO], void>
         await new ErrorDecorator(
             new LoggerDecorator(
                 new ChangePasswordCommand(
-                    this.userRepository,
+                    new UserRedisRepositoryProxy(this.userRepository),
                     new ConcreteDateProvider(),
                     this.crypto,
                 ),

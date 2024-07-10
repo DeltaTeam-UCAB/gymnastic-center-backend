@@ -12,13 +12,14 @@ import { CreateUserCommand } from 'src/user/application/commads/create/create.us
 import { CreateUserResponse } from 'src/user/application/commads/create/types/response'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
+import { UserRedisRepositoryProxy } from '../../repositories/redis/user.repository.proxy'
 
 @Controller({
     path: 'auth',
     docTitle: 'Auth',
 })
 export class CreateUserController
-    implements ControllerContract<[body: CreateUserDTO], CreateUserResponse>
+implements ControllerContract<[body: CreateUserDTO], CreateUserResponse>
 {
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,
@@ -29,7 +30,11 @@ export class CreateUserController
     async execute(@Body() body: CreateUserDTO): Promise<CreateUserResponse> {
         const result = await new ErrorDecorator(
             new LoggerDecorator(
-                new CreateUserCommand(this.idGen, this.crypto, this.userRepo),
+                new CreateUserCommand(
+                    this.idGen,
+                    this.crypto,
+                    new UserRedisRepositoryProxy(this.userRepo),
+                ),
                 new NestLogger('CreateUser'),
             ),
             (e) => new HttpException(e.message, 400),

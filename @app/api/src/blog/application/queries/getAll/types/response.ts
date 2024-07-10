@@ -4,7 +4,7 @@ export type GetAllBlogResponse = {
     description: string
     category: string
     tags: string[]
-    images: string[]
+    image: string
     trainer: string
     date: Date
 }

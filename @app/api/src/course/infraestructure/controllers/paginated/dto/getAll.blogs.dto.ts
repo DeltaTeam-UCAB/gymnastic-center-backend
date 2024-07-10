@@ -8,31 +8,30 @@ import {
     IsUUID,
     Min,
 } from 'class-validator'
-import { FilterType } from 'src/blog/application/queries/getAll/types/dto'
 
 export class GetAllCoursesDTO {
     @ApiProperty()
     @Min(0)
     @Type(() => Number)
-        page: number
+    page: number
     @ApiProperty()
     @IsPositive()
     @Type(() => Number)
-        perPage: number
+    perPage: number
     @ApiProperty()
     @IsString()
     @IsIn(['POPULAR', 'RECENT'])
-        filter: FilterType
+    filter: 'POPULAR' | 'RECENT'
     @ApiProperty({
         required: false,
     })
     @IsUUID()
     @IsOptional()
-        trainer?: string
+    trainer?: string
     @ApiProperty({
         required: false,
     })
     @IsUUID()
     @IsOptional()
-        category?: string
+    category?: string
 }

@@ -15,10 +15,9 @@ export class Course {
     @PrimaryColumn({
         type: 'uuid',
     })
-        id: string
+    id: string
     @Column({
         type: 'varchar',
-        unique: true,
     })
     title: string
     @Column({
@@ -55,9 +54,25 @@ export class Course {
     @Column({
         type: 'uuid',
     })
-        trainer: string
+    trainer: string
     @Column({
         type: 'uuid',
     })
     image: string
+    @Column({
+        type: 'numeric',
+        nullable: true,
+    })
+    weeks: number
+    @Column({
+        type: 'numeric',
+        nullable: true,
+    })
+    hours: number
+    @Column({
+        type: 'boolean',
+        default: true,
+        nullable: true,
+    })
+    available: boolean
 }

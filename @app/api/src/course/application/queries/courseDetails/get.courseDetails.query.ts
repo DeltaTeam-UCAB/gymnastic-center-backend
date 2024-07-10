@@ -4,12 +4,13 @@ import { ApplicationService } from 'src/core/application/service/application.ser
 import { Result } from 'src/core/application/result-handler/result.handler'
 import { CourseRepository } from '../../repositories/course.repository'
 import { isNotNull } from 'src/utils/null-manager/null-checker'
-import { imageNotFoundError } from 'src/category/application/errors/image.not.found'
 import { courseNotExistError } from '../../errors/course.not.exist'
 import { VideoRepository } from '../../repositories/video.repository'
-import { TrainerRepository } from '../../repositories/trainer.repository'
-import { CategoryRepository } from '../../repositories/category.repository'
 import { ImageRepository } from '../../repositories/image.repository'
+import { CourseID } from 'src/course/domain/value-objects/course.id'
+import { LessonVideo } from 'src/course/domain/value-objects/lesson.video'
+import { Video } from 'src/course/application/models/video'
+import { imageNotExistError } from '../../errors/image.not.exist'
 
 export class GetCourseDetailsQuery
     implements
@@ -19,39 +20,42 @@ export class GetCourseDetailsQuery
         private courseRepository: CourseRepository,
         private imageRepository: ImageRepository,
         private videoRepository: VideoRepository,
-        private trainerRepository: TrainerRepository,
-        private categoryRepository: CategoryRepository,
     ) {}
     async execute(
         data: GetCourseDetailsDTO,
     ): Promise<Result<GetCourseDetailsResponse>> {
-        const course = await this.courseRepository.getById(data.id)
+        const course = await this.courseRepository.getById(
+            new CourseID(data.id),
+        )
         if (!isNotNull(course)) return Result.error(courseNotExistError())
         const image = await this.imageRepository.getById(course.image)
-        if (!isNotNull(image)) return Result.error(imageNotFoundError())
-        const category = await this.categoryRepository.getById(course.category)
-        const trainer = await this.trainerRepository.getById(course.trainer)
-
-        const getOptionalImage = async (image?: string) =>
-            image ? (await this.imageRepository.getById(image))?.src : undefined
-
-        const getOptionalVideo = async (video?: string) =>
-            video ? (await this.videoRepository.getById(video))?.src : undefined
+        if (!isNotNull(image)) return Result.error(imageNotExistError())
 
         return Result.success({
-            tags: course.tags,
-            level: course.level,
-            id: course.id,
-            title: course.title,
-            description: course.description,
-            trainer: trainer!,
-            category: category!.name,
-            date: course.date,
+            tags: course.tags.map((t) => t.tag),
+            level: course.level.level,
+            id: course.id.id,
+            title: course.title.title,
+            description: course.description.description,
+            trainer: {
+                id: course.trainer.id.id,
+                name: course.trainer.name.name,
+            },
+            category: course.category.name.name,
+            date: course.creationDate.date,
             image: image.src,
-            lessons: await course.lessons.asyncMap(async (lesson) => ({
-                ...lesson,
-                image: await getOptionalImage(lesson.image),
-                video: await getOptionalVideo(lesson.video),
+            durationWeeks: course.duration.weeks,
+            durationMinutes: course.duration.hours,
+            lessons: await course.lessons.asyncMap(async (lesson, index) => ({
+                id: lesson.id.id,
+                title: lesson.title.title,
+                content: lesson.content.content,
+                video: (
+                    (await this.videoRepository.getById(
+                        new LessonVideo(lesson.video.video),
+                    )) as Video
+                ).src,
+                order: index + 1,
             })),
         })
     }
