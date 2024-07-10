@@ -151,4 +151,12 @@ export class SubscriptionPostgresRepository implements SubscriptionRepository {
                 }),
         )
     }
+
+    countByClient(client: ClientID): Promise<number> {
+        return this.subscriptionProvider.count({
+            where: {
+                client: client.id,
+            },
+        })
+    }
 }

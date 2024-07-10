@@ -158,4 +158,12 @@ implements SubscriptionRepository
                 }),
         )
     }
+
+    countByClient(client: ClientID): Promise<number> {
+        return this.queryRunner.manager.count(SubscriptionORM, {
+            where: {
+                client: client.id,
+            },
+        })
+    }
 }
