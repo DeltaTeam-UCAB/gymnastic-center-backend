@@ -4,7 +4,7 @@ import { GetPopularTagsResponse } from 'src/search/application/queries/popular-t
 import { TagPostgresRepository } from '../../repositories/postgres/tag.repository'
 import { GetPopularTagsQuery } from 'src/search/application/queries/popular-tags/popular.tags.query'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { UserGuard } from '../../guards/user.guard'
 
 @Controller({
     path: 'search',
@@ -12,7 +12,7 @@ import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
     bearerAuth: true,
 })
 export class GetPopularTagsControllers
-implements
+    implements
         ControllerContract<
             [page: number, perPage: number],
             GetPopularTagsResponse

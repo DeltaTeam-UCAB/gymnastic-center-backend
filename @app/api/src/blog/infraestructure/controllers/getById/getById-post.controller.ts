@@ -7,7 +7,7 @@ import {
     ParseUUIDPipe,
     UseGuards,
 } from '@nestjs/common'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { BLOG_DOC_PREFIX, BLOG_ROUTE_PREFIX } from '../prefix'
 import { BlogPostgresRepository } from '../../repositories/postgres/blog.repository'
 import { GetBlogByIdResponse } from 'src/blog/application/queries/getById/types/response'
@@ -28,7 +28,7 @@ import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.reposi
     bearerAuth: true,
 })
 export class GetPostByIdController
-implements ControllerContract<[id: string], GetBlogByIdResponse>
+    implements ControllerContract<[id: string], GetBlogByIdResponse>
 {
     constructor(
         private blogRepository: BlogPostgresRepository,

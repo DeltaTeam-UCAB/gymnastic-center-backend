@@ -1,7 +1,7 @@
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Get, Query, UseGuards } from '@nestjs/common'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { BLOG_DOC_PREFIX, BLOG_ROUTE_PREFIX } from '../prefix'
 import { GetAllBlogResponse } from 'src/blog/application/queries/getAll/types/response'
 import { BlogPostgresRepository } from '../../repositories/postgres/blog.repository'
@@ -22,7 +22,7 @@ import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.reposi
     bearerAuth: true,
 })
 export class GetAllBlogController
-implements
+    implements
         ControllerContract<[query: GetAllBlogsDTO], GetAllBlogResponse[]>
 {
     constructor(

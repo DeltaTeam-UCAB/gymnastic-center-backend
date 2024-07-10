@@ -8,8 +8,9 @@ import { CoursePostgresBySearchRepository } from '../../repositories/postgres/co
 import { BlogPostgresBySearchRepository } from '../../repositories/postgres/blog.repository'
 import { ImagePostgresBySearchRepository } from '../../repositories/postgres/image.repository'
 import { SearchBlogsQuery } from 'src/search/application/queries/search-blogs/search.blog.query'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
+import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
 
 @Controller({
     path: 'search',
@@ -40,11 +41,11 @@ implements
         const res = await Promise.parallel({
             courses: new SearchCoursesQuery(
                 this.courseRepository,
-                this.imageRepository,
+                new ImageRedisRepositoryProxy(this.imageRepository),
             ).execute(data),
             blogs: new SearchBlogsQuery(
                 this.blogRepository,
-                this.imageRepository,
+                new ImageRedisRepositoryProxy(this.imageRepository),
             ).execute(data),
         })
         return {

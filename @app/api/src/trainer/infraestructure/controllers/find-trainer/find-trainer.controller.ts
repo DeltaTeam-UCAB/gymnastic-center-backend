@@ -11,13 +11,13 @@ import { FindTrainerResponse } from 'src/trainer/application/queries/find/types/
 import { TrainerPostgresRepository } from '../../repositories/postgres/trainer.repository'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { FindTrainerQuery } from 'src/trainer/application/queries/find/find.trainer.query'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { User } from 'src/user/application/models/user'
-import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { UserGuard } from '../../guards/user.guard'
+import { User as UserDecorator } from '../../decorators/user.decorator'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { ImagePostgresByTrainerRepository } from '../../repositories/postgres/image.repository'
 import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
+import { CurrentUserResponse } from '../../auth/current/types/response'
 
 @Controller({
     path: 'trainer',
@@ -25,8 +25,11 @@ import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.reposi
     bearerAuth: true,
 })
 export class FindTrainerController
-    implements
-        ControllerContract<[param: string, user: User], FindTrainerResponse>
+implements
+        ControllerContract<
+            [param: string, user: CurrentUserResponse],
+            FindTrainerResponse
+        >
 {
     constructor(
         private trainerRepo: TrainerPostgresRepository,
@@ -37,7 +40,7 @@ export class FindTrainerController
     @UseGuards(UserGuard)
     async execute(
         @Param('id', ParseUUIDPipe) param: string,
-        @UserDecorator() user: User,
+        @UserDecorator() user: CurrentUserResponse,
     ): Promise<FindTrainerResponse> {
         const result = await new ErrorDecorator(
             new LoggerDecorator(

@@ -2,7 +2,7 @@ import { DeleteCommentResponse } from 'src/comment/application/commands/delete/t
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
-import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { CurrentUserResponse } from '../../auth/current/types/response'
 import { CommentPostgresRepository } from '../../repositories/postgres/comment.repository'
 import {
     Delete,
@@ -11,9 +11,9 @@ import {
     ParseUUIDPipe,
     UseGuards,
 } from '@nestjs/common'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { User } from 'src/user/infraestructure/decorators/user.decorator'
+import { UserGuard } from '../../guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
+import { User } from '../../decorators/user.decorator'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { DeleteCommentCommand } from 'src/comment/application/commands/delete/delete.comment.command'
@@ -26,7 +26,7 @@ import { DomainErrorParserDecorator } from 'src/core/application/decorators/doma
     bearerAuth: true,
 })
 export class DeleteCommentController
-    implements
+implements
         ControllerContract<
             [id: string, user: CurrentUserResponse],
             DeleteCommentResponse

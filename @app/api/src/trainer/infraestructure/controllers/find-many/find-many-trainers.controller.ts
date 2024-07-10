@@ -3,9 +3,8 @@ import { ControllerContract } from 'src/core/infraestructure/controllers/control
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { TrainerPostgresRepository } from '../../repositories/postgres/trainer.repository'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { User } from 'src/user/application/models/user'
-import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { UserGuard } from '../../guards/user.guard'
+import { User as UserDecorator } from '../../decorators/user.decorator'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { FindManyTrainersResponse } from 'src/trainer/application/queries/find-many/types/response'
@@ -13,6 +12,7 @@ import { FindManyTrainersQuery } from 'src/trainer/application/queries/find-many
 import { FindManyTrainersDTO } from './dto/dto'
 import { ImagePostgresByTrainerRepository } from '../../repositories/postgres/image.repository'
 import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
+import { CurrentUserResponse } from '../../auth/current/types/response'
 
 @Controller({
     path: 'trainer',
@@ -20,9 +20,9 @@ import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.reposi
     bearerAuth: true,
 })
 export class FindTrainerController
-    implements
+implements
         ControllerContract<
-            [data: FindManyTrainersDTO, user: User],
+            [data: FindManyTrainersDTO, user: CurrentUserResponse],
             FindManyTrainersResponse[]
         >
 {
@@ -35,7 +35,7 @@ export class FindTrainerController
     @UseGuards(UserGuard)
     async execute(
         @Query() data: FindManyTrainersDTO,
-        @UserDecorator() user: User,
+        @UserDecorator() user: CurrentUserResponse,
     ): Promise<FindManyTrainersResponse[]> {
         const result = await new ErrorDecorator(
             new LoggerDecorator(

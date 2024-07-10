@@ -12,14 +12,12 @@ import {
 } from '@nestjs/common'
 import { ApiConsumes } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
 import { configVideoMulter } from '../../helpers/multer.helper'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { VideoStorage } from 'src/core/application/storage/video/video.manager'
 import { CLOUDINARY_VIDEO_STORAGE } from 'src/core/infraestructure/storage/video/video.storage.module'
 import { VIDEO_DOC_PREFIX, VIDEO_ROUTE_PREFIX } from '../prefix'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { rmSync } from 'fs'
 import { VideoPostgresRepository } from '../../repositories/postgres/video.repository'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
@@ -27,8 +25,10 @@ import { SaveVideoCommand } from 'src/video/application/commands/save/save.video
 import { SaveVideoResponse } from 'src/video/application/commands/save/types/response'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
-import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
-import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { User as UserDecorator } from '../../decorators/user.decorator'
+import { CurrentUserResponse } from '../../auth/current/types/response'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
 
 @Controller({
     path: VIDEO_ROUTE_PREFIX,
@@ -36,7 +36,7 @@ import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.
     bearerAuth: true,
 })
 export class UploadVideoController
-    implements
+implements
         ControllerContract<
             [
                 file: Express.Multer.File,

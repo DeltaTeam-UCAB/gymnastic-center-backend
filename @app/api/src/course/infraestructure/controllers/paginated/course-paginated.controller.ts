@@ -2,7 +2,7 @@ import { Controller } from 'src/core/infraestructure/controllers/decorators/cont
 import { COURSE_ROUTE_PREFIX, COURSE_DOC_PREFIX } from '../prefix'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Get, Query, UseGuards } from '@nestjs/common'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { CoursePostgresRepository } from '../../repositories/postgres/course.repository'
 import { GetCoursesManyQuery } from 'src/course/application/queries/many/course.many.query'
 import { ImagePostgresByCourseRepository } from '../../repositories/postgres/image.repository'
@@ -15,7 +15,7 @@ import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.reposi
     bearerAuth: true,
 })
 export class CoursesManyController
-implements
+    implements
         ControllerContract<[data: GetAllCoursesDTO], GetCoursesManyResponse>
 {
     constructor(

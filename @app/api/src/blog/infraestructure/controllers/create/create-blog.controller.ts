@@ -3,8 +3,8 @@ import { ControllerContract } from 'src/core/infraestructure/controllers/control
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { BLOG_ROUTE_PREFIX, BLOG_DOC_PREFIX } from '../prefix'
 import { CreateBlogDTO } from './dto/create.blog.dto'
@@ -20,8 +20,8 @@ import { PostgresTransactionProvider } from 'src/core/infraestructure/repositori
 import { BlogPostgresTransactionalRepository } from '../../repositories/postgres/blog.repository.transactional'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
-import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
-import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
+import { CurrentUserResponse } from '../../auth/current/types/response'
+import { User as UserDecorator } from '../../decorators/user.decorator'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
 import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
@@ -36,7 +36,7 @@ import { CategoryRedisRepositoryProxy } from '../../repositories/redis/category.
     bearerAuth: true,
 })
 export class CreateBlogController
-    implements
+implements
         ControllerContract<
             [body: CreateBlogDTO, user: CurrentUserResponse],
             { id: string }

@@ -8,14 +8,14 @@ import { CreateTrainerCommand } from 'src/trainer/application/commands/create/cr
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
 import { TrainerPostgresRepository } from '../../repositories/postgres/trainer.repository'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { AuditDecorator } from 'src/core/application/decorators/audit.decorator'
 import { AuditingTxtRepository } from 'src/core/infraestructure/auditing/repositories/txt/auditing.repository'
-import { User as UserDecorator } from 'src/user/infraestructure/decorators/user.decorator'
-import { CurrentUserResponse } from '../../../../../src/user/application/queries/current/types/response'
+import { User as UserDecorator } from '../../decorators/user.decorator'
+import { CurrentUserResponse } from '../../auth/current/types/response'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { DomainErrorParserDecorator } from 'src/core/application/decorators/domain.error.parser'
 import { ImagePostgresByTrainerRepository } from '../../repositories/postgres/image.repository'
@@ -27,7 +27,7 @@ import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.reposi
     bearerAuth: true,
 })
 export class CreateTrainerController
-implements
+    implements
         ControllerContract<
             [body: CreateTrainerDTO, user: CurrentUserResponse],
             CreateTrainerResponse

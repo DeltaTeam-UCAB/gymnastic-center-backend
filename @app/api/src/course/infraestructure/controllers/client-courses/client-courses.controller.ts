@@ -2,7 +2,7 @@ import { Controller } from 'src/core/infraestructure/controllers/decorators/cont
 import { COURSE_DOC_PREFIX } from '../prefix'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Get, Query, UseGuards } from '@nestjs/common'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { CoursePostgresRepository } from '../../repositories/postgres/course.repository'
 import { ImagePostgresByCourseRepository } from '../../repositories/postgres/image.repository'
 import { GetClientCoursesDTO } from './dto/dto'
@@ -10,8 +10,8 @@ import { GetSubscribedCoursesResponse } from 'src/course/application/queries/pag
 import { GetSubscribedCoursesPaginatedQuery } from 'src/course/application/queries/paginatedSubscribedCourses/GetSubscribedCoursesPaginatedQuery'
 import { SubscriptionPostgresByCourseRepository } from '../../repositories/postgres/subscription.repository'
 import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { User } from 'src/user/infraestructure/decorators/user.decorator'
-import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { User } from '../../decorators/user.decorator'
+import { CurrentUserResponse } from '../../auth/current/types/response'
 import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
 
 @Controller({
@@ -20,7 +20,7 @@ import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.reposi
     bearerAuth: true,
 })
 export class ClientCoursesController
-    implements
+implements
         ControllerContract<
             [data: GetClientCoursesDTO, user: CurrentUserResponse],
             GetSubscribedCoursesResponse

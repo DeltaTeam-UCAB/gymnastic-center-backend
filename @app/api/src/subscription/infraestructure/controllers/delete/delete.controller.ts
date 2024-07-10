@@ -12,13 +12,13 @@ import { ControllerContract } from 'src/core/infraestructure/controllers/control
 import { PostgresTransactionProvider } from 'src/core/infraestructure/repositories/transaction/postgres.transaction'
 import { CreateSubscriptionResponse } from 'src/subscription/application/commands/create/types/response'
 import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
-import { User } from 'src/user/infraestructure/decorators/user.decorator'
+import { User } from '../../decorators/user.decorator'
 import { SubscriptionPostgresRepositoryTransactional } from '../../repositories/postgres/subscription.repository.transactional'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { TransactionHandlerDecorator } from 'src/core/application/decorators/transaction.handler.decorator'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { DeleteSubscriptionCommand } from 'src/subscription/application/commands/delete/delete.subscription.command'
 
@@ -28,7 +28,7 @@ import { DeleteSubscriptionCommand } from 'src/subscription/application/commands
     bearerAuth: true,
 })
 export class DeleteSubscriptionController
-implements
+    implements
         ControllerContract<
             [user: CurrentUserResponse, course: string],
             CreateSubscriptionResponse

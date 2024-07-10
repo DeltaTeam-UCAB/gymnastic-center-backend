@@ -9,8 +9,8 @@ import {
     ParseUUIDPipe,
     UseGuards,
 } from '@nestjs/common'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { PostgresTransactionProvider } from 'src/core/infraestructure/repositories/transaction/postgres.transaction'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
 import { CoursePostgresTransactionalRepository } from '../../repositories/postgres/course.repository.transactional'
@@ -27,7 +27,7 @@ import { RemoveLessonCommand } from 'src/course/application/commands/remove-less
     bearerAuth: true,
 })
 export class RemoveLessonController
-implements
+    implements
         ControllerContract<[course: string, lesson: string], AddLessonResponse>
 {
     constructor(

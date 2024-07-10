@@ -6,8 +6,8 @@ import { AddLessonResponse } from 'src/course/application/commands/add-lesson/ty
 import { Body, HttpException, Inject, Put, UseGuards } from '@nestjs/common'
 import { UUID_GEN_NATIVE } from 'src/core/infraestructure/UUID/module/UUID.module'
 import { IDGenerator } from 'src/core/application/ID/ID.generator'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { VideoPostgresByCourseRepository } from '../../repositories/postgres/video.repository'
 import { PostgresTransactionProvider } from 'src/core/infraestructure/repositories/transaction/postgres.transaction'
 import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rabbitmq/rabbit.service'
@@ -25,7 +25,7 @@ import { DomainErrorParserDecorator } from 'src/core/application/decorators/doma
     bearerAuth: true,
 })
 export class AddLessonController
-    implements ControllerContract<[data: AddLessonDTO], AddLessonResponse>
+implements ControllerContract<[data: AddLessonDTO], AddLessonResponse>
 {
     constructor(
         @Inject(UUID_GEN_NATIVE) private idGen: IDGenerator<string>,

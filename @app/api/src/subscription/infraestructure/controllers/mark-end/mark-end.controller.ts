@@ -4,15 +4,15 @@ import { ErrorDecorator } from 'src/core/application/decorators/error.handler.de
 import { LoggerDecorator } from 'src/core/application/decorators/logger.decorator'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { PostgresTransactionProvider } from 'src/core/infraestructure/repositories/transaction/postgres.transaction'
-import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
-import { User } from 'src/user/infraestructure/decorators/user.decorator'
+import { CurrentUserResponse } from '../../auth/current/types/response'
+import { User } from '../../decorators/user.decorator'
 import { SubscriptionPostgresRepositoryTransactional } from '../../repositories/postgres/subscription.repository.transactional'
 import { ConcreteDateProvider } from 'src/core/infraestructure/date/date.provider'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
 import { TransactionHandlerDecorator } from 'src/core/application/decorators/transaction.handler.decorator'
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
 import { MarkEndDTO } from './dto/dto'
 import { UpdateSubscriptionCommand } from 'src/subscription/application/commands/update/update.command'
 import { UpdateSubscriptionResponse } from 'src/subscription/application/commands/update/types/response'
@@ -24,7 +24,7 @@ import { RabbitMQEventHandler } from 'src/core/infraestructure/event-handler/rab
     bearerAuth: true,
 })
 export class MarkEndLessonController
-implements
+    implements
         ControllerContract<
             [user: CurrentUserResponse, body: MarkEndDTO],
             UpdateSubscriptionResponse

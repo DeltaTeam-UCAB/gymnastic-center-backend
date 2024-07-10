@@ -7,7 +7,7 @@ import {
     ParseUUIDPipe,
     UseGuards,
 } from '@nestjs/common'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { IMAGE_DOC_PREFIX, IMAGE_ROUTE_PREFIX } from '../prefix'
 import { GetImageByIdResponse } from 'src/image/application/queries/get-by-id/types/response'
 import { GetImageByIdQuery } from 'src/image/application/queries/get-by-id/get.image.id.query'
@@ -22,7 +22,7 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
     bearerAuth: true,
 })
 export class FindImageController
-implements ControllerContract<[id: string], GetImageByIdResponse>
+    implements ControllerContract<[id: string], GetImageByIdResponse>
 {
     constructor(private imageRepository: ImagePostgresRepository) {}
     @Get('one/:id')

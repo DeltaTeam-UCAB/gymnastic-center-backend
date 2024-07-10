@@ -2,11 +2,11 @@ import { Controller } from 'src/core/infraestructure/controllers/decorators/cont
 import { VIDEO_DOC_PREFIX, VIDEO_ROUTE_PREFIX } from '../prefix'
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { Get, UseGuards } from '@nestjs/common'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
 import { GetAllVideosResponse } from 'src/video/application/queries/get-all/types/response'
 import { VideoPostgresRepository } from '../../repositories/postgres/video.repository'
 import { GetAllVideosQuery } from 'src/video/application/queries/get-all/get.all.video.query'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
+import { UserGuard } from '../../guards/user.guard'
 
 @Controller({
     path: VIDEO_ROUTE_PREFIX,
@@ -14,7 +14,7 @@ import { GetAllVideosQuery } from 'src/video/application/queries/get-all/get.all
     bearerAuth: true,
 })
 export class FindVideoController
-implements ControllerContract<undefined, GetAllVideosResponse>
+    implements ControllerContract<undefined, GetAllVideosResponse>
 {
     constructor(private videoRepository: VideoPostgresRepository) {}
     @Get('all')
