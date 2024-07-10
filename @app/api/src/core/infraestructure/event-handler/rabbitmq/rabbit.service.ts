@@ -4,6 +4,7 @@ import { DomainEventBase } from 'src/core/domain/events/event'
 import amqp from 'amqplib'
 
 const connection = await amqp.connect(process.env.QUEUE_URL ?? '')
+new Logger('Rabbit connection').log('Queue started')
 const queues: Record<string, string[]> = {}
 
 @Injectable()
