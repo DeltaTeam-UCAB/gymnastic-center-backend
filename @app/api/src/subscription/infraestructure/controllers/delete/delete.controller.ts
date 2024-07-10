@@ -11,7 +11,7 @@ import { LoggerDecorator } from 'src/core/application/decorators/logger.decorato
 import { ControllerContract } from 'src/core/infraestructure/controllers/controller-model/controller.contract'
 import { PostgresTransactionProvider } from 'src/core/infraestructure/repositories/transaction/postgres.transaction'
 import { CreateSubscriptionResponse } from 'src/subscription/application/commands/create/types/response'
-import { CurrentUserResponse } from 'src/user/application/queries/current/types/response'
+import { CurrentUserResponse } from '../../auth/current/types/response'
 import { User } from '../../decorators/user.decorator'
 import { SubscriptionPostgresRepositoryTransactional } from '../../repositories/postgres/subscription.repository.transactional'
 import { NestLogger } from 'src/core/infraestructure/logger/nest.logger'
@@ -28,7 +28,7 @@ import { DeleteSubscriptionCommand } from 'src/subscription/application/commands
     bearerAuth: true,
 })
 export class DeleteSubscriptionController
-    implements
+implements
         ControllerContract<
             [user: CurrentUserResponse, course: string],
             CreateSubscriptionResponse

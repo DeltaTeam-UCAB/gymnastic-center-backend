@@ -10,7 +10,7 @@ import {
 import { Controller } from 'src/core/infraestructure/controllers/decorators/controller.module'
 import { Roles, RolesGuard } from '../../guards/roles.guard'
 import { User as UserDecorator } from '../../decorators/user.decorator'
-import { UserGuard } from 'src/user/infraestructure/guards/user.guard'
+import { UserGuard } from '../../guards/user.guard'
 import { ErrorDecorator } from 'src/core/application/decorators/error.handler.decorator'
 import { ToggleLikeCommand } from 'src/comment/application/commands/toggle-like/toggle-like.command'
 import { CommentPostgresRepository } from '../../repositories/postgres/comment.repository'
@@ -27,7 +27,7 @@ import { CurrentUserResponse } from '../../auth/current/types/response'
     bearerAuth: true,
 })
 export class ToggleLikeController
-implements
+    implements
         ControllerContract<
             [param: string, user: CurrentUserResponse],
             ToggleLikeResponse

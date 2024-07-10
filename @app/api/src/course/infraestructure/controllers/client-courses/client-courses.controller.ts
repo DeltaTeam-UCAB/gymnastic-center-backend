@@ -9,7 +9,7 @@ import { GetClientCoursesDTO } from './dto/dto'
 import { GetSubscribedCoursesResponse } from 'src/course/application/queries/paginatedSubscribedCourses/types/response'
 import { GetSubscribedCoursesPaginatedQuery } from 'src/course/application/queries/paginatedSubscribedCourses/GetSubscribedCoursesPaginatedQuery'
 import { SubscriptionPostgresByCourseRepository } from '../../repositories/postgres/subscription.repository'
-import { Roles, RolesGuard } from 'src/user/infraestructure/guards/roles.guard'
+import { Roles, RolesGuard } from '../../guards/roles.guard'
 import { User } from '../../decorators/user.decorator'
 import { CurrentUserResponse } from '../../auth/current/types/response'
 import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.repository.proxy'
@@ -20,7 +20,7 @@ import { ImageRedisRepositoryProxy } from '../../repositories/redis/image.reposi
     bearerAuth: true,
 })
 export class ClientCoursesController
-implements
+    implements
         ControllerContract<
             [data: GetClientCoursesDTO, user: CurrentUserResponse],
             GetSubscribedCoursesResponse

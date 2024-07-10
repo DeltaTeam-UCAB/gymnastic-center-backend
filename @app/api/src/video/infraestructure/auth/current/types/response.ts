@@ -1,4 +1,4 @@
-import { UserType } from 'src/user/application/models/user'
+import { UserType } from '../../user'
 
 export type CurrentUserResponse = {
     id: string
