@@ -42,11 +42,17 @@ implements
             courses: new SearchCoursesQuery(
                 this.courseRepository,
                 new ImageRedisRepositoryProxy(this.imageRepository),
-            ).execute(data),
+            ).execute({
+                ...data,
+                tags: data.tag ?? data.tags,
+            }),
             blogs: new SearchBlogsQuery(
                 this.blogRepository,
                 new ImageRedisRepositoryProxy(this.imageRepository),
-            ).execute(data),
+            ).execute({
+                ...data,
+                tags: data.tag ?? data.tags,
+            }),
         })
         return {
             courses: res.courses.unwrap(),
