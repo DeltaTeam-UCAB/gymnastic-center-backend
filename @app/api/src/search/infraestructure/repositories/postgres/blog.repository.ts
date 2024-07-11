@@ -24,10 +24,7 @@ export class BlogPostgresBySearchRepository implements BlogRepository {
         private tagProvider: Repository<Tag>,
     ) {}
     async getMany(criteria: SearchBlogsCriteria): Promise<Blog[]> {
-        const tags = await (criteria.tags
-            ? (JSON.parse(criteria.tags as any) as string[])
-            : undefined
-        )?.asyncMap(async (tag) => {
+        const tags = await criteria.tags?.asyncMap(async (tag) => {
             const item = await this.tagProvider.findOneByOrFail({
                 name: tag,
             })
@@ -39,8 +36,8 @@ export class BlogPostgresBySearchRepository implements BlogRepository {
                 `lower(b.title) like :term ${
                     tags && tags.isNotEmpty()
                         ? `and b.active = true and b.id in (select "blogId" from blog_tag where ${tags
-                              ?.map((e) => `"tagId" = '${e}'`)
-                              .join(' or ')})`
+                            ?.map((e) => `"tagId" = '${e}'`)
+                            .join(' or ')})`
                         : ''
                 }`,
                 {
