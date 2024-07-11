@@ -21,10 +21,7 @@ export class CoursePostgresBySearchRepository implements CourseRepository {
         private tagProvider: Repository<Tag>,
     ) {}
     async getMany(criteria: SearchCoursesCriteria): Promise<Course[]> {
-        const tags = await (criteria.tags
-            ? (JSON.parse(criteria.tags as any) as string[])
-            : undefined
-        )?.asyncMap(async (tag) => {
+        const tags = await criteria.tags?.asyncMap(async (tag) => {
             const item = await this.tagProvider.findOneByOrFail({
                 name: tag,
             })
@@ -34,28 +31,28 @@ export class CoursePostgresBySearchRepository implements CourseRepository {
 (SELECT c.*, count(s.id)
 	FROM public.course c, subscription s 
 	where c.available = true and c.id = s.course and lower(c.title) like '%${
-        criteria.term?.toLowerCase() ?? ''
-    }%' ${
-    tags && tags.isNotEmpty()
-        ? `and c.id in (select "courseId" from course_tag where ${tags
-            ?.map((e) => `"tagId" = '${e}'`)
-            .join(' or ')})`
-        : ''
-}
+    criteria.term?.toLowerCase() ?? ''
+}%' ${
+            tags && tags.isNotEmpty()
+                ? `and c.id in (select "courseId" from course_tag where ${tags
+                      ?.map((e) => `"tagId" = '${e}'`)
+                      .join(' or ')})`
+                : ''
+        }
 	group by c.id, s.course 
 	order by count(s.id) DESC)
 UNION
 (select *, 0 
 	from course c 
 	where c.available = true and c.id not in (select course from subscription) and lower(c.title) like '%${
-        criteria.term?.toLowerCase() ?? ''
-    }%'${
-    tags && tags.isNotEmpty()
-        ? `and c.id in (select "courseId" from course_tag where ${tags
-            ?.map((e) => `"tagId" = '${e}'`)
-            .join(' or ')})`
-        : ''
-}
+    criteria.term?.toLowerCase() ?? ''
+}%'${
+            tags && tags.isNotEmpty()
+                ? `and c.id in (select "courseId" from course_tag where ${tags
+                      ?.map((e) => `"tagId" = '${e}'`)
+                      .join(' or ')})`
+                : ''
+        }
  )
 order by count DESC
 offset ${criteria.perPage * (criteria.page - 1)}
